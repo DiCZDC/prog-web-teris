@@ -16,9 +16,10 @@ return new class extends Migration
             $table->string('nombre');
             $table->string('descripcion');
             //Equipo FK
+            $table->foreignId('team_id')->constrained('teams')->onDelete('cascade')->onUpdate('cascade');
             
             //Evento FK
-            $table->foreignId('evento_id')->constrained('events')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('event_id')->constrained('events')->onDelete('cascade')->onUpdate('cascade');
 
             $table->string('url_repositorio')-> nullable();
 
