@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('nombre');
-            $table->foreignId('id_lider')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('id_disenador')->constrained('events')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('id_frontprog')->constrained('events')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('id_back_prog')->constrained('events')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('lider_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('disenador_id')->constrained('events')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('frontprog_id')->constrained('events')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('backprog_id')->constrained('events')->onDelete('cascade')->onUpdate('cascade');
             
         });
     }

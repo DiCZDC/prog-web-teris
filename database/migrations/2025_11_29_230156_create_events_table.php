@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('events', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->string('descripcion');
+            $table->longText('descripcion');
             $table->dateTime('inicio_evento');
             $table->dateTime('fin_evento');
-            $table->string('reglas');
-            $table->string('premios');
+            $table->longText('reglas');
+            $table->longText('premios');
             $table->string('estado')->nullable();
             //Se requiere relacionar con el creador del evento
             $table->timestamps();
