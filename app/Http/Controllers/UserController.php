@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Team;
 use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
-class TeamController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $teams = Team::paginate(30);
-        return view('teams.index',compact('teams'));
+        $users = User::paginate(30);
+        return view('users.index', compact('users'));
     }
 
     /**
@@ -38,7 +38,7 @@ class TeamController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Team $team)
+    public function show(string $id)
     {
         //
     }
@@ -46,7 +46,7 @@ class TeamController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Team $team)
+    public function edit(string $id)
     {
         //
     }
@@ -54,7 +54,7 @@ class TeamController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Team $team)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -62,7 +62,7 @@ class TeamController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Team $team)
+    public function destroy(string $id)
     {
         //
     }

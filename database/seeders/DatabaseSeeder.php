@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
             'password' => bcrypt('password'),
         ]);
-        User::factory(100)->create();
+        User::factory(50)->create();
         $this->call([
             // TeamSeeder::class,
             // ProjectSeeder::class,
