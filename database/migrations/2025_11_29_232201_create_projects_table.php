@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->string('descripcion');
+            $table->longText('descripcion');
             //Equipo FK
             $table->foreignId('team_id')->constrained('teams')->onDelete('cascade')->onUpdate('cascade');
             
             //Evento FK
-            $table->foreignId('event_id')->constrained('events')->onDelete('cascade')->onUpdate('cascade');
+            // $table->foreignId('event_id')->constrained('events')->onDelete('cascade')->onUpdate('cascade');
 
             $table->string('url_repositorio')-> nullable();
 
