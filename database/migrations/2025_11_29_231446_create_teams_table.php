@@ -15,12 +15,15 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('nombre');
+            $table->string('codigo', 10)->unique(); // Código único del equipo
+            $table->text('descripcion')->nullable(); // Descripción del equipo
+            $table->string('icono')->nullable(); // Ruta del archivo de icono
+            $table->boolean('estado')->default(true); // Activo/Inactivo
             $table->foreignId('evento_id')->nullable()->constrained('events')->onDelete('set null')->onUpdate('cascade');
             $table->foreignId('lider_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('disenador_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('frontprog_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('backprog_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
-            
+            $table->foreignId('disenador_id')->nullable()->constrained('users')->onDelete('set null')->onUpdate('cascade');
+            $table->foreignId('frontprog_id')->nullable()->constrained('users')->onDelete('set null')->onUpdate('cascade');
+            $table->foreignId('backprog_id')->nullable()->constrained('users')->onDelete('set null')->onUpdate('cascade');
         });
     }
 
