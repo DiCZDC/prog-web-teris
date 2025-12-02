@@ -1,7 +1,12 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\EventosController;
+use App\Http\Controllers\{
+    EventController,
+    ProfileController,
+    UserController,
+    ProjectController,
+    TeamController
+};
 use Illuminate\Support\Facades\Route;
 
 // Página principal muestra los eventos
@@ -22,6 +27,10 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 Route::get('/eventos', [EventosController::class, 'index'])->name('eventos.index');
 Route::get('/eventos/buscar', [EventosController::class, 'buscar'])->name('eventos.buscar');
 Route::get('/eventos/{id}', [EventosController::class, 'show'])->name('eventos.show');
+
+Route::resource('teams', TeamController::class);
+Route::resource('events', EventController::class);
+Route::resource('users', UserController::class);
 
 // Rutas solo para usuarios autenticados
 Route::middleware('auth')->group(function () {
