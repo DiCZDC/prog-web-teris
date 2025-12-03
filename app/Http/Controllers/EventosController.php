@@ -10,13 +10,13 @@ class EventosController extends Controller
     public function index()
     {
         $eventosPopulares = Event::populares()->get();
-        return view('eventos.index', compact('eventosPopulares'));
+        return view('event.index', compact('eventosPopulares'));
     }
 
     public function show($id)
     {
         $evento = Event::findOrFail($id);
-        return view('eventos.show', compact('evento'));
+        return view('event.show', compact('evento'));
     }
 
     public function buscar(Request $request)
@@ -27,7 +27,7 @@ class EventosController extends Controller
             ->orWhere('descripcion', 'like', "%{$query}%")
             ->get();
         
-        return view('eventos.buscar', compact('eventos', 'query'));
+        return view('event.buscar', compact('eventos', 'query'));
     }
 
     // NUEVO: Mostrar formulario de creación
