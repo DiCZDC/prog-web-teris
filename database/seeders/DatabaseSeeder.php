@@ -23,10 +23,10 @@ class DatabaseSeeder extends Seeder
         ]);
         User::factory(50)->create();
         $this->call([
-            // EventosSeeder::class,
             EventSeeder::class, 
             TeamSeeder::class,
             ProjectSeeder::class,
+            EventUserSeeder::class,
         ]);
     }
 }
