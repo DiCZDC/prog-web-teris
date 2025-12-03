@@ -9,7 +9,7 @@ use App\Http\Controllers\{
     TeamController
 };
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AuthController;
 // Página principal muestra los eventos
 Route::get('/', [EventController::class, 'index'])->name('home');
 
