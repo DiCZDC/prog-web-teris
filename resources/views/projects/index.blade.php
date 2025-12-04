@@ -30,6 +30,7 @@
                                 <td class="px-6 py-4 whitespace-normal text-sm text-white">{{ Str::limit($project->descripcion ?? '-', 80) }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{{ $project->team_id }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ optional($project->created_at)->format('Y-m-d') }}</td>
+
                             </tr>
                         @endforeach
                     </tbody>

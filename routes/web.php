@@ -35,6 +35,7 @@ Route::resource('events', EventController::class);
 Route::resource('teams', TeamController::class);
 Route::resource('users', UserController::class);
 Route::resource('projects', ProjectController::class);
+
 // Rutas solo para usuarios autenticados
 Route::middleware('auth')->group(function () {
     Route::get('/events/crear', [EventController::class, 'create'])->name('events.create');
