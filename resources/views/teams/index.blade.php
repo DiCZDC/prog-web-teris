@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -396,8 +394,10 @@
         }
     </style>
 </head>
-<body>
-    <nav class="navbar">
+
+<x-app-layout>
+    <body>
+    {{-- <nav class="navbar">
         <div class="logo">
             <div class="logo-icon"></div>
             <span>TERIS</span>
@@ -454,7 +454,7 @@
                 </li>
             @endauth
         </ul>
-    </nav>
+    </nav> --}}
 
     <div class="container">
         <h1>Equipos Disponibles</h1>
@@ -570,4 +570,4 @@
         @endif
     </div>
 </body>
-</html>
+</x-app-layout>
