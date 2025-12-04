@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\{
-    // EventosController,
     EventController,
     ProfileController,
     UserController,
@@ -11,8 +10,6 @@ use App\Http\Controllers\{
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EventosController;
-use App\Http\Controllers\AuthController;
-
 // Página principal muestra los eventos
 Route::get('/', [EventController::class, 'index'])->name('home');
 
@@ -37,7 +34,7 @@ Route::resource('events', EventController::class);
 
 Route::resource('teams', TeamController::class);
 Route::resource('users', UserController::class);
-
+Route::resource('projects', ProjectController::class);
 // Rutas solo para usuarios autenticados
 Route::middleware('auth')->group(function () {
     Route::get('/events/crear', [EventController::class, 'create'])->name('events.create');
