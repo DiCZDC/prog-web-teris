@@ -15,11 +15,16 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->longText('descripcion');
+            $table->string('imagen')->nullable();
             $table->dateTime('inicio_evento');
             $table->dateTime('fin_evento');
+            $table->enum('estado', ['Activo', 'Inactivo'])->default('Activo');
+            $table->enum('modalidad', ['Presencial', 'Virtual', 'Híbrido']);
+            $table->string('ubicacion')->nullable();
             $table->longText('reglas');
             $table->longText('premios');
-            $table->string('estado')->nullable();
+            $table->boolean('popular')->default(false);
+
             //Se requiere relacionar con el creador del evento
             $table->timestamps();
         });

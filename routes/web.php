@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\{
+    // EventosController,
     EventController,
     ProfileController,
     UserController,
@@ -8,12 +9,15 @@ use App\Http\Controllers\{
     TeamController
 };
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EventosController;
 use App\Http\Controllers\AuthController;
 
 // Página principal muestra los eventos
-Route::get('/', [EventosController::class, 'index'])->name('home');
+Route::get('/', [EventController::class, 'index'])->name('home');
 
+// dashboard para usuarios autenticados
+Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard')->middleware('auth');
 // Rutas de autenticación (solo para invitados)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -26,18 +30,18 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 // Rutas de eventos (accesibles para todos, autenticados o no)
-Route::get('/eventos', [EventosController::class, 'index'])->name('eventos.index');
-Route::get('/eventos/buscar', [EventosController::class, 'buscar'])->name('eventos.buscar');
-Route::get('/eventos/{id}', [EventosController::class, 'show'])->name('eventos.show');
+Route::get('/events', [EventController::class, 'index'])->name('events.index');
+Route::get('/events/search', [EventController::class, 'search'])->name('events.search');
+Route::get('/events/{id}', [EventController::class, 'show'])->name('events.show');
+Route::resource('events', EventController::class);
 
 Route::resource('teams', TeamController::class);
-Route::resource('events', EventController::class);
 Route::resource('users', UserController::class);
 
 // Rutas solo para usuarios autenticados
 Route::middleware('auth')->group(function () {
-    Route::get('/eventos/crear', [EventosController::class, 'create'])->name('eventos.create');
-    Route::post('/eventos', [EventosController::class, 'store'])->name('eventos.store');
+    Route::get('/events/crear', [EventController::class, 'create'])->name('events.create');
+    Route::post('/events', [EventController::class, 'store'])->name('events.store');
 });
 
 // Ruta temporal para password reset
