@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->longText('descripcion');
-            $table->string('imagen')->nullable();
+            $table->longText('imagen')->nullable();
             $table->dateTime('inicio_evento');
             $table->dateTime('fin_evento');
             $table->enum('estado', ['Activo', 'Inactivo'])->default('Activo');

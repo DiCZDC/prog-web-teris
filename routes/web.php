@@ -30,6 +30,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
 Route::get('/events/search', [EventController::class, 'search'])->name('events.search');
 Route::get('/events/{id}', [EventController::class, 'show'])->name('events.show');
+Route::get('projects/{id}', [ProjectController::class, 'show'])->name('projects.show');
 Route::resource('events', EventController::class);
 
 Route::resource('teams', TeamController::class);

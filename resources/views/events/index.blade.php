@@ -18,7 +18,11 @@
     
         <div class="container">
             <h1>Eventos Populares</h1>
-    
+            @if(auth()->check() && auth()->user()->hasRole('admin'))
+                <a class = "btn" href="{{ route('events.create') }}">
+                    Crear Evento
+                </a>
+            @endif
             <div class="eventos-grid">
                 @forelse($events as $event)
                 <div class="evento-card" onclick="window.location='{{ route('events.show', $event->id) }}'">
