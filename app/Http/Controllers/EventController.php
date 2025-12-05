@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
-
+use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +29,23 @@ class EventController extends Controller
     {
         return view('events.create');
     }
-
+    /**
+     * Display the teams associated with a specific event.
+     */
+    public function num_teams($id){
+        $event = Event::findOrFail($id);
+        $teamsCount = Team::where('evento_id', $id)->count();
+        return $teamsCount;
+    }
+    public function teams($id)
+    {
+        $event = Event::findOrFail($id);
+        $teams = Team::where('evento_id', $id)
+            ->with(['lider', 'disenador', 'frontprog', 'backprog', 'evento'])
+            ->paginate(12);
+        
+        return view('events.teams.index', compact('teams', 'event'));
+    }
     /**
      * Store a newly created resource in storage.
      */

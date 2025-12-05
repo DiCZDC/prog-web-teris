@@ -26,7 +26,7 @@
             <div class="eventos-grid">
                 @forelse($events as $event)
                 <div class="evento-card" onclick="window.location='{{ route('events.show', $event->id) }}'">
-                    <img src="{{ asset('storage/' . $event->imagen) }}" alt="{{ $event->nombre }}" class="evento-imagen">
+                    <img src="{{ asset($event->imagen) }}" alt="{{ $event->nombre }}" class="evento-imagen">
                     
                     <div class="evento-content">
                         <h2 class="evento-titulo">{{ $event->nombre }}</h2>

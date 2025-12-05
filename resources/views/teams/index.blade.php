@@ -455,7 +455,7 @@
             @endauth
         </ul>
     </nav> --}}
-
+    
     <div class="container">
         <h1>Equipos Disponibles</h1>
 

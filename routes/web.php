@@ -14,7 +14,6 @@ use App\Http\Controllers\EventosController;
 Route::get('/', [EventController::class, 'index'])->name('home');
 
 // dashboard para usuarios autenticados
-Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard')->middleware('auth');
 // Rutas de autenticación (solo para invitados)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -30,10 +29,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middl
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
 Route::get('/events/search', [EventController::class, 'search'])->name('events.search');
 Route::get('/events/{id}', [EventController::class, 'show'])->name('events.show');
-Route::get('projects/{id}', [ProjectController::class, 'show'])->name('projects.show');
-Route::resource('events', EventController::class);
+Route::get('/events/teams/{id}', [EventController::class, 'teams'])->name('events.teams.index');
 
-Route::resource('teams', TeamController::class);
+
 Route::resource('users', UserController::class);
 Route::resource('projects', ProjectController::class);
 
@@ -52,6 +50,7 @@ Route::get('/password/reset', function () {
 
 // Rutas públicas de equipos
 Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
+// Route::get('/teams/event/{id}', [TeamController::class, 'indexEvent'])->name('teams.indexEvent');
 Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
 
 // Rutas protegidas de equipos (requieren autenticación)
