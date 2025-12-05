@@ -19,12 +19,15 @@ class EventFactory extends Factory
         return [
             'nombre' => $this->faker->sentence,
             'descripcion' => $this->faker->paragraph,
-            'imagen' => $this->faker->imageUrl(),
+            'imagen' => 'https://picsum.photos/1600/1200?random' . $this->faker->numberBetween(1, 5000),
+
             'inicio_evento' => $this->faker->dateTime,
             'fin_evento' => $this->faker->dateTime,
             'estado' => $this->faker->randomElement(['Activo', 'Inactivo']),
             'modalidad' => $this->faker->randomElement(['Presencial', 'Virtual', 'Híbrido']),
-            'ubicacion' => $this->faker->city,
+            'ubicacion' => $this->faker->randomElement(['Presencial', 'Híbrido']) === $this->faker->randomElement(['Presencial', 'Híbrido']) 
+                ? $this->faker->city 
+                : null,
             'reglas' => $this->faker->paragraph,
             'premios' => $this->faker->paragraph,
             'popular' => $this->faker->boolean,

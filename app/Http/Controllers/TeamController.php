@@ -27,7 +27,7 @@ class TeamController extends Controller
     {
         $teams = Team::where('evento_id', $id)
             ->with(['lider', 'disenador', 'frontprog', 'backprog', 'evento'])
-            ->paginate(12);
+            ->paginate(12);      
         
         return view('teams.index', compact('teams'));
     }
