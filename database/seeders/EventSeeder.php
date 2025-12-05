@@ -31,7 +31,7 @@ class EventSeeder extends Seeder
             [
                 'nombre' => 'AWS re:Invent',
                 'descripcion' => 'Evento anual de Amazon Web Services centrado en cloud computing, seguridad e IA.',
-                'imagen' => 'eventos/aws-reinvent.jpg',
+                'imagen' => 'https://assets.aboutamazon.com/dims4/default/aeb9629/2147483647/strip/true/crop/2548x1434+2+0/resize/2640x1486!/quality/90/?url=https%3A%2F%2Famazon-blogs-brightspot.s3.amazonaws.com%2F43%2F54%2F2a64c627400f9b8857a2bf8881a4%2Fabout-amazon-feature-hero-001-amazon-amazon-dynamo-5.jpg',
                 'inicio_evento' => '2025-12-01',
                 'fin_evento' => '2025-12-05',
                 'estado' => 'Activo',

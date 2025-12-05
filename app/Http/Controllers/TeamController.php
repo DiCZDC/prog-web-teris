@@ -23,7 +23,14 @@ class TeamController extends Controller
         
         return view('teams.index', compact('teams'));
     }
-
+    public function indexEvent($id)
+    {
+        $teams = Team::where('evento_id', $id)
+            ->with(['lider', 'disenador', 'frontprog', 'backprog', 'evento'])
+            ->paginate(12);
+        
+        return view('teams.index', compact('teams'));
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -60,7 +67,7 @@ class TeamController extends Controller
         return redirect()->route('teams.show', $team)
             ->with('success', '¡Equipo creado exitosamente! Código: ' . $team->codigo);
     }
-
+    
     /**
      * Display the specified resource.
      */
