@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
-
+use App\Mail\createdAccount;
 class AuthController extends Controller
 {
     // Mostrar formulario de login
@@ -72,9 +72,11 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
-
+        //envio de correo
         Auth::login($user);
-
+        \Mail::to($user->email)
+            ->send(new createdAccount($user));
+        
         return redirect()->route('home')->with('success', '¡Bienvenido, ' . $user->name . '! Tu cuenta ha sido creada exitosamente.');
     }
 

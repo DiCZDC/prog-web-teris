@@ -1,0 +1,86 @@
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificación Teris</title>
+    <style>
+        /* Estilos generales para clientes que los soporten */
+        body { margin: 0; padding: 0; background-color: #f6f7f8; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+        table { border-spacing: 0; }
+        td { padding: 0; }
+        img { border: 0; }
+        
+        /* Media query para móviles */
+        @media screen and (max-width: 600px) {
+            .container { width: 100% !important; }
+            .content-padding { padding: 20px !important; }
+        }
+    </style>
+</head>
+<!-- <body style="margin: 0; padding: 0; background-color: #f6f7f8; font-family: Helvetica, Arial, sans-serif;"> -->
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #ffffff;">
+    <tr>
+        <td align="center">
+            
+            <table border="0" cellpadding="0" cellspacing="0" width="600" class="container" style="background-color: #ffffff; margin-top: 20px;">
+                
+                <tr>
+                    <td align="left" style="padding: 20px 0 10px 0;">
+                        <img src="https://i.ibb.co/27Vq2w3c/Whats-App-Image-2025-12-06-at-12-06-34.jpg" alt="Teris Logo" width="75" height="auto" style="display: block; vertical-align: middle;">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center" style="font-size: 16px; color: #333333; padding-bottom: 20px;">
+                        Tienes una nueva notificación de <strong style="color: #0079d3;"> Teris</strong>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2" style="border-bottom: 1px solid #edeff1;"></td>
+                </tr>
+
+                <tr>
+                    <td colspan="2" class="content-padding" style="padding: 30px 0; text-align: left; color: #1c1c1c; font-size: 14px; line-height: 21px;">
+                        
+                        <p style="color: #878a8c; font-size: 12px; margin: 0 0 10px 0;">{{$userName}}</p>
+                        
+                        <h2 style="font-size: 18px; margin: 0 0 15px 0; font-weight: bold;">Felicidades por crear una cuenta</h2>
+                        
+                        <p style="margin-bottom: 15px;">
+                            Gracias por unirte a Teris. Estamos emocionados de tenerte con nosotros. Explora nuestras funciones y comienza a disfrutar de una experiencia única.
+                        </p>
+                        <p style="margin-bottom: 0;">
+                            Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos. ¡Estamos aquí para ayudarte!
+                        </p>
+                        <p style="color: #878a8c; text-align: right;">
+                                                    Atentamente,<br>
+                                                    El equipo de Teris
+                                                </p>
+                    </td>
+                </tr>
+
+
+            </table>
+            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f6f7f8;">
+                <tr>
+                    <td align="center" style="padding: 40px 20px;">
+                        <table border="0" cellpadding="0" cellspacing="0" width="600" class="container">
+                                    <a href="https://imgbb.com/"><img src="https://i.ibb.co/27Vq2w3c/Whats-App-Image-2025-12-06-at-12-06-34.jpg" width="200" alt="Teris Logo" border="0"></a>
+                                    <tr>
+                                <td align="center" style="font-size: 10px; color: #878a8c; line-height: 1.5;">
+                                    Este correo fue enviado a {{$userName}}.<br>
+                                    <a href="#" style="color: #000000; text-decoration: underline;">Unsubscribe</a> from Inbox Announcement Email Marketing messages, or visit your settings.<br>
+                                    <br>
+                                    548 Market St, #16093,<br>
+                                    San Francisco, CA 94104-5401
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+        </td>
+    </tr>
+</table>
