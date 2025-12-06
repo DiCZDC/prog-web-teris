@@ -45,10 +45,16 @@
                         
                         <p style="color: #878a8c; font-size: 12px; margin: 0 0 10px 0;">{{$userName}}</p>
                         
-                        <h2 style="font-size: 18px; margin: 0 0 15px 0; font-weight: bold;">Felicidades por crear una cuenta</h2>
-                        
+                        <h2 style="font-size: 18px; margin: 0 0 15px 0; font-weight: bold;">
+                            Tu proyecto ha sido calificado
+                        </h2>
+                        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExb214b214b214b214b214b214b214b214b214b214b214b214/3o7abKhOpu0NwenH3O/giphy.gif" alt="Celebration GIF" style="width: 100%; max-width: 600px; height: auto; display: block; margin-bottom: 20px; border-radius: 8px;">
                         <p style="margin-bottom: 15px;">
-                            Gracias por unirte a Teris. Estamos emocionados de tenerte con nosotros. Explora nuestras funciones y comienza a disfrutar de una experiencia única.
+                            Felicidades a tu equipo {{$teamName}} por completar el proceso de envio de proyectos en Teris. 
+                            Apreciamos el esfuerzo y la dedicación que han demostrado durante este proceso.
+                        </p>
+                        <p>
+                            Tu proyecto ha sido evaluado y calificado por nuestro equipo. Te invitamos a revisar los comentarios y la retroalimentación proporcionada para mejorar aún más tu trabajo.
                         </p>
                         <p style="margin-bottom: 0;">
                             Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos. ¡Estamos aquí para ayudarte!
@@ -66,7 +72,7 @@
                 <tr>
                     <td align="center" style="padding: 40px 20px;">
                         <table border="0" cellpadding="0" cellspacing="0" width="600" class="container">
-                                    <a><img src="https://lh3.googleusercontent.com/pw/AP1GczPldrhndLJ4PriR8KdVJOQjVFpOxtSs1JsFp_m96A2Qph9aiXgu920yv15-dkFEP-hYcTpoHh6d0biBlJiopzHMQzjQ4X303HV9ZTARaWhIVQ6ftYaNFYiawNYVYz-JrDVL7-uhgQsgyAnCRaCMAgHX=w500-h500-s-no?authuser=0" width="200" alt="Teris Logo" border="0"></a>
+                                    <img src="https://lh3.googleusercontent.com/pw/AP1GczPldrhndLJ4PriR8KdVJOQjVFpOxtSs1JsFp_m96A2Qph9aiXgu920yv15-dkFEP-hYcTpoHh6d0biBlJiopzHMQzjQ4X303HV9ZTARaWhIVQ6ftYaNFYiawNYVYz-JrDVL7-uhgQsgyAnCRaCMAgHX=w500-h500-s-no?authuser=0" width="200" alt="Teris Logo" border="0">
                                     <tr>
                                 <td align="center" style="font-size: 10px; color: #878a8c; line-height: 1.5;">
                                     Este correo fue enviado a {{$userName}}.<br>

@@ -5,22 +5,24 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class createdAccount extends Mailable
+class joinedTeam extends Mailable
 {
     use Queueable, SerializesModels;
-    protected $user;
-    protected $mailsender;
+    
     /**
      * Create a new message instance.
      */
-    public function __construct($user, $mailsender)
-    {
+    protected $team;
+    protected $user;
+    protected $mailsender;
+
+    public function __construct($user, $team, $mailsender){
         $this->user = $user;
+        $this->team = $team;
         $this->mailsender = $mailsender;
     }
 
@@ -31,7 +33,7 @@ class createdAccount extends Mailable
     {
         return new Envelope(
             from: new Address($this->mailsender,"Support Teris"),
-            subject: 'Cuenta creada exitosamente',
+            subject: 'Has sido aceptado en un equipo',
         );
     }
 
@@ -41,9 +43,10 @@ class createdAccount extends Mailable
     public function content(): Content
     {
         return new Content(
-            html: 'mails.account.new',
+            html: 'mails.team.joined',
             with: [
                 'userName' => $this->user['name'],
+                'teamName' => $this->team['nombre'],
             ]
         );
     }

@@ -45,10 +45,14 @@
                         
                         <p style="color: #878a8c; font-size: 12px; margin: 0 0 10px 0;">{{$userName}}</p>
                         
-                        <h2 style="font-size: 18px; margin: 0 0 15px 0; font-weight: bold;">Felicidades por crear una cuenta</h2>
+                        <h2 style="font-size: 18px; margin: 0 0 15px 0; font-weight: bold;">
+                            Se ha enviado tu proyecto con éxito
+                        </h2>
                         
                         <p style="margin-bottom: 15px;">
-                            Gracias por unirte a Teris. Estamos emocionados de tenerte con nosotros. Explora nuestras funciones y comienza a disfrutar de una experiencia única.
+                            Felicidades a tu equipo {{$teamName}} por enviar tu proyecto a través de Teris. Hemos recibido tu envío y nuestro equipo lo revisará pronto.
+                            Mientras tanto, te animamos a seguir trabajando en tus habilidades y explorando nuevas ideas.
+                            De igual modo, te invitamos a mantenerte activo en la plataforma y participar en otras actividades y eventos que ofrecemos.
                         </p>
                         <p style="margin-bottom: 0;">
                             Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos. ¡Estamos aquí para ayudarte!

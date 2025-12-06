@@ -45,10 +45,12 @@
                         
                         <p style="color: #878a8c; font-size: 12px; margin: 0 0 10px 0;">{{$userName}}</p>
                         
-                        <h2 style="font-size: 18px; margin: 0 0 15px 0; font-weight: bold;">Felicidades por crear una cuenta</h2>
-                        
+                        <h2 style="font-size: 18px; margin: 0 0 15px 0; font-weight: bold;">Felicidades por crear un equipo</h2>
+                        <img src="https://i.giphy.com/3o7abKhOpu0NwenH3O.webp">
+
                         <p style="margin-bottom: 15px;">
-                            Gracias por unirte a Teris. Estamos emocionados de tenerte con nosotros. Explora nuestras funciones y comienza a disfrutar de una experiencia única.
+                            Gracias por crear un equipo en Teris. Estamos emocionados de tenerte con nosotros. 
+                            Disfruta colaborando con tu equipo y aprovechando al máximo el evento.
                         </p>
                         <p style="margin-bottom: 0;">
                             Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos. ¡Estamos aquí para ayudarte!

@@ -9,16 +9,19 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class OrderShipped extends Mailable
+class createdTeam extends Mailable
 {
     use Queueable, SerializesModels;
-
+    protected $user;
+    protected $team;
+    protected $mailsender;
     /**
      * Create a new message instance.
      */
-    public function __construct()
-    {
-        //
+    public function __construct($user, $team, $mailsender){
+        $this->user = $user;
+        $this->team = $team;
+        $this->mailsender = $mailsender;
     }
 
     /**
@@ -27,7 +30,8 @@ class OrderShipped extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Order Shipped',
+            from: new Address($this->mailsender,"Support Teris"),
+            subject: 'Equipo creado exitosamente',
         );
     }
 
@@ -37,7 +41,11 @@ class OrderShipped extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            html: 'mails.team.new',
+            with:[
+                'userName' => $this->user['name'],
+                'teamName' => $this->team['nombre'],
+            ]
         );
     }
 
