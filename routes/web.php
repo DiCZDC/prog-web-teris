@@ -57,11 +57,23 @@ Route::get('/password/reset', function () {
     return redirect()->route('login')->with('error', 'Función en desarrollo');
 })->name('password.request');
 
-
-
 // Rutas públicas de equipos
 Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
 // Route::get('/teams/event/{id}', [TeamController::class, 'indexEvent'])->name('teams.indexEvent');
 Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
 
 // Rutas protegidas de equipos (requieren autenticación)
+Route::middleware('auth')->group(function () {
+     // ==================== RUTAS DEL PERFIL ====================
+    // Ruta principal para ver el perfil
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    
+    // Rutas para editar perfil (si usas Laravel Breeze ya deberían existir)
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // Rutas para cambiar contraseña
+    Route::get('/profile/password', [ProfileController::class, 'editPassword'])->name('profile.edit-password');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('password.update');
+});
