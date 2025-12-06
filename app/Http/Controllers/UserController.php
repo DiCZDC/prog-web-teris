@@ -57,7 +57,16 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+        ]);
+        
+        $user->update($request->only(['name', 'email']));
+        
+        return redirect()->route('users.index')->with('success', 'Usuario actualizado correctamente');
     }
 
     /**
@@ -65,6 +74,9 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->delete();
+        
+        return redirect()->route('users.index')->with('success', 'Usuario eliminado correctamente');
     }
 }
