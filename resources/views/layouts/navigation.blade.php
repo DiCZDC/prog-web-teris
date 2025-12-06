@@ -33,17 +33,17 @@
                         Equipos
                     </a>
                 </li>
-                <!--Proyectos-->
-                <li>
-                    <a href="/projects">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 8 8">
-                            <path fill="#ffffff" d="M0 0v7h1V0H0zm7 0v7h1V0H7zM2 1v1h2V1H2zm1 2v1h2V3H3zm1 2v1h2V5H4z"/>
-                        </svg> 
-                        Proyectos
-                    </a>
-                </li>
                 <!-- Mostrar enlaces solo para administradores -->
                 @if(auth()->check() && auth()->user()->hasRole('admin'))
+                    <!--Proyectos-->
+                        <li>
+                            <a href="/projects">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 8 8">
+                                    <path fill="#ffffff" d="M0 0v7h1V0H0zm7 0v7h1V0H7zM2 1v1h2V1H2zm1 2v1h2V3H3zm1 2v1h2V5H4z"/>
+                                </svg> 
+                                Proyectos
+                            </a>
+                        </li>
                     <!--Lista de usuarios-->
                     <li>
                         <a href="/users">

@@ -38,13 +38,18 @@ class userSeeder extends Seeder
             'password' => bcrypt('password'),
         ]);
         
-        User::factory(50)->create();
         
-        $roleAdmin = Role::create(['name' => 'admin']);
+        $roleAdmin = Role::create(['name' =>  'admin']);
         
         //Assign All Permissions to Admin
         $adminUser->assignRole($roleAdmin);
         $roleAdmin->syncPermissions(Permission::query()->pluck('name'));
-
+        $normalUser->assignRole(Role::create(['name' => 'user']));
+        User::factory(50)->create();
+        User::all()->each(function ($user) {
+            if (!$user->hasRole('admin')) {
+                $user->assignRole('user');
+            }
+        });
     }
 }
