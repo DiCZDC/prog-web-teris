@@ -37,10 +37,16 @@ class userSeeder extends Seeder
             'email' => 'normal@example.com',
             'password' => bcrypt('password'),
         ]);
+        $judgeUser = User::factory()->create([
+            'name' => 'Judge User',
+            'email' => 'judge@example.com',
+            'password' => bcrypt('password'),
+        ]);
         
         
         $roleAdmin = Role::create(['name' =>  'admin']);
-        
+        $roleJudge = Role::create(['name' =>  'judge']);
+        $judgeUser ->assignRole($roleJudge);
         //Assign All Permissions to Admin
         $adminUser->assignRole($roleAdmin);
         $roleAdmin->syncPermissions(Permission::query()->pluck('name'));
