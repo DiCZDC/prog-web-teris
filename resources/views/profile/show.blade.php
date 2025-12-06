@@ -1,8 +1,6 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>TERIS - Mi Perfil</title>
     <style>
         * {
@@ -251,7 +249,8 @@
         }
     </style>
 </head>
-<body>
+
+<x-app-layout>
     <div class="profile-container">
         <a href="{{ route('home') }}" class="back-btn">
             ← Volver a Inicio
@@ -408,6 +407,7 @@
         </div>
     </div>
 
+</x-app-layout>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Mostrar mensajes de éxito/error
@@ -444,5 +444,3 @@
             });
         });
     </script>
-</body>
-</html>
