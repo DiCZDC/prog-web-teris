@@ -37,4 +37,9 @@ class Event extends Model
     {
         return $query->where('estado', 'Activo');
     }
+    // Relaciones
+    public function teams()
+    {
+        return $this->hasMany(Team::class, 'evento_id');
+    }
 }
