@@ -39,7 +39,7 @@ class userSeeder extends Seeder
         ]);
         
         
-        $roleAdmin = Role::create(['name' => 'admin']);
+        $roleAdmin = Role::create(['name' =>  'admin']);
         
         //Assign All Permissions to Admin
         $adminUser->assignRole($roleAdmin);

@@ -72,7 +72,7 @@
                         <textarea name="premios" class="w-full border rounded px-3 py-2" rows="4"></textarea>
                     </div>
                 <!-- Botón de envío -->
-                <button  type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
                     Guardar
                 </button>
             </form>
