@@ -2,59 +2,97 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
     /**
-     * Display the user's profile form.
+     * Mostrar la página del perfil del usuario
      */
-    public function edit(Request $request): View
+    public function show()
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        $user = Auth::user();
+        return view('profile.show', compact('user'));
     }
 
     /**
-     * Update the user's profile information.
+     * Mostrar el formulario para editar el perfil
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function edit()
     {
-        $request->user()->fill($request->validated());
+        $user = Auth::user();
+        return view('profile.edit', compact('user'));
+    }
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+    /**
+     * Actualizar la información del perfil
+     */
+    public function update(Request $request)
+    {
+        $user = Auth::user();
+        
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+        ]);
+
+        $user->update($request->only('name', 'email'));
+
+        return redirect()->route('profile.show')->with('success', 'Perfil actualizado correctamente.');
+    }
+
+    /**
+     * Mostrar el formulario para cambiar la contraseña
+     */
+    public function editPassword()
+    {
+        return view('profile.edit-password');
+    }
+
+    /**
+     * Actualizar la contraseña del usuario
+     */
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'La contraseña actual es incorrecta.']);
         }
 
-        $request->user()->save();
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return redirect()->route('profile.show')->with('success', 'Contraseña actualizada correctamente.');
     }
 
     /**
-     * Delete the user's account.
+     * Eliminar la cuenta del usuario
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request)
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+        $request->validate([
+            'password' => 'required',
         ]);
 
-        $user = $request->user();
+        $user = Auth::user();
+
+        if (!Hash::check($request->password, $user->password)) {
+            return back()->withErrors(['password' => 'La contraseña es incorrecta.']);
+        }
 
         Auth::logout();
-
         $user->delete();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        return redirect('/')->with('success', 'Tu cuenta ha sido eliminada.');
     }
 }

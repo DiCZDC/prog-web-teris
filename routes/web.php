@@ -10,6 +10,7 @@ use App\Http\Controllers\{
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EventosController;
+
 // Página principal muestra los eventos
 Route::get('/', [EventController::class, 'index'])->name('home');
 
@@ -46,8 +47,6 @@ Route::get('/password/reset', function () {
     return redirect()->route('login')->with('error', 'Función en desarrollo');
 })->name('password.request');
 
-
-
 // Rutas públicas de equipos
 Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
 // Route::get('/teams/event/{id}', [TeamController::class, 'indexEvent'])->name('teams.indexEvent');
@@ -65,4 +64,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/teams/join/form', [TeamController::class, 'join'])->name('teams.join');
     Route::post('/teams/join/process', [TeamController::class, 'joinTeam'])->name('teams.join.process');
     Route::post('/teams/{team}/leave', [TeamController::class, 'leave'])->name('teams.leave');
+
+     // ==================== RUTAS DEL PERFIL ====================
+    // Ruta principal para ver el perfil
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    
+    // Rutas para editar perfil (si usas Laravel Breeze ya deberían existir)
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // Rutas para cambiar contraseña
+    Route::get('/profile/password', [ProfileController::class, 'editPassword'])->name('profile.edit-password');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('password.update');
 });
