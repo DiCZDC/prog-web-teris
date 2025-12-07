@@ -33,7 +33,7 @@ class joinedTeam extends Mailable
     {
         return new Envelope(
             from: new Address($this->mailsender,"Support Teris"),
-            subject: 'Has sido aceptado en un equipo',
+            subject: 'Has sido aceptado en el equipo ' . $this->team['nombre'],
         );
     }
 

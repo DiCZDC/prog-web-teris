@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use App\Mail\createdAccount;
 use Illuminate\Http\Request;
-
+use App\Mail\pdfSent;
 class MailController extends Controller
 {
     private $mailsender ="noreply_teris@test-ywj2lpnxppqg7oqz.mlsender.net";
@@ -35,6 +35,11 @@ class MailController extends Controller
     function sendJoinedTeamEmail($user, $team){
         \Mail::to($user->email)
             ->send(new joinedTeam($user, $team, $this->mailsender));
+        return "E-mail Enviado";
+    }
+    function sendPdfEmail($team, $user, $event, $date){
+        \Mail::to($user->email)
+            ->send(new pdfSent($team, $user, $this->mailsender, $event, $date));
         return "E-mail Enviado";
     }
 }
