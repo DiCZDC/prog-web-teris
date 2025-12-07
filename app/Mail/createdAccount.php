@@ -21,7 +21,7 @@ class createdAccount extends Mailable
     public function __construct($user, $mailsender)
     {
         $this->user = $user;
-        $this->mailsender = $mailsender;
+        $this->mailsender = $mailsender ;
     }
 
     /**
