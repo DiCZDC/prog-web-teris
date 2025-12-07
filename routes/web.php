@@ -31,11 +31,12 @@ Route::get('/mailPdf', function(){
     $date = now();
     return $mailController->sendPdfEmail($team, $user, $event, $date);
 });
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
+    Route::post('/events', [EventController::class, 'store'])->name('events.store');
+});
 Route::middleware('auth')->group(function () {
     // Rutas CRUD de eventos
-    Route::get('/events/create', [EventController::class, 'create'])->name('events.create')->middleware('auth');
-    Route::post('/events', [EventController::class, 'store'])->name('events.store');
-    
     // Rutas CRUD de equipos
     Route::get('/teams/create', [TeamController::class, 'create'])->name('teams.create');
     Route::post('/teams', [TeamController::class, 'store'])->name('teams.store');
