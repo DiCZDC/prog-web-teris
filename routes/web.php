@@ -5,6 +5,7 @@ use App\Http\Controllers\{
     ProfileController,
     UserController,
     ProjectController,
+    JudgeController,
     TeamController
 };
 use Illuminate\Support\Facades\Route;
@@ -47,7 +48,7 @@ Route::get('/events', [EventController::class, 'index'])->name('events.index');
 Route::get('/events/search', [EventController::class, 'search'])->name('events.search');
 Route::get('/events/{id}', [EventController::class, 'show'])->name('events.show');
 Route::get('/events/teams/{id}', [EventController::class, 'teams'])->name('events.teams.index');
-
+Route::get('/events/{id}/judges', [EventController::class, 'showJudges'])->name('events.judges');
 
 Route::resource('users', UserController::class);
 Route::resource('projects', ProjectController::class);
@@ -76,4 +77,14 @@ Route::middleware('auth')->group(function () {
     // Rutas para cambiar contraseña
     Route::get('/profile/password', [ProfileController::class, 'editPassword'])->name('profile.edit-password');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('password.update');
+});
+
+// ==================== RUTAS DE JUECES ====================
+Route::middleware(['auth', 'role:judge'])->prefix('judge')->name('judge.')->group(function () {
+    Route::get('/dashboard', [JudgeController::class, 'index'])->name('dashboard');
+    Route::get('/event/{event}', [JudgeController::class, 'showEvent'])->name('event.show');
+    Route::get('/event/{event}/team/{team}', [JudgeController::class, 'showTeam'])->name('team.show');
+    Route::post('/event/{event}/team/{team}/score', [JudgeController::class, 'storeScore'])->name('score.store');
+    Route::post('/event/{event}/criteria', [JudgeController::class, 'addCriteria'])->name('criteria.add');
+    Route::get('/evaluated-teams', [JudgeController::class, 'evaluatedTeams'])->name('evaluated.teams');
 });
