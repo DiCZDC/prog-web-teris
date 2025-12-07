@@ -33,17 +33,17 @@
                         Equipos
                     </a>
                 </li>
-                <!--Proyectos-->
-                <li>
-                    <a href="/projects">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 8 8">
-                            <path fill="#ffffff" d="M0 0v7h1V0H0zm7 0v7h1V0H7zM2 1v1h2V1H2zm1 2v1h2V3H3zm1 2v1h2V5H4z"/>
-                        </svg> 
-                        Proyectos
-                    </a>
-                </li>
                 <!-- Mostrar enlaces solo para administradores -->
                 @if(auth()->check() && auth()->user()->hasRole('admin'))
+                    <!--Proyectos-->
+                        <li>
+                            <a href="/projects">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 8 8">
+                                    <path fill="#ffffff" d="M0 0v7h1V0H0zm7 0v7h1V0H7zM2 1v1h2V1H2zm1 2v1h2V3H3zm1 2v1h2V5H4z"/>
+                                </svg> 
+                                Proyectos
+                            </a>
+                        </li>
                     <!--Lista de usuarios-->
                     <li>
                         <a href="/users">
@@ -60,13 +60,13 @@
                 <li>
                     <div class="user-info">
                         <span class="user-name">
-                            {{-- <a href="{{ route('profile.show') }}" class="auth-btn">
+                            <a href="{{ route('profile.show') }}" class="auth-btn">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="display: inline; vertical-align: middle;">
                                     <g fill="none" fill-rule="evenodd">
                                         <path fill="#ffffff" d="M16 14a5 5 0 0 1 4.995 4.783L21 19v1a2 2 0 0 1-1.85 1.995L19 22H5a2 2 0 0 1-1.995-1.85L3 20v-1a5 5 0 0 1 4.783-4.995L8 14zm0 2H8a3 3 0 0 0-2.995 2.824L5 19v1h14v-1a3 3 0 0 0-2.824-2.995zM12 2a5 5 0 1 1 0 10a5 5 0 0 1 0-10m0 2a3 3 0 1 0 0 6a3 3 0 0 0 0-6"/>
                                     </g>
                                 </svg>
-                            </a> --}}
+                            </a>
                                 Hola, {{ Auth::user()->name }}
                         </span>
                         <form action="{{ route('logout') }}" method="POST" style="display: inline; margin: 0;">
