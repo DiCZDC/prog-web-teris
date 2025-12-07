@@ -1,33 +1,29 @@
-
-<head>
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TERIS - Eventos</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-</head>
 <x-app-layout>
-    <body>
-    <!-- Barra de navegación con búsqueda -->
-        <nav class="navbar">
-            <div class="search-box">
-                <form action="{{ route('events.search') }}" method="GET">
-                    <input type="text" name="q" placeholder="Buscar evento" />
-                </form>
+    <x-slot name="header">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+            <div>
+                <h2 class="text-3xl font-bold text-white">
+                    Eventos Populares
+                </h2>
+                <p class="text-purple-200 mt-1">Descubre y participa en los mejores eventos tecnológicos</p>
             </div>
-        </nav>
+            
+            @auth
+                @if(auth()->user()->hasRole('admin'))
+                    <x-button :href="route('events.create')" variant="primary" size="md">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Crear Evento
+                    </x-button>
+                @endif
+            @endauth
+        </div>
+    </x-slot>
+    <body>
     <!-- Contenido principal -->
         <div class="container">
             <h1>Eventos Populares</h1>
-            @auth
-                @if(auth()->user()->hasRole('admin'))
-                    <div style="text-align: center; margin: 20px 0;">
-                        <a class="btn" href="{{ route('events.create') }}" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; font-weight: 500; transition: background-color 0.3s;">
-                            Crear Evento
-                        </a>
-                    </div>
-                @endif
-            @endauth
         <!-- Eventos populares -->
             <div class="eventos-grid">
                 @forelse($events as $event)
