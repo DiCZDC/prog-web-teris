@@ -8,8 +8,8 @@ use App\Http\Controllers\{
     ProjectController,
     TeamController,
     AdminController,
-    JudgeController
-    mailController
+    JudgeController,
+    MailController,
 };
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
