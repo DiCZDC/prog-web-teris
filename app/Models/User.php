@@ -41,7 +41,9 @@ class User extends Authenticatable
     }
 
     // Equipos donde es líder
-    public function equiposComolider()
+    public function equiposComolider(){
+
+    }
     // ============================================
     // RELACIONES PARA JUECES
     // ============================================
@@ -149,6 +151,7 @@ class User extends Authenticatable
     public function invitacionesEnviadas()
     {
         return $this->hasMany(TeamInvitation::class, 'invited_by');
+    }
     /**
      * Verificar si el usuario está en algún equipo
      */

@@ -407,7 +407,7 @@
         <div class="divider"></div>
 
         <!-- ========== SOLICITUDES RECIBIDAS (Me solicitaron - solo si soy líder) ========== -->
-        @if($solicitudesPendientes->count() > 0 || Auth::user()->equiposComolider->count() > 0)
+        @if($solicitudesPendientes->count() > 0 || Auth::user()->equiposComoLider->count() > 0)
         <div class="section">
             <h2 class="section-title">
                 📥 Solicitudes para Mis Equipos
