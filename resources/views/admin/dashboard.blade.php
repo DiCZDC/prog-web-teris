@@ -217,7 +217,7 @@
 
     <!-- Acciones Rápidas -->
     <div class="quick-actions">
-        <a href="{{ route('events.create') }}" class="action-btn">
+        <a href="{{ route('admin.events.create') }}" class="action-btn">
             <div class="action-icon">➕</div>
             <div class="action-text">Crear Evento</div>
         </a>

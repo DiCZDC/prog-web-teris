@@ -49,43 +49,26 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rol</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Registro</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse($usuarios as $usuario)
+                        @forelse($jueces as $juez)
                         <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $usuario->id }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ $usuario->name }}</div>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $juez->id }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{ $juez->name }}</div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $usuario->email }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                @php
-                                    $role = $usuario->roles->first();
-                                    $roleName = $role ? $role->name : 'user';
-                                @endphp
-                                <span class="px-2 py-1 text-xs rounded-full 
-                                    @if($roleName == 'admin') bg-purple-100 text-purple-800
-                                    @elseif($roleName == 'juez') bg-blue-100 text-blue-800
-                                    @else bg-green-100 text-green-800 @endif">
-                                    {{ ucfirst($roleName) }}
-                                </span>
-                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $juez->email }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $usuario->created_at->format('d/m/Y') }}
+                                {{ $juez->created_at->format('d/m/Y') }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ route('admin.usuarios.show', $usuario->id) }}" 
+                                <a href="{{ route('admin.usuarios.show', $juez->id) }}" 
                                    class="text-blue-600 hover:text-blue-900 mr-3">
                                     <i class="fas fa-eye"></i> Ver
                                 </a>
-                                <button onclick="showChangeRoleModal({{ $usuario->id }}, '{{ $usuario->name }}', '{{ $roleName }}')"
-                                        class="text-purple-600 hover:text-purple-900">
-                                    <i class="fas fa-user-tag"></i> Cambiar Rol
-                                </button>
                             </td>
                         </tr>
                         @empty
@@ -101,11 +84,7 @@
             </div>
             
             <!-- Paginación -->
-            @if($usuarios->hasPages())
-            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
-                {{ $usuarios->links() }}
-            </div>
-            @endif
+            
         </div>
     </div>
 </x-app-layout>

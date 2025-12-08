@@ -117,7 +117,7 @@
     <!-- Contenido principal -->
     <div class="container mx-auto px-4 py-8">
         <div class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-800">Eventos Populares</h1>
+            <h1 class="text-3xl font-bold text-white-800">Eventos Populares</h1>
             
             @auth
                 @if(auth()->user()->hasRole('admin'))
