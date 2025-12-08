@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('event_users', function (Blueprint $table) {
+        Schema::create('event_judge', function (Blueprint $table) {
             $table->id();
             $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->enum('role', ['Juez', 'Organizador']);
             $table->timestamps();
+            
+            $table->unique(['event_id', 'user_id']);
+            $table->index('event_id');
+            $table->index('user_id');
         });
     }
 
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('event_users');
+        Schema::dropIfExists('events_judge');
     }
 };

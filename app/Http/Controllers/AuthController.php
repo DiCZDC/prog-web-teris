@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
+use App\http\controllers\MailController;
 
 class AuthController extends Controller
 {
@@ -68,6 +70,8 @@ class AuthController extends Controller
         $user->assignRole('user');
 
         Auth::login($user);
+        $mailController = new MailController();
+        $mailController->sendCreatedAccountEmail($user);
 
         return redirect()->route('home');
     }

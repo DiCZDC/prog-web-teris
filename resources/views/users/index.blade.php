@@ -30,7 +30,8 @@
                         <select class="form-select form-select-sm bg-dark text-black border-secondary role-select" data-user-id="{{ $user->id }}">
                         <option value="user" {{ ($user->hasRole('user')) ? 'selected' : '' }}>Usuario</option>
                         <option value="admin" {{ ($user->hasRole('admin')) ? 'selected' : '' }}>Administrador</option>
-                        </select>
+                        <option value="judge" {{ ($user->hasRole('judge')) ? 'selected' : '' }}>Juez</option>
+                    </select>
                     </td>
                     <td class="text-center"><small class="text-muted">{{ optional($user->created_at)->diffForHumans() ?? '-' }}</small></td>
                     <td class="text-center">

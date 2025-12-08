@@ -9,6 +9,7 @@ use App\Http\Controllers\{
     TeamController,
     AdminController,
     JudgeController
+    mailController
 };
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -47,12 +48,40 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
+    
 });
 
 // Login POST (con redirección por rol)
 Route::post('/login', [AuthController::class, 'login'])->name('login.post')->middleware('guest');
 
 // Logout
+// Route::get('/mailPdf', function(){
+//     $mailController = new MailController();
+//     $team = \App\Models\Team::find(1);
+//     $user = \App\Models\User::find(54);
+//     $event = \App\Models\Event::find(1);
+//     $date = now();
+//     return $mailController->sendPdfEmail($team, $user, $event, $date);
+// });
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
+    Route::post('/events', [EventController::class, 'store'])->name('events.store');
+});
+Route::middleware('auth')->group(function () {
+    // Rutas CRUD de eventos
+    // Rutas CRUD de equipos
+    Route::get('/teams/create', [TeamController::class, 'create'])->name('teams.create');
+    Route::post('/teams', [TeamController::class, 'store'])->name('teams.store');
+    Route::get('/teams/{team}/edit', [TeamController::class, 'edit'])->name('teams.edit');
+    Route::put('/teams/{team}', [TeamController::class, 'update'])->name('teams.update');
+    Route::delete('/teams/{team}', [TeamController::class, 'destroy'])->name('teams.destroy');
+    
+    // Rutas para unirse a equipos
+    Route::get('/teams/join/form', [TeamController::class, 'join'])->name('teams.join');
+    Route::post('/teams/join/process', [TeamController::class, 'joinTeam'])->name('teams.join.process');
+    Route::post('/teams/{team}/leave', [TeamController::class, 'leave'])->name('teams.leave');
+});
+// Ruta de logout (requiere estar autenticado)
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 // Reset password (placeholder)
