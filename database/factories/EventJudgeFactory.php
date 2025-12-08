@@ -3,13 +3,11 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Event_User;
-use App\Models\Event;
-use App\Models\User;
+
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
  */
-class EventUserFactory extends Factory
+class EventJudgeFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -19,9 +17,7 @@ class EventUserFactory extends Factory
     public function definition(): array
     {
         return [
-            'event_id' => Event::factory(),
-            'user_id' => User::factory(),
-            'role' => $this->faker->randomElement(['Juez', 'Organizador']),
+            //
         ];
     }
 }

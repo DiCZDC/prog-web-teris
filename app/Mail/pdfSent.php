@@ -5,25 +5,32 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Barryvdh\DomPDF\Facade\Pdf;
 
-class joinedTeam extends Mailable
+class pdfSent extends Mailable
 {
     use Queueable, SerializesModels;
-    
+
     /**
      * Create a new message instance.
      */
+
     protected $team;
     protected $user;
     protected $mailsender;
-
-    public function __construct($user, $team, $mailsender){
-        $this->user = $user;
+    protected $date;
+    protected $event;
+    public function __construct($team, $user, $mailsender, $event, $date)
+    {
         $this->team = $team;
+        $this->user = $user;
         $this->mailsender = $mailsender;
+        $this->event = $event;
+        $this->date = $date;
     }
 
     /**
@@ -33,7 +40,7 @@ class joinedTeam extends Mailable
     {
         return new Envelope(
             from: new Address($this->mailsender,"Support Teris"),
-            subject: 'Has sido aceptado en el equipo ' . $this->team['nombre'],
+            subject: 'Tu certificado del evento ' . $this->event['nombre'],
         );
     }
 
@@ -43,10 +50,11 @@ class joinedTeam extends Mailable
     public function content(): Content
     {
         return new Content(
-            html: 'mails.team.joined',
+            html: 'mails.pdf.cert',
             with: [
                 'userName' => $this->user['name'],
                 'teamName' => $this->team['nombre'],
+                'eventName' => $this->event['nombre'],
             ]
         );
     }
@@ -58,6 +66,14 @@ class joinedTeam extends Mailable
      */
     public function attachments(): array
     {
-        return [];
+        return [
+            \Illuminate\Mail\Mailables\Attachment::fromData(fn () => Pdf::loadView('pdf.participation', [
+                'userName' => $this->user['name'],
+                'teamName' => $this->team['nombre'],
+                'eventName' => $this->event['nombre'],
+                'eventDate' => \Carbon\Carbon::parse($this->date)->format('d/m/Y'),
+            ])->setPaper('a4')->output(), 'certificado-' . $this->event['nombre'] . '.pdf')
+                ->withMime('application/pdf')
+        ];
     }
 }
