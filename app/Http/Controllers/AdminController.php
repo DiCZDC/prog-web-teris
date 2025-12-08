@@ -74,22 +74,43 @@ class AdminController extends Controller
     /**
      * Cambiar rol de usuario
      */
-    public function cambiarRol(Request $request, $id)
+    public function cambiarRol(Request $request)
     {
-        $user = User::findOrFail($id);
-        
-        $validated = $request->validate([
-            'role' => 'required|in:admin,juez,user'
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'new_role' => 'required|in:admin,juez,user'
         ]);
 
-        // Remover todos los roles existentes
-        $user->roles()->detach();
-        
-        // Asignar nuevo rol
-        $user->assignRole($validated['role']);
+        try {
+            $user = User::findOrFail($request->user_id);
+            
+            // Remover todos los roles existentes
+            $user->roles()->detach();
+            
+            // Asignar nuevo rol
+            $user->assignRole($request->new_role);
 
-        return redirect()->route('admin.usuarios.show', $id)
-            ->with('success', 'Rol actualizado correctamente a ' . ucfirst($validated['role']));
+            // Si es petición AJAX
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Rol cambiado exitosamente a ' . ucfirst($request->new_role)
+                ]);
+            }
+
+            return redirect()->route('admin.usuarios.show', $request->user_id)
+                ->with('success', 'Rol actualizado correctamente a ' . ucfirst($request->new_role));
+                
+        } catch (\Exception $e) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return back()->with('error', 'Error al cambiar el rol: ' . $e->getMessage());
+        }
     }
 
     /**

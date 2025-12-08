@@ -79,4 +79,48 @@ class UserController extends Controller
         
         return redirect()->route('users.index')->with('success', 'Usuario eliminado correctamente');
     }
+    
+    /**
+     * Cambiar rol de usuario
+     */
+    public function cambiarRol(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'new_role' => 'required|in:admin,juez,user'
+        ]);
+        
+        try {
+            $usuario = User::findOrFail($request->user_id);
+            
+            // Remover todos los roles actuales
+            $usuario->roles()->detach();
+            
+            // Asignar nuevo rol
+            $role = Role::where('name', $request->new_role)->first();
+            if ($role) {
+                $usuario->assignRole($role);
+            }
+            
+            // Si es petición AJAX
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Rol cambiado exitosamente'
+                ]);
+            }
+            
+            return back()->with('success', 'Rol cambiado exitosamente');
+            
+        } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al cambiar el rol: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return back()->with('error', 'Error al cambiar el rol: ' . $e->getMessage());
+        }
+    }
 }
