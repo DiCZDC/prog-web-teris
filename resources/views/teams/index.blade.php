@@ -16,6 +16,34 @@
             color: white;
         }
 
+        /* ========== ESTILOS PARA BADGE DE NOTIFICACIONES ========== */
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #f44336;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .user-menu-item {
+            position: relative;
+        }
+        /* ========================================================== */
+
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -417,8 +445,11 @@
                 <div class="dropdown-content">
                     <a href="{{ route('teams.index') }}">Ver equipos</a>
                     @auth
+                        <a href="{{ route('teams.my-teams') }}">Mis equipos</a>
                         <a href="{{ route('teams.create') }}">Crear equipo</a>
                         <a href="{{ route('teams.join') }}">Unir a equipo</a>
+                        
+                        
                     @endauth
                 </div>
             </li>
@@ -434,8 +465,18 @@
             </a></li>
             
             @auth
-                <li>
+                <li class="user-menu-item">
                     <div class="user-info">
+                        <!-- Botón de invitaciones con badge -->
+                        <a href="{{ route('teams.my-invitations') }}" style="position: relative; margin-right: 20px; font-size: 24px; text-decoration: none;" title="Mis invitaciones">
+                            @php
+                                $invitacionesPendientes = Auth::user()->invitacionesPendientes()->count();
+                            @endphp
+                            @if($invitacionesPendientes > 0)
+                                <span class="notification-badge">{{ $invitacionesPendientes }}</span>
+                            @endif
+                        </a>
+                        
                         <span style="color: rgba(255, 255, 255, 0.9);">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="display: inline; vertical-align: middle;">
                                 <g fill="none" fill-rule="evenodd"><path fill="#ffffff" d="M16 14a5 5 0 0 1 4.995 4.783L21 19v1a2 2 0 0 1-1.85 1.995L19 22H5a2 2 0 0 1-1.995-1.85L3 20v-1a5 5 0 0 1 4.783-4.995L8 14zm0 2H8a3 3 0 0 0-2.995 2.824L5 19v1h14v-1a3 3 0 0 0-2.824-2.995zM12 2a5 5 0 1 1 0 10a5 5 0 0 1 0-10m0 2a3 3 0 1 0 0 6a3 3 0 0 0 0-6"/></g>
@@ -469,8 +510,10 @@
 
         @auth
             <div class="action-buttons">
+                <a href="{{ route('teams.my-teams') }}" class="btn btn-secondary">🤝 Mis equipos</a>
                 <a href="{{ route('teams.create') }}" class="btn btn-primary">➕ Crear Nuevo Equipo</a>
                 <a href="{{ route('teams.join') }}" class="btn btn-secondary">🤝 Unirse a un Equipo</a>
+                <a href="{{ route('teams.my-invitations') }}">📬 Mis invitaciones</a>
             </div>
         @endauth
 

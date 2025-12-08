@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
-use App\http\controllers\MailController;
+use App\Http\Controllers\MailController;
 
 class AuthController extends Controller
 {

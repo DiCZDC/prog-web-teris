@@ -30,6 +30,18 @@ class User extends Authenticatable
         ];
     }
 
+    // Agregar estas relaciones al modelo User
+
+    // Relación con equipos (tabla pivote)
+    public function equipos()
+    {
+        return $this->belongsToMany(Team::class, 'team_user')
+            ->withPivot('rol')
+            ->withTimestamps();
+    }
+
+    // Equipos donde es líder
+    public function equiposComolider()
     // ============================================
     // RELACIONES PARA JUECES
     // ============================================
@@ -84,6 +96,7 @@ class User extends Authenticatable
         return $this->hasMany(Team::class, 'lider_id');
     }
 
+    // Todos los equipos donde participa (cualquier rol)
     /**
      * Equipos donde es diseñador
      */
@@ -120,6 +133,22 @@ class User extends Authenticatable
             ->get();
     }
 
+    // Invitaciones
+    public function invitacionesRecibidas()
+    {
+        return $this->hasMany(TeamInvitation::class, 'user_id');
+    }
+
+    public function invitacionesPendientes()
+    {
+        return $this->hasMany(TeamInvitation::class, 'user_id')
+            ->where('status', 'pendiente')
+            ->with(['team', 'invitador']);
+    }
+
+    public function invitacionesEnviadas()
+    {
+        return $this->hasMany(TeamInvitation::class, 'invited_by');
     /**
      * Verificar si el usuario está en algún equipo
      */
