@@ -23,14 +23,14 @@ Route::middleware('guest')->group(function () {
     
 });
 
-Route::get('/mailPdf', function(){
-    $mailController = new MailController();
-    $team = \App\Models\Team::find(1);
-    $user = \App\Models\User::find(54);
-    $event = \App\Models\Event::find(1);
-    $date = now();
-    return $mailController->sendPdfEmail($team, $user, $event, $date);
-});
+// Route::get('/mailPdf', function(){
+//     $mailController = new MailController();
+//     $team = \App\Models\Team::find(1);
+//     $user = \App\Models\User::find(54);
+//     $event = \App\Models\Event::find(1);
+//     $date = now();
+//     return $mailController->sendPdfEmail($team, $user, $event, $date);
+// });
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
     Route::post('/events', [EventController::class, 'store'])->name('events.store');
