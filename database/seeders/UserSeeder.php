@@ -45,7 +45,7 @@ class userSeeder extends Seeder
         
         
         $roleAdmin = Role::create(['name' =>  'admin']);
-        $roleJudge = Role::create(['name' =>  'judge']);
+        $roleJudge = Role::create(['name' =>  'juez']);
         $judgeUser ->assignRole($roleJudge);
         //Assign All Permissions to Admin
         $adminUser->assignRole($roleAdmin);

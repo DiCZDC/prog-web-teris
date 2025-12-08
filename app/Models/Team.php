@@ -121,5 +121,19 @@ class Team extends Model
         if ($this->frontprog) $miembros['PROGRAMADOR FRONT'] = $this->frontprog;
         if ($this->backprog) $miembros['PROGRAMADOR BACK'] = $this->backprog;
         return $miembros;
+        /**
+     * Proyecto del equipo
+     */
+    public function proyecto()
+    {
+        return $this->hasOne(Project::class, 'team_id');
+    }
+
+    /**
+     * Verificar si tiene proyecto
+     */
+    public function tieneProyecto()
+    {
+        return $this->proyecto()->exists();
     }
 }
