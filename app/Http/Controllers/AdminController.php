@@ -206,7 +206,7 @@ class AdminController extends Controller
         $jueces = User::role('juez')
             ->withCount('eventosComoJuez')
             ->with(['eventosComoJuez' => function($query) {
-                $query->select('events.id', 'events.nombre')->latest()->take(3);
+                $query->select('events.id', 'events.nombre')->latest('events.created_at')->take(3);
             }])
             ->paginate(20);
         

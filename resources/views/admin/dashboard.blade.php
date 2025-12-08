@@ -273,7 +273,7 @@
                     </span>
                 </div>
             @endforeach
-            <a href="{{ route('users.index') }}" class="view-all">Ver todos los usuarios →</a>
+            <a href="{{ route('admin.usuarios.index') }}" class="view-all">Ver todos los usuarios →</a>
         </div>
     </div>
 </div>

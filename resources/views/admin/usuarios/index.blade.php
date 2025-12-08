@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{{-- <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -11,36 +11,21 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-50">
-    
-    <!-- Navbar simple -->
-    <nav class="bg-white shadow-lg">
-        <div class="container mx-auto px-4 py-3">
-            <div class="flex justify-between items-center">
-                <a href="{{ route('admin.dashboard') }}" class="text-xl font-bold text-indigo-600">
-                    <i class="fas fa-crown mr-2"></i>Panel Admin
-                </a>
-                <div class="flex items-center space-x-4">
-                    <span class="text-sm text-gray-600">
-                        <i class="fas fa-user-circle mr-1"></i> {{ auth()->user()->name }}
-                    </span>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
-                            <i class="fas fa-sign-out-alt mr-1"></i> Salir
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </nav>
+<body class="bg-gray-50"> --}}
+<x-app-layout>
     
     <!-- Contenido Principal -->
     <div class="container mx-auto px-4 py-8">
-        
+        <!-- Botón Regresar -->
+            <div class="mb-6">
+                <a href="{{ url()->previous() }}" class="inline-flex items-center text-gray-600 hover:text-gray-100 transition-colors duration-200">
+                <i class="fas fa-arrow-left mr-2"></i>
+                <span class="font-medium">← Regresar</span>
+                </a>
+            </div>
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">
+            <h1 class="text-3xl font-bold text-white-800 mb-2">
                 <i class="fas fa-users mr-3"></i>Gestión de Usuarios
             </h1>
             <p class="text-gray-600">Administra los usuarios del sistema</p>
@@ -137,7 +122,7 @@
             @endif
         </div>
     </div>
-    
+</x-app-layout>
     <!-- JavaScript simple -->
     <script>
         function showChangeRoleModal(userId, userName, currentRole) {
@@ -145,5 +130,6 @@
             // En una implementación real, esto abriría un modal
         }
     </script>
-</body>
-</html>
+
+{{-- </body>
+</html> --}}
