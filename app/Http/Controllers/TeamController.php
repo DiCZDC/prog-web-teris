@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Event;
+use App\Models\TeamInvitation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class TeamController extends Controller
 {
@@ -23,6 +25,10 @@ class TeamController extends Controller
         
         return view('teams.index', compact('teams'));
     }
+
+    /**
+     * Display teams by event (TU MÉTODO - SE MANTIENE)
+     */
     public function indexEvent($id)
     {
         $teams = Team::where('evento_id', $id)
@@ -31,6 +37,7 @@ class TeamController extends Controller
         
         return view('teams.index', compact('teams'));
     }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -153,16 +160,8 @@ class TeamController extends Controller
      */
     public function join()
     {
-        $user = Auth::user();
-        
-        // Verificar si el usuario ya está en un equipo
-        $equipoActual = Team::where('lider_id', $user->id)
-            ->orWhere('disenador_id', $user->id)
-            ->orWhere('frontprog_id', $user->id)
-            ->orWhere('backprog_id', $user->id)
-            ->first();
-
-        return view('teams.join', compact('equipoActual'));
+        // Ya no verificamos si está en un equipo, puede estar en múltiples
+        return view('teams.join');
     }
 
     /**
@@ -178,15 +177,9 @@ class TeamController extends Controller
         $user = Auth::user();
         $team = Team::where('codigo', $validated['codigo'])->first();
 
-        // Verificar si el usuario ya está en un equipo
-        $equipoActual = Team::where('lider_id', $user->id)
-            ->orWhere('disenador_id', $user->id)
-            ->orWhere('frontprog_id', $user->id)
-            ->orWhere('backprog_id', $user->id)
-            ->first();
-
-        if ($equipoActual) {
-            return back()->with('error', 'Ya eres miembro de un equipo');
+        // Verificar si el usuario YA está en ESTE equipo específico
+        if ($team->esMiembro($user->id)) {
+            return back()->with('error', 'Ya eres miembro de este equipo');
         }
 
         // Asignar rol según la selección
@@ -261,5 +254,573 @@ class TeamController extends Controller
 
         return redirect()->route('teams.index')
             ->with('success', 'Has salido del equipo exitosamente');
+    }
+
+    // ==================== MÉTODOS NUEVOS DE INVITACIONES ====================
+
+    /**
+     * Ver MIS equipos (donde soy miembro)
+     */
+    public function myTeams()
+    {
+        $user = Auth::user();
+        
+        // Obtener todos los equipos donde el usuario participa
+        $misEquipos = Team::where('lider_id', $user->id)
+            ->orWhere('disenador_id', $user->id)
+            ->orWhere('frontprog_id', $user->id)
+            ->orWhere('backprog_id', $user->id)
+            ->with(['lider', 'disenador', 'frontprog', 'backprog', 'evento'])
+            ->get();
+
+        return view('teams.my-teams', compact('misEquipos'));
+    }
+
+    /**
+     * Mostrar formulario para invitar miembros (SOLO LÍDER)
+     */
+    public function invite(Team $team)
+    {
+        // Verificar que el usuario sea el líder
+        if ($team->lider_id !== Auth::id()) {
+            return redirect()->route('teams.show', $team)
+                ->with('error', 'Solo el líder puede invitar miembros');
+        }
+
+        // Obtener invitaciones pendientes de este equipo
+        $invitacionesPendientes = $team->invitacionesPendientes()
+            ->with('invitado')
+            ->get();
+
+        return view('teams.invite', compact('team', 'invitacionesPendientes'));
+    }
+
+    /**
+     * Enviar invitación
+     */
+    public function sendInvitation(Request $request, Team $team)
+    {
+        // Verificar que el usuario sea el líder
+        if ($team->lider_id !== Auth::id()) {
+            return back()->with('error', 'Solo el líder puede invitar miembros');
+        }
+
+        $validated = $request->validate([
+            'user_identifier' => 'required|string',
+            'rol' => 'required|in:DISEÑADOR,PROGRAMADOR FRONT,PROGRAMADOR BACK',
+            'mensaje' => 'nullable|string|max:500'
+        ]);
+
+        // Buscar usuario por nombre o email
+        $usuario = User::where('name', $validated['user_identifier'])
+            ->orWhere('email', $validated['user_identifier'])
+            ->first();
+
+        if (!$usuario) {
+            return back()
+                ->withInput()
+                ->withErrors(['user_identifier' => 'No se encontró ningún usuario con ese nombre o email']);
+        }
+
+        // Verificar que no sea el mismo líder
+        if ($usuario->id === Auth::id()) {
+            return back()->with('error', 'No puedes invitarte a ti mismo');
+        }
+
+        // Verificar que el usuario no esté ya en un equipo
+        $usuarioYaTieneEquipo = Team::where(function($query) use ($usuario) {
+            $query->where('lider_id', $usuario->id)
+                  ->orWhere('disenador_id', $usuario->id)
+                  ->orWhere('frontprog_id', $usuario->id)
+                  ->orWhere('backprog_id', $usuario->id);
+        })->exists();
+
+        if ($usuarioYaTieneEquipo) {
+            return back()->with('error', 'Este usuario ya pertenece a un equipo');
+        }
+
+        // Verificar que el rol esté disponible
+        $rolDisponible = false;
+        switch ($validated['rol']) {
+            case 'DISEÑADOR':
+                $rolDisponible = is_null($team->disenador_id);
+                break;
+            case 'PROGRAMADOR FRONT':
+                $rolDisponible = is_null($team->frontprog_id);
+                break;
+            case 'PROGRAMADOR BACK':
+                $rolDisponible = is_null($team->backprog_id);
+                break;
+        }
+
+        if (!$rolDisponible) {
+            return back()->with('error', 'Este rol ya está ocupado en el equipo');
+        }
+
+        // Verificar que no exista una invitación pendiente para este usuario y rol
+        $invitacionExistente = TeamInvitation::where('team_id', $team->id)
+            ->where('user_id', $validated['user_id'])
+            ->where('status', 'pendiente')
+            ->exists();
+
+        if ($invitacionExistente) {
+            return back()->with('error', 'Ya existe una invitación pendiente para este usuario');
+        }
+
+        // Crear la invitación
+        TeamInvitation::create([
+            'team_id' => $team->id,
+            'invited_by' => Auth::id(),
+            'user_id' => $validated['user_id'],
+            'tipo' => 'invitacion', // Líder invita a usuario
+            'rol' => $validated['rol'],
+            'mensaje' => $validated['mensaje'],
+            'status' => 'pendiente'
+        ]);
+
+        return back()->with('success', '¡Invitación enviada exitosamente!');
+    }
+
+    /**
+     * Enviar solicitud para unirse a un equipo (USUARIO solicita al LÍDER)
+     */
+    public function sendRequest(Request $request, Team $team)
+    {
+        $validated = $request->validate([
+            'rol' => 'required|in:DISEÑADOR,PROGRAMADOR FRONT,PROGRAMADOR BACK',
+            'mensaje' => 'nullable|string|max:500'
+        ]);
+
+        $user = Auth::user();
+
+        // Verificar que el usuario no esté ya en este equipo
+        if ($team->esMiembro($user->id)) {
+            return back()->with('error', 'Ya eres miembro de este equipo');
+        }
+
+        // Verificar que el rol esté disponible
+        $rolDisponible = false;
+        switch ($validated['rol']) {
+            case 'DISEÑADOR':
+                $rolDisponible = is_null($team->disenador_id);
+                break;
+            case 'PROGRAMADOR FRONT':
+                $rolDisponible = is_null($team->frontprog_id);
+                break;
+            case 'PROGRAMADOR BACK':
+                $rolDisponible = is_null($team->backprog_id);
+                break;
+        }
+
+        if (!$rolDisponible) {
+            return back()->with('error', 'Este rol ya está ocupado en el equipo');
+        }
+
+        // Verificar que no exista una solicitud pendiente
+        $solicitudExistente = TeamInvitation::where('team_id', $team->id)
+            ->where('user_id', $user->id)
+            ->where('tipo', 'solicitud')
+            ->where('status', 'pendiente')
+            ->exists();
+
+        if ($solicitudExistente) {
+            return back()->with('error', 'Ya tienes una solicitud pendiente para este equipo');
+        }
+
+        // Crear la solicitud
+        TeamInvitation::create([
+            'team_id' => $team->id,
+            'invited_by' => $user->id, // Usuario que solicita
+            'user_id' => $user->id, // El mismo usuario
+            'tipo' => 'solicitud', // Usuario solicita unirse
+            'rol' => $validated['rol'],
+            'mensaje' => $validated['mensaje'],
+            'status' => 'pendiente'
+        ]);
+
+        return back()->with('success', '¡Solicitud enviada al líder del equipo!');
+    }
+
+    /**
+     * Ver solicitudes pendientes para mis equipos (LÍDER)
+     */
+    public function mySolicitudes()
+    {
+        $user = Auth::user();
+        
+        // Obtener equipos donde soy líder
+        $misEquiposComoLider = Team::where('lider_id', $user->id)->pluck('id');
+
+        // Obtener solicitudes pendientes para esos equipos
+        $solicitudesPendientes = TeamInvitation::whereIn('team_id', $misEquiposComoLider)
+            ->where('tipo', 'solicitud')
+            ->where('status', 'pendiente')
+            ->with(['team', 'invitador'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $solicitudesRespondidas = TeamInvitation::whereIn('team_id', $misEquiposComoLider)
+            ->where('tipo', 'solicitud')
+            ->whereIn('status', ['aceptada', 'rechazada'])
+            ->with(['team', 'invitador'])
+            ->orderBy('responded_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        return view('teams.my-solicitudes', compact('solicitudesPendientes', 'solicitudesRespondidas'));
+    }
+
+    /**
+     * Aceptar solicitud (LÍDER acepta al USUARIO)
+     */
+    public function acceptRequest(TeamInvitation $invitation)
+    {
+        $team = $invitation->team;
+
+        // Verificar que el usuario sea el líder
+        if ($team->lider_id !== Auth::id()) {
+            return back()->with('error', 'Solo el líder puede aceptar solicitudes');
+        }
+
+        // Verificar que sea una solicitud
+        if (!$invitation->isSolicitud()) {
+            return back()->with('error', 'Esta no es una solicitud válida');
+        }
+
+        // Verificar que esté pendiente
+        if (!$invitation->isPendiente()) {
+            return back()->with('error', 'Esta solicitud ya fue respondida');
+        }
+
+        // Verificar que el rol siga disponible
+        $rolDisponible = false;
+        switch ($invitation->rol) {
+            case 'DISEÑADOR':
+                $rolDisponible = is_null($team->disenador_id);
+                break;
+            case 'PROGRAMADOR FRONT':
+                $rolDisponible = is_null($team->frontprog_id);
+                break;
+            case 'PROGRAMADOR BACK':
+                $rolDisponible = is_null($team->backprog_id);
+                break;
+        }
+
+        if (!$rolDisponible) {
+            $invitation->rechazar();
+            return back()->with('error', 'El rol ya fue ocupado');
+        }
+
+        // Aceptar la solicitud
+        $invitation->aceptar();
+
+        return back()->with('success', 'Solicitud aceptada. El usuario se ha unido al equipo.');
+    }
+
+    /**
+     * Rechazar solicitud (LÍDER rechaza al USUARIO)
+     */
+    public function rejectRequest(TeamInvitation $invitation)
+    {
+        $team = $invitation->team;
+
+        // Verificar que el usuario sea el líder
+        if ($team->lider_id !== Auth::id()) {
+            return back()->with('error', 'Solo el líder puede rechazar solicitudes');
+        }
+
+        // Verificar que sea una solicitud
+        if (!$invitation->isSolicitud()) {
+            return back()->with('error', 'Esta no es una solicitud válida');
+        }
+
+        // Verificar que esté pendiente
+        if (!$invitation->isPendiente()) {
+            return back()->with('error', 'Esta solicitud ya fue respondida');
+        }
+
+        $invitation->rechazar();
+
+        return back()->with('success', 'Solicitud rechazada');
+    }
+
+    /**
+     * Ver mis invitaciones
+     */
+    public function myInvitations()
+    {
+        $user = Auth::user();
+        
+        $invitacionesPendientes = $user->invitacionesPendientes()
+            ->with(['team', 'invitador'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $invitacionesRespondidas = TeamInvitation::where('user_id', $user->id)
+            ->whereIn('status', ['aceptada', 'rechazada'])
+            ->with(['team', 'invitador'])
+            ->orderBy('responded_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        return view('teams.my-invitations', compact('invitacionesPendientes', 'invitacionesRespondidas'));
+    }
+
+    /**
+     * Aceptar invitación
+     */
+    public function acceptInvitation(TeamInvitation $invitation)
+    {
+        // Verificar que la invitación sea para el usuario autenticado
+        if ($invitation->user_id !== Auth::id()) {
+            return back()->with('error', 'Esta invitación no es para ti');
+        }
+
+        // Verificar que la invitación esté pendiente
+        if (!$invitation->isPendiente()) {
+            return back()->with('error', 'Esta invitación ya fue respondida');
+        }
+
+        // Verificar que el usuario no esté ya en ESTE equipo específico
+        $team = $invitation->team;
+        if ($team->esMiembro(Auth::id())) {
+            $invitation->rechazar();
+            return back()->with('error', 'Ya eres miembro de este equipo');
+        }
+
+        // Verificar que el rol siga disponible
+        $rolDisponible = false;
+        
+        switch ($invitation->rol) {
+            case 'DISEÑADOR':
+                $rolDisponible = is_null($team->disenador_id);
+                break;
+            case 'PROGRAMADOR FRONT':
+                $rolDisponible = is_null($team->frontprog_id);
+                break;
+            case 'PROGRAMADOR BACK':
+                $rolDisponible = is_null($team->backprog_id);
+                break;
+        }
+
+        if (!$rolDisponible) {
+            $invitation->rechazar();
+            return back()->with('error', 'El rol ya fue ocupado por otro usuario');
+        }
+
+        // Aceptar la invitación
+        $invitation->aceptar();
+
+        return redirect()->route('teams.show', $team)
+            ->with('success', '¡Te has unido al equipo exitosamente como ' . $invitation->rol . '!');
+    }
+
+    /**
+     * Rechazar invitación
+     */
+    public function rejectInvitation(TeamInvitation $invitation)
+    {
+        // Verificar que la invitación sea para el usuario autenticado
+        if ($invitation->user_id !== Auth::id()) {
+            return back()->with('error', 'Esta invitación no es para ti');
+        }
+
+        // Verificar que la invitación esté pendiente
+        if (!$invitation->isPendiente()) {
+            return back()->with('error', 'Esta invitación ya fue respondida');
+        }
+
+        $invitation->rechazar();
+
+        return back()->with('success', 'Has rechazado la invitación');
+    }
+
+    /**
+     * Cancelar invitación (SOLO LÍDER)
+     */
+    public function cancelInvitation(TeamInvitation $invitation)
+    {
+        $team = $invitation->team;
+
+        // Verificar que el usuario sea el líder
+        if ($team->lider_id !== Auth::id()) {
+            return back()->with('error', 'Solo el líder puede cancelar invitaciones');
+        }
+
+        // Verificar que la invitación esté pendiente
+        if (!$invitation->isPendiente()) {
+            return back()->with('error', 'Esta invitación ya fue respondida');
+        }
+
+        $invitation->delete();
+
+        return back()->with('success', 'Invitación cancelada');
+    }
+
+    // ==================== MÉTODOS NUEVOS: SOLICITUDES ====================
+
+    /**
+     * Usuario envía solicitud para unirse a un equipo
+     */
+    public function enviarSolicitud(Request $request, Team $team)
+    {
+        $validated = $request->validate([
+            'rol' => 'required|in:DISEÑADOR,PROGRAMADOR FRONT,PROGRAMADOR BACK',
+            'mensaje' => 'nullable|string|max:500'
+        ]);
+
+        $user = Auth::user();
+
+        // Verificar que el usuario no esté ya en este equipo
+        if ($team->esMiembro($user->id)) {
+            return back()->with('error', 'Ya eres miembro de este equipo');
+        }
+
+        // Verificar que el rol esté disponible
+        $rolDisponible = false;
+        switch ($validated['rol']) {
+            case 'DISEÑADOR':
+                $rolDisponible = is_null($team->disenador_id);
+                break;
+            case 'PROGRAMADOR FRONT':
+                $rolDisponible = is_null($team->frontprog_id);
+                break;
+            case 'PROGRAMADOR BACK':
+                $rolDisponible = is_null($team->backprog_id);
+                break;
+        }
+
+        if (!$rolDisponible) {
+            return back()->with('error', 'Este rol ya está ocupado');
+        }
+
+        // Verificar que no exista una solicitud pendiente
+        $solicitudExistente = TeamInvitation::where('team_id', $team->id)
+            ->where('user_id', $user->id)
+            ->where('tipo', 'solicitud')
+            ->where('status', 'pendiente')
+            ->exists();
+
+        if ($solicitudExistente) {
+            return back()->with('error', 'Ya tienes una solicitud pendiente para este equipo');
+        }
+
+        // Crear la solicitud
+        TeamInvitation::create([
+            'team_id' => $team->id,
+            'invited_by' => $user->id, // Usuario que solicita
+            'user_id' => $user->id, // El mismo usuario
+            'tipo' => 'solicitud', // Es una solicitud, no invitación
+            'rol' => $validated['rol'],
+            'mensaje' => $validated['mensaje'],
+            'status' => 'pendiente'
+        ]);
+
+        return redirect()->route('teams.show', $team)
+            ->with('success', '¡Solicitud enviada! El líder la revisará pronto.');
+    }
+
+    /**
+     * Líder ve solicitudes pendientes para sus equipos
+     */
+    public function verSolicitudes()
+    {
+        $user = Auth::user();
+        
+        // Equipos donde soy líder
+        $misEquiposIds = Team::where('lider_id', $user->id)->pluck('id');
+
+        // Solicitudes pendientes
+        $solicitudesPendientes = TeamInvitation::whereIn('team_id', $misEquiposIds)
+            ->where('tipo', 'solicitud')
+            ->where('status', 'pendiente')
+            ->with(['team', 'invitador']) // invitador = el usuario que solicita
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Solicitudes respondidas (últimas 10)
+        $solicitudesRespondidas = TeamInvitation::whereIn('team_id', $misEquiposIds)
+            ->where('tipo', 'solicitud')
+            ->whereIn('status', ['aceptada', 'rechazada'])
+            ->with(['team', 'invitador'])
+            ->orderBy('responded_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        return view('teams.my-solicitudes', compact('solicitudesPendientes', 'solicitudesRespondidas'));
+    }
+
+    /**
+     * Líder acepta solicitud de usuario
+     */
+    public function aceptarSolicitud(TeamInvitation $solicitud)
+    {
+        $team = $solicitud->team;
+
+        // Verificar que sea el líder
+        if ($team->lider_id !== Auth::id()) {
+            return back()->with('error', 'Solo el líder puede aceptar solicitudes');
+        }
+
+        // Verificar que sea una solicitud
+        if (!$solicitud->esSolicitud()) {
+            return back()->with('error', 'Esto no es una solicitud válida');
+        }
+
+        // Verificar que esté pendiente
+        if (!$solicitud->isPendiente()) {
+            return back()->with('error', 'Esta solicitud ya fue respondida');
+        }
+
+        // Verificar que el rol siga disponible
+        $rolDisponible = false;
+        switch ($solicitud->rol) {
+            case 'DISEÑADOR':
+                $rolDisponible = is_null($team->disenador_id);
+                break;
+            case 'PROGRAMADOR FRONT':
+                $rolDisponible = is_null($team->frontprog_id);
+                break;
+            case 'PROGRAMADOR BACK':
+                $rolDisponible = is_null($team->backprog_id);
+                break;
+        }
+
+        if (!$rolDisponible) {
+            $solicitud->rechazar();
+            return back()->with('error', 'El rol ya fue ocupado por otro usuario');
+        }
+
+        // Aceptar la solicitud (asigna al usuario al equipo)
+        $solicitud->aceptar();
+
+        return back()->with('success', '✅ Solicitud aceptada. El usuario se ha unido al equipo.');
+    }
+
+    /**
+     * Líder rechaza solicitud de usuario
+     */
+    public function rechazarSolicitud(TeamInvitation $solicitud)
+    {
+        $team = $solicitud->team;
+
+        // Verificar que sea el líder
+        if ($team->lider_id !== Auth::id()) {
+            return back()->with('error', 'Solo el líder puede rechazar solicitudes');
+        }
+
+        // Verificar que sea una solicitud
+        if (!$solicitud->esSolicitud()) {
+            return back()->with('error', 'Esto no es una solicitud válida');
+        }
+
+        // Verificar que esté pendiente
+        if (!$solicitud->isPendiente()) {
+            return back()->with('error', 'Esta solicitud ya fue respondida');
+        }
+
+        $solicitud->rechazar();
+
+        return back()->with('success', 'Solicitud rechazada');
     }
 }

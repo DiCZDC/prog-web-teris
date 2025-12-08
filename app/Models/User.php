@@ -45,4 +45,48 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Agregar estas relaciones al modelo User
+
+    // Relación con equipos (tabla pivote)
+    public function equipos()
+    {
+        return $this->belongsToMany(Team::class, 'team_user')
+            ->withPivot('rol')
+            ->withTimestamps();
+    }
+
+    // Equipos donde es líder
+    public function equiposComolider()
+    {
+        return $this->hasMany(Team::class, 'lider_id');
+    }
+
+    // Todos los equipos donde participa (cualquier rol)
+    public function todosLosEquipos()
+    {
+        return Team::where('lider_id', $this->id)
+            ->orWhere('disenador_id', $this->id)
+            ->orWhere('frontprog_id', $this->id)
+            ->orWhere('backprog_id', $this->id)
+            ->get();
+    }
+
+    // Invitaciones
+    public function invitacionesRecibidas()
+    {
+        return $this->hasMany(TeamInvitation::class, 'user_id');
+    }
+
+    public function invitacionesPendientes()
+    {
+        return $this->hasMany(TeamInvitation::class, 'user_id')
+            ->where('status', 'pendiente')
+            ->with(['team', 'invitador']);
+    }
+
+    public function invitacionesEnviadas()
+    {
+        return $this->hasMany(TeamInvitation::class, 'invited_by');
+    }
 }
