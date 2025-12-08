@@ -8,31 +8,6 @@
                 <div class="p-6 text-gray-900">
                     <img src="{{ $event->imagen }}" alt="{{ $event->nombre }}" class="w-full mb-4 rounded" style = "height: 300px; object-fit: cover;">
                     <h1 class="text-2xl font-bold mb-4">{{ $event->nombre}}</h1>
-                    <p class="text-gray-600 mb-2"><strong>Fecha de inicio:</strong> {{ $event->inicio_evento }}</p>
-                    <p class="text-gray-600 mb-2"><strong>Fecha de finalización:</strong> {{ $event->fin_evento }}</p>
-                    
-                    <p class="text-gray-600 mb-2"><strong>Estado:</strong> {{ $event->estado }}</p>
-                    <p class="text-gray-600 mb-2"><strong>Modalidad:</strong> {{ $event->modalidad }}</p>
-                    <p class="text-gray-600 mb-2"><strong>Ubicación:</strong> {{ $event->ubicacion }}</p>
-                    
-                    <hr>
-                    
-<<<<<<< Updated upstream
-                    <p class="mt-4">{{ $event->descripcion }}</p>
-                    <p class="mt-4"><strong>Reglas:</strong> {{ $event->reglas }}</p>
-                    <p class="mt-4"><strong>Premios:</strong> {{ $event->premios }}</p>
-                    <hr>
-                    <p class="mt-4"><strong>Equipos inscritos :</strong> {{ \App\Models\Team::where('evento_id', $event->id)->count() }}</p>
-                    @if (auth()->check() && auth()->user()->hasRole('user'))
-                        <a href="{{ route('events.teams.index', $event->id) }}" class="inline-flex items-center px-4 py-2 mt-4 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                            Unirse
-                        </a>
-                    @else
-                        <a href="{{ route('events.teams.index', $event->id) }}" class="inline-flex items-center px-4 py-2 mt-4 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                            Consultar Equipos
-                        </a>
-                    @endif
-=======
                     <div class="mb-6">
                         <h2 class="text-xl font-semibold mb-2">Descripción</h2>
                         <p class="text-gray-700">{{ $event->descripcion }}</p>
@@ -60,11 +35,11 @@
                                 Jueces del Evento
                             </h2>
                             <span class="text-sm text-gray-500">
-                                {{ $event->judges->count() }} juez{{ $event->judges->count() !== 1 ? 'es' : '' }} asignado{{ $event->judges->count() !== 1 ? 's' : '' }}
+                                @php $count = $event->judges ? $event->judges->count() : 0; @endphp
+                                {{ $count }} jue{{ $count !== 1 ? 'ces' : 'z' }} asignado{{ $count !== 1 ? 's' : '' }}
                             </span>
                         </div>
-
-                        @if($event->judges->isNotEmpty())
+                        @if($event->judges && $event->judges->isNotEmpty())
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 @foreach($event->judges as $judge)
                                     <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
@@ -139,7 +114,6 @@
                             </a> --}}
                         @endif
                     </div>
->>>>>>> Stashed changes
                 </div>
             </div>
         </div>
