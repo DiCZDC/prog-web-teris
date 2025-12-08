@@ -121,7 +121,7 @@
             
             @auth
                 @if(auth()->user()->hasRole('admin'))
-                    <a href="{{ route('events.create') }}" class="btn-crear">
+                    <a href="{{ route('admin.events.create') }}" class="btn-crear">
                         ＋ Crear Nuevo Evento
                     </a>
                 @endif

@@ -861,7 +861,7 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('events.store') }}" id="eventForm">
+            <form method="POST" action="{{ route('admin.events.store') }}" id="eventForm">
                 @csrf
                 
                 <!-- Sección: Información Básica -->
