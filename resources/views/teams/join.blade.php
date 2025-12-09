@@ -1,9 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TERIS - Unirse a Equipo</title>
+
     <style>
         * {
             margin: 0;
@@ -277,8 +272,8 @@
             }
         }
     </style>
-</head>
-<body>
+
+<x-app-layout>
     <div class="container">
         <a href="{{ route('teams.index') }}" class="back-link">
             ← Volver a equipos
@@ -380,5 +375,4 @@
             </form>
         </div>
     </div>
-</body>
-</html>
+</x-app-layout>

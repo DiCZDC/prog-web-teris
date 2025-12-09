@@ -1,4 +1,3 @@
-<x-app-layout>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -331,110 +330,108 @@
         }
     </style>
 </head>
-    <body>
-        
+<x-app-layout>
+    <div class="container">
+        <a href="{{ route('teams.index') }}" class="back-link">
+            ← Volver a equipos
+        </a>
 
-        <div class="container">
-            <a href="{{ route('teams.index') }}" class="back-link">
-                ← Volver a equipos
-            </a>
+        <h1>Crear Nuevo Equipo</h1>
 
-            <h1>Crear Nuevo Equipo</h1>
+        <div class="form-card">
+            <div class="info-box">
+                <p>📋 <strong>Importante:</strong></p>
+                <p>• Serás asignado automáticamente como GERENTE del equipo</p>
+                <p>• El código del equipo se generará automáticamente</p>
+                <p>• Otros usuarios podrán unirse usando el código</p>
+            </div>
 
-            <div class="form-card">
-                <div class="info-box">
-                    <p>📋 <strong>Importante:</strong></p>
-                    <p>• Serás asignado automáticamente como GERENTE del equipo</p>
-                    <p>• El código del equipo se generará automáticamente</p>
-                    <p>• Otros usuarios podrán unirse usando el código</p>
+            <form action="{{ route('teams.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="form-label">
+                            Nombre del Equipo <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            name="nombre" 
+                            class="form-input" 
+                            placeholder="Ingrese el nombre del equipo"
+                            value="{{ old('nombre') }}"
+                            required
+                        >
+                        @error('nombre')
+                            <span class="error-message">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">Descripción</label>
+                        <textarea 
+                            name="descripcion" 
+                            class="form-textarea"
+                            placeholder="Describe tu equipo, objetivos, habilidades requeridas..."
+                        >{{ old('descripcion') }}</textarea>
+                        @error('descripcion')
+                            <span class="error-message">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Icono del Equipo</label>
+                        <div class="file-input-wrapper">
+                            <input 
+                                type="file" 
+                                name="icono" 
+                                id="icono"
+                                accept="image/*"
+                                onchange="displayFileName(this)"
+                            >
+                            <label for="icono" class="file-input-label">
+                                📁 Seleccionar imagen
+                            </label>
+                        </div>
+                        <div class="file-name" id="file-name"></div>
+                        @error('icono')
+                            <span class="error-message">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Evento (Opcional)</label>
+                        <select name="evento_id" class="form-select">
+                            <option value="">Sin evento asignado</option>
+                            @foreach($eventos as $evento)
+                                <option value="{{ $evento->id }}" {{ old('evento_id') == $evento->id ? 'selected' : '' }}>
+                                    {{ $evento->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('evento_id')
+                            <span class="error-message">{{ $message }}</span>
+                        @enderror
+                    </div>
                 </div>
 
-                <form action="{{ route('teams.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-
-                    <div class="form-grid">
-                        <div class="form-group full-width">
-                            <label class="form-label">
-                                Nombre del Equipo <span class="required">*</span>
-                            </label>
-                            <input 
-                                type="text" 
-                                name="nombre" 
-                                class="form-input" 
-                                placeholder="Ingrese el nombre del equipo"
-                                value="{{ old('nombre') }}"
-                                required
-                            >
-                            @error('nombre')
-                                <span class="error-message">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label class="form-label">Descripción</label>
-                            <textarea 
-                                name="descripcion" 
-                                class="form-textarea"
-                                placeholder="Describe tu equipo, objetivos, habilidades requeridas..."
-                            >{{ old('descripcion') }}</textarea>
-                            @error('descripcion')
-                                <span class="error-message">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Icono del Equipo</label>
-                            <div class="file-input-wrapper">
-                                <input 
-                                    type="file" 
-                                    name="icono" 
-                                    id="icono"
-                                    accept="image/*"
-                                    onchange="displayFileName(this)"
-                                >
-                                <label for="icono" class="file-input-label">
-                                    📁 Seleccionar imagen
-                                </label>
-                            </div>
-                            <div class="file-name" id="file-name"></div>
-                            @error('icono')
-                                <span class="error-message">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Evento (Opcional)</label>
-                            <select name="evento_id" class="form-select">
-                                <option value="">Sin evento asignado</option>
-                                @foreach($eventos as $evento)
-                                    <option value="{{ $evento->id }}" {{ old('evento_id') == $evento->id ? 'selected' : '' }}>
-                                        {{ $evento->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('evento_id')
-                                <span class="error-message">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="action-buttons">
-                        <button type="submit" class="btn btn-primary">✓ Crear Equipo</button>
-                        <a href="{{ route('teams.index') }}" class="btn btn-secondary">✕ Cancelar</a>
-                    </div>
-                </form>
-            </div>
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">✓ Crear Equipo</button>
+                    <a href="{{ route('teams.index') }}" class="btn btn-secondary">✕ Cancelar</a>
+                </div>
+            </form>
         </div>
+    </div>
 
-        <script>
-            function displayFileName(input) {
-                const fileNameDisplay = document.getElementById('file-name');
-                if (input.files && input.files[0]) {
-                    fileNameDisplay.textContent = '📄 ' + input.files[0].name;
-                } else {
-                    fileNameDisplay.textContent = '';
-                }
+    <script>
+        function displayFileName(input) {
+            const fileNameDisplay = document.getElementById('file-name');
+            if (input.files && input.files[0]) {
+                fileNameDisplay.textContent = '📄 ' + input.files[0].name;
+            } else {
+                fileNameDisplay.textContent = '';
             }
-        </script>
-    </body>
+        }
+    </script>
+
 </x-app-layout>

@@ -408,74 +408,74 @@
 
         <!-- ========== SOLICITUDES RECIBIDAS (Me solicitaron - solo si soy líder) ========== -->
         @if($solicitudesPendientes->count() > 0 || Auth::user()->equiposComoLider->count() > 0)
-        <div class="section">
-            <h2 class="section-title">
-                📥 Solicitudes para Mis Equipos
-                @if($solicitudesPendientes->count() > 0)
-                    <span class="count-badge">{{ $solicitudesPendientes->count() }}</span>
-                @endif
-            </h2>
+            <div class="section">
+                <h2 class="section-title">
+                    📥 Solicitudes para Mis Equipos
+                    @if($solicitudesPendientes->count() > 0)
+                        <span class="count-badge">{{ $solicitudesPendientes->count() }}</span>
+                    @endif
+                </h2>
 
-            @if($solicitudesPendientes->isEmpty())
-                <div class="empty-state">
-                    <div class="empty-icon">📫</div>
-                    <h3>No hay solicitudes pendientes</h3>
-                    <p>Cuando alguien solicite unirse a tus equipos, aparecerán aquí</p>
-                </div>
-            @else
-                <div class="cards-grid">
-                    @foreach($solicitudesPendientes as $solicitud)
-                        <div class="notification-card solicitud">
-                            <span class="card-type type-solicitud">📥 SOLICITUD</span>
+                @if($solicitudesPendientes->isEmpty())
+                    <div class="empty-state">
+                        <div class="empty-icon">📫</div>
+                        <h3>No hay solicitudes pendientes</h3>
+                        <p>Cuando alguien solicite unirse a tus equipos, aparecerán aquí</p>
+                    </div>
+                @else
+                    <div class="cards-grid">
+                        @foreach($solicitudesPendientes as $solicitud)
+                            <div class="notification-card solicitud">
+                                <span class="card-type type-solicitud">📥 SOLICITUD</span>
 
-                            <div class="card-header">
-                                <div class="user-info">
-                                    <div class="user-name">{{ $solicitud->invitador->name }}</div>
-                                    <div class="user-email">{{ $solicitud->invitador->email }}</div>
-                                </div>
-                                <div class="rol-badge">{{ $solicitud->rol }}</div>
-                            </div>
-
-                            <div class="card-body">
-                                <div class="team-info">
-                                    <span class="team-name">{{ $solicitud->team->nombre }}</span>
-                                    <span class="team-code">{{ $solicitud->team->codigo }}</span>
-                                </div>
-
-                                @if($solicitud->mensaje)
-                                    <div class="mensaje-box">
-                                        <div class="mensaje-label">💬 Mensaje del usuario:</div>
-                                        <div class="mensaje-text">{{ $solicitud->mensaje }}</div>
+                                <div class="card-header">
+                                    <div class="user-info">
+                                        <div class="user-name">{{ $solicitud->invitador->name }}</div>
+                                        <div class="user-email">{{ $solicitud->invitador->email }}</div>
                                     </div>
-                                @endif
+                                    <div class="rol-badge">{{ $solicitud->rol }}</div>
+                                </div>
 
-                                <div class="fecha">
-                                    🕐 Recibida hace {{ $solicitud->created_at->diffForHumans() }}
+                                <div class="card-body">
+                                    <div class="team-info">
+                                        <span class="team-name">{{ $solicitud->team->nombre }}</span>
+                                        <span class="team-code">{{ $solicitud->team->codigo }}</span>
+                                    </div>
+
+                                    @if($solicitud->mensaje)
+                                        <div class="mensaje-box">
+                                            <div class="mensaje-label">💬 Mensaje del usuario:</div>
+                                            <div class="mensaje-text">{{ $solicitud->mensaje }}</div>
+                                        </div>
+                                    @endif
+
+                                    <div class="fecha">
+                                        🕐 Recibida hace {{ $solicitud->created_at->diffForHumans() }}
+                                    </div>
+                                </div>
+
+                                <div class="action-buttons">
+                                    <form action="{{ route('solicitudes.aceptar', $solicitud) }}" method="POST" style="flex: 1;">
+                                        @csrf
+                                        <button type="submit" class="btn btn-accept" onclick="return confirm('¿Aceptar esta solicitud?')">
+                                            ✓ Aceptar
+                                        </button>
+                                    </form>
+
+                                    <form action="{{ route('solicitudes.rechazar', $solicitud) }}" method="POST" style="flex: 1;">
+                                        @csrf
+                                        <button type="submit" class="btn btn-reject" onclick="return confirm('¿Rechazar esta solicitud?')">
+                                            ✕ Rechazar
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
 
-                            <div class="action-buttons">
-                                <form action="{{ route('solicitudes.aceptar', $solicitud) }}" method="POST" style="flex: 1;">
-                                    @csrf
-                                    <button type="submit" class="btn btn-accept" onclick="return confirm('¿Aceptar esta solicitud?')">
-                                        ✓ Aceptar
-                                    </button>
-                                </form>
-
-                                <form action="{{ route('solicitudes.rechazar', $solicitud) }}" method="POST" style="flex: 1;">
-                                    @csrf
-                                    <button type="submit" class="btn btn-reject" onclick="return confirm('¿Rechazar esta solicitud?')">
-                                        ✕ Rechazar
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            @endif
-        </div>
-
-        <div class="divider"></div>
+            <div class="divider"></div>
         @endif
 
         <!-- ========== HISTORIAL (Invitaciones y Solicitudes respondidas) ========== -->

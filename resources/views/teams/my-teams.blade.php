@@ -1,305 +1,306 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TERIS - Mis Equipos</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 50%, #8e24aa 100%);
-            min-height: 100vh;
-            color: white;
-        }
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 50%, #8e24aa 100%);
+        min-height: 100vh;
+        color: white;
+    }
 
-        h1 {
-            text-align: center;
-            font-size: 48px;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
-        }
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
 
-        .subtitle {
-            text-align: center;
-            font-size: 18px;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 40px;
-        }
+    h1 {
+        text-align: center;
+        font-size: 48px;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+    }
 
-        .alert {
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 16px;
-        }
+    .subtitle {
+        text-align: center;
+        font-size: 18px;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 40px;
+    }
 
-        .alert-success {
-            background: rgba(76, 175, 80, 0.3);
-            border: 1px solid rgba(76, 175, 80, 0.5);
-        }
+    .alert {
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 16px;
+    }
 
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 40px;
-        }
+    .alert-success {
+        background: rgba(76, 175, 80, 0.3);
+        border: 1px solid rgba(76, 175, 80, 0.5);
+    }
 
-        .btn {
-            padding: 12px 30px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: bold;
-            transition: all 0.3s;
-            display: inline-block;
-            border: 2px solid;
-        }
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 40px;
+    }
 
-        .btn-primary {
-            background: rgba(255, 215, 0, 0.3);
-            border-color: #ffd700;
-            color: #ffd700;
-        }
+    .btn {
+        padding: 12px 30px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 18px;
+        font-weight: bold;
+        transition: all 0.3s;
+        display: inline-block;
+        border: 2px solid;
+    }
 
-        .btn-primary:hover {
-            background: rgba(255, 215, 0, 0.5);
-            transform: translateY(-2px);
-        }
+    .btn-primary {
+        background: rgba(255, 215, 0, 0.3);
+        border-color: #ffd700;
+        color: #ffd700;
+    }
 
-        .btn-secondary {
-            background: rgba(33, 150, 243, 0.3);
-            border-color: #2196F3;
-            color: #2196F3;
-        }
+    .btn-primary:hover {
+        background: rgba(255, 215, 0, 0.5);
+        transform: translateY(-2px);
+    }
 
-        .btn-secondary:hover {
-            background: rgba(33, 150, 243, 0.5);
-            transform: translateY(-2px);
-        }
+    .btn-secondary {
+        background: rgba(33, 150, 243, 0.3);
+        border-color: #2196F3;
+        color: #2196F3;
+    }
 
+    .btn-secondary:hover {
+        background: rgba(33, 150, 243, 0.5);
+        transform: translateY(-2px);
+    }
+
+    .teams-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 30px;
+    }
+
+    .team-card {
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s;
+        position: relative;
+    }
+
+    .team-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .team-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .team-info {
+        flex: 1;
+    }
+
+    .team-name {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #ffd700;
+    }
+
+    .team-code {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        display: inline-block;
+    }
+
+    .mi-rol-badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 8px 15px;
+        border-radius: 15px;
+        font-size: 13px;
+        font-weight: bold;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .team-body {
+        margin-bottom: 20px;
+    }
+
+    .member-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .member-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+    }
+
+    .role-badge {
+        background: rgba(255, 215, 0, 0.3);
+        border: 1px solid #ffd700;
+        padding: 4px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        color: #ffd700;
+        font-weight: bold;
+        min-width: 140px;
+        text-align: center;
+    }
+
+    .member-name {
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .team-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn-small {
+        padding: 8px 15px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: bold;
+        transition: all 0.3s;
+        display: inline-block;
+        border: 2px solid;
+        cursor: pointer;
+    }
+
+    .btn-invite {
+        background: rgba(255, 215, 0, 0.3);
+        border-color: #ffd700;
+        color: #ffd700;
+    }
+
+    .btn-invite:hover {
+        background: rgba(255, 215, 0, 0.5);
+    }
+
+    .btn-view {
+        background: rgba(33, 150, 243, 0.3);
+        border-color: #2196F3;
+        color: #2196F3;
+    }
+
+    .btn-view:hover {
+        background: rgba(33, 150, 243, 0.5);
+    }
+
+    .btn-edit {
+        background: rgba(76, 175, 80, 0.3);
+        border-color: #4CAF50;
+        color: #4CAF50;
+    }
+
+    .btn-edit:hover {
+        background: rgba(76, 175, 80, 0.5);
+    }
+
+    .btn-danger {
+        background: rgba(244, 67, 54, 0.3);
+        border-color: #f44336;
+        color: #f44336;
+    }
+
+    .btn-danger:hover {
+        background: rgba(244, 67, 54, 0.5);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 20px;
+    }
+
+    .empty-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+    }
+
+    .empty-state h2 {
+        font-size: 32px;
+        margin-bottom: 15px;
+    }
+
+    .empty-state p {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 18px;
+        margin-bottom: 30px;
+    }
+
+    .status-badge {
+        padding: 5px 15px;
+        border-radius: 15px;
+        font-size: 13px;
+        font-weight: bold;
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    .status-complete {
+        background: rgba(76, 175, 80, 0.3);
+        border: 1px solid #4CAF50;
+        color: #4CAF50;
+    }
+
+    .status-incomplete {
+        background: rgba(255, 152, 0, 0.3);
+        border: 1px solid #FF9800;
+        color: #FF9800;
+    }
+
+    @media (max-width: 768px) {
         .teams-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            gap: 30px;
-        }
-
-        .team-card {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s;
-            position: relative;
-        }
-
-        .team-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .team-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .team-info {
-            flex: 1;
-        }
-
-        .team-name {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #ffd700;
-        }
-
-        .team-code {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 5px 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            display: inline-block;
-        }
-
-        .mi-rol-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 8px 15px;
-            border-radius: 15px;
-            font-size: 13px;
-            font-weight: bold;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
-        .team-body {
-            margin-bottom: 20px;
-        }
-
-        .member-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .member-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-        }
-
-        .role-badge {
-            background: rgba(255, 215, 0, 0.3);
-            border: 1px solid #ffd700;
-            padding: 4px 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            color: #ffd700;
-            font-weight: bold;
-            min-width: 140px;
-            text-align: center;
-        }
-
-        .member-name {
-            color: rgba(255, 255, 255, 0.9);
+            grid-template-columns: 1fr;
         }
 
         .team-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            flex-direction: column;
         }
-
-        .btn-small {
-            padding: 8px 15px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: bold;
-            transition: all 0.3s;
-            display: inline-block;
-            border: 2px solid;
-            cursor: pointer;
-        }
-
-        .btn-invite {
-            background: rgba(255, 215, 0, 0.3);
-            border-color: #ffd700;
-            color: #ffd700;
-        }
-
-        .btn-invite:hover {
-            background: rgba(255, 215, 0, 0.5);
-        }
-
-        .btn-view {
-            background: rgba(33, 150, 243, 0.3);
-            border-color: #2196F3;
-            color: #2196F3;
-        }
-
-        .btn-view:hover {
-            background: rgba(33, 150, 243, 0.5);
-        }
-
-        .btn-edit {
-            background: rgba(76, 175, 80, 0.3);
-            border-color: #4CAF50;
-            color: #4CAF50;
-        }
-
-        .btn-edit:hover {
-            background: rgba(76, 175, 80, 0.5);
-        }
-
-        .btn-danger {
-            background: rgba(244, 67, 54, 0.3);
-            border-color: #f44336;
-            color: #f44336;
-        }
-
-        .btn-danger:hover {
-            background: rgba(244, 67, 54, 0.5);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 80px 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 20px;
-        }
-
-        .empty-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-        }
-
-        .empty-state h2 {
-            font-size: 32px;
-            margin-bottom: 15px;
-        }
-
-        .empty-state p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 18px;
-            margin-bottom: 30px;
-        }
-
-        .status-badge {
-            padding: 5px 15px;
-            border-radius: 15px;
-            font-size: 13px;
-            font-weight: bold;
-            display: inline-block;
-            margin-top: 10px;
-        }
-
-        .status-complete {
-            background: rgba(76, 175, 80, 0.3);
-            border: 1px solid #4CAF50;
-            color: #4CAF50;
-        }
-
-        .status-incomplete {
-            background: rgba(255, 152, 0, 0.3);
-            border: 1px solid #FF9800;
-            color: #FF9800;
-        }
-
-        @media (max-width: 768px) {
-            .teams-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .team-actions {
-                flex-direction: column;
-            }
-        }
-    </style>
-</head>
-<body>
+    }
+</style>
+<x-app-layout>
     <div class="container">
+        <!-- Botón Regresar -->
+            <div class="mb-6">
+                <a href="{{ url()->previous() }}" class="inline-flex items-center text-gray-600 hover:text-gray-100 transition-colors duration-200">
+                <i class="fas fa-arrow-left mr-2"></i>
+                <span class="font-medium">← Regresar</span>
+                </a>
+            </div>
         <h1>🏆 Mis Equipos</h1>
         <p class="subtitle">Equipos en los que participas</p>
 
@@ -396,5 +397,5 @@
             </div>
         @endif
     </div>
-</body>
+</x-app-layout>
 </html>

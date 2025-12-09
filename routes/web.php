@@ -33,10 +33,8 @@ Route::prefix('events')->name('events.')->group(function () {
 });
 
 // Equipos públicos (solo lectura)
-Route::prefix('teams')->name('teams.')->group(function () {
-    Route::get('/', [TeamController::class, 'index'])->name('index');
-    Route::get('/{team}', [TeamController::class, 'show'])->name('show');
-});
+Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
+Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
 
 /*
 |--------------------------------------------------------------------------

@@ -563,7 +563,15 @@ class TeamController extends Controller
             ->limit(10)
             ->get();
 
-        return view('teams.my-invitations', compact('invitacionesPendientes', 'invitacionesRespondidas'));
+        $solicitudesPendientes = $invitacionesPendientes;
+        $solicitudesRespondidas = $invitacionesRespondidas;
+
+        return view('teams.my-invitations', compact(
+            'invitacionesPendientes',
+            'invitacionesRespondidas',
+            'solicitudesPendientes',
+            'solicitudesRespondidas'
+        ));
     }
 
     /**
