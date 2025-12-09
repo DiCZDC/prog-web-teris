@@ -481,7 +481,23 @@
                 </div>
                 @endif
             </div>
+            {{-- En teams/show.blade.php, después de los botones de acción --}}
 
+@if($team->esLider(Auth::id()) && !$team->tieneProyecto())
+    <a href="{{ route('projects.create', ['team_id' => $team->id]) }}" 
+       class="btn btn-success">
+        <i class="fas fa-cloud-upload-alt mr-2"></i>
+        Subir Proyecto
+    </a>
+@endif
+
+@if($team->tieneProyecto())
+    <a href="{{ route('projects.show', $team->proyecto) }}" 
+       class="btn btn-primary">
+        <i class="fas fa-eye mr-2"></i>
+        Ver Proyecto
+    </a>
+@endif
             <div class="members-section">
                 <div class="members-title">Integrantes:</div>
 
