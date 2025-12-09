@@ -14,18 +14,15 @@ return new class extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->longText('descripcion');
-            //Equipo FK
-            $table->foreignId('team_id')->constrained('teams')->onDelete('cascade')->onUpdate('cascade');
-            
-            //Evento FK
-            // $table->foreignId('event_id')->constrained('events')->onDelete('cascade')->onUpdate('cascade');
-
-            $table->string('url_repositorio')-> nullable();
-
-            $table->string('etapa_validacion')-> nullable();
-            
+            $table->text('descripcion')->nullable();
+            $table->foreignId('team_id')->constrained('teams')->onDelete('cascade');
+            $table->string('url_repositorio')->nullable();
+            $table->string('etapa_validacion')->default('Pendiente');
             $table->timestamps();
+
+            // Índices
+            $table->index('team_id');
+            $table->index('etapa_validacion');
         });
     }
 

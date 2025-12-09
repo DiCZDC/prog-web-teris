@@ -1,16 +1,27 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<<<<<<< Updated upstream
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+=======
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+>>>>>>> Stashed changes
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'EventHub') }} - @yield('title', 'Gestión de Eventos')</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+<<<<<<< Updated upstream
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         
@@ -384,10 +395,31 @@
                 <header class="shadow" style="background: linear-gradient(135deg, rgba(49, 46, 129, 0.95), rgba(76, 29, 149, 0.95)); border-bottom: 2px solid rgba(167, 139, 250, 0.3);">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8" style="color: #e0e7ff;">
                         {{ $header }}
+=======
+    <!-- Tailwind CSS + Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- Estilos adicionales -->
+    @stack('styles')
+</head>
+<body class="font-sans antialiased bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Navbar -->
+        <nav class="bg-gradient-to-r from-purple-900 via-purple-800 to-purple-900 shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <!-- Logo -->
+                    <div class="flex items-center">
+                        <a href="{{ route('home') }}" class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-trophy text-white text-xl"></i>
+                            </div>
+                            <span class="text-white text-2xl font-bold">EventHub</span>
+                        </a>
+>>>>>>> Stashed changes
                     </div>
-                </header>
-            @endisset
 
+<<<<<<< Updated upstream
             <!-- Page Content -->
             <main>
                 @if(View::hasSection('content'))
@@ -448,4 +480,216 @@
             });
         </script>
     </body>
+=======
+                    <!-- Search Bar (Desktop) -->
+                    <div class="hidden md:block flex-1 max-w-md mx-8">
+                        <form action="{{ route('events.search') }}" method="GET" class="relative">
+                            <input type="text" 
+                                   name="q" 
+                                   placeholder="Buscar eventos..." 
+                                   class="w-full bg-white/10 border border-white/20 rounded-full px-4 py-2 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Navigation Links -->
+                    <div class="hidden md:flex items-center space-x-6">
+                        <a href="{{ route('events.index') }}" class="text-white hover:text-yellow-400 transition flex items-center space-x-2">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Eventos</span>
+                        </a>
+                        
+                        <a href="{{ route('teams.index') }}" class="text-white hover:text-yellow-400 transition flex items-center space-x-2">
+                            <i class="fas fa-users"></i>
+                            <span>Equipos</span>
+                        </a>
+
+                        @auth
+                            <!-- Menú según rol -->
+                            @role('administrador')
+                                <div class="relative group">
+                                    <button class="text-white hover:text-yellow-400 transition flex items-center space-x-2">
+                                        <i class="fas fa-cog"></i>
+                                        <span>Admin</span>
+                                        <i class="fas fa-chevron-down text-xs"></i>
+                                    </button>
+                                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                        <a href="{{ route('admin.users.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 rounded-t-lg">
+                                            <i class="fas fa-users mr-2"></i>Usuarios
+                                        </a>
+                                        <a href="{{ route('admin.judges.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-purple-50">
+                                            <i class="fas fa-gavel mr-2"></i>Jueces
+                                        </a>
+                                        <a href="{{ route('admin.events.create') }}" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 rounded-b-lg">
+                                            <i class="fas fa-plus-circle mr-2"></i>Crear Evento
+                                        </a>
+                                    </div>
+                                </div>
+                            @endrole
+
+                            @role('juez')
+                                <a href="{{ route('judge.dashboard') }}" class="text-white hover:text-yellow-400 transition flex items-center space-x-2">
+                                    <i class="fas fa-gavel"></i>
+                                    <span>Panel Juez</span>
+                                </a>
+                            @endrole
+
+                            <!-- User Menu -->
+                            <div class="relative group">
+                                <button class="flex items-center space-x-2 text-white hover:text-yellow-400 transition">
+                                    <div class="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center text-purple-900 font-semibold">
+                                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                    </div>
+                                    <span>{{ Auth::user()->name }}</span>
+                                    <i class="fas fa-chevron-down text-xs"></i>
+                                </button>
+                                <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                    <a href="{{ route('profile.show') }}" class="block px-4 py-2 text-gray-800 hover:bg-purple-50 rounded-t-lg">
+                                        <i class="fas fa-user mr-2"></i>Mi Perfil
+                                    </a>
+                                    <a href="{{ route('teams.create') }}" class="block px-4 py-2 text-gray-800 hover:bg-purple-50">
+                                        <i class="fas fa-plus mr-2"></i>Crear Equipo
+                                    </a>
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded-b-lg">
+                                            <i class="fas fa-sign-out-alt mr-2"></i>Cerrar Sesión
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        @else
+                            <a href="{{ route('login') }}" class="text-white hover:text-yellow-400 transition">
+                                Iniciar Sesión
+                            </a>
+                            <a href="{{ route('register') }}" class="bg-yellow-400 text-purple-900 px-4 py-2 rounded-full hover:bg-yellow-300 transition font-semibold">
+                                Registrarse
+                            </a>
+                        @endauth
+                    </div>
+
+                    <!-- Mobile menu button -->
+                    <div class="md:hidden">
+                        <button id="mobile-menu-button" class="text-white hover:text-yellow-400 transition">
+                            <i class="fas fa-bars text-2xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden bg-purple-800 border-t border-white/10">
+                <div class="px-4 py-4 space-y-3">
+                    <!-- Search Mobile -->
+                    <form action="{{ route('events.search') }}" method="GET" class="relative mb-4">
+                        <input type="text" 
+                               name="q" 
+                               placeholder="Buscar eventos..." 
+                               class="w-full bg-white/10 border border-white/20 rounded-full px-4 py-2 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                    </form>
+
+                    <a href="{{ route('events.index') }}" class="block text-white hover:text-yellow-400 py-2">
+                        <i class="fas fa-calendar-alt mr-2"></i>Eventos
+                    </a>
+                    <a href="{{ route('teams.index') }}" class="block text-white hover:text-yellow-400 py-2">
+                        <i class="fas fa-users mr-2"></i>Equipos
+                    </a>
+
+                    @auth
+                        @role('administrador')
+                            <div class="border-t border-white/10 pt-3 mt-3">
+                                <p class="text-white/70 text-sm mb-2">Administración</p>
+                                <a href="{{ route('admin.users.index') }}" class="block text-white hover:text-yellow-400 py-2">
+                                    <i class="fas fa-users mr-2"></i>Usuarios
+                                </a>
+                                <a href="{{ route('admin.judges.index') }}" class="block text-white hover:text-yellow-400 py-2">
+                                    <i class="fas fa-gavel mr-2"></i>Jueces
+                                </a>
+                                <a href="{{ route('admin.events.create') }}" class="block text-white hover:text-yellow-400 py-2">
+                                    <i class="fas fa-plus-circle mr-2"></i>Crear Evento
+                                </a>
+                            </div>
+                        @endrole
+
+                        @role('juez')
+                            <a href="{{ route('judge.dashboard') }}" class="block text-white hover:text-yellow-400 py-2">
+                                <i class="fas fa-gavel mr-2"></i>Panel Juez
+                            </a>
+                        @endrole
+
+                        <div class="border-t border-white/10 pt-3 mt-3">
+                            <a href="{{ route('profile.show') }}" class="block text-white hover:text-yellow-400 py-2">
+                                <i class="fas fa-user mr-2"></i>Mi Perfil
+                            </a>
+                            <a href="{{ route('teams.create') }}" class="block text-white hover:text-yellow-400 py-2">
+                                <i class="fas fa-plus mr-2"></i>Crear Equipo
+                            </a>
+                            <form action="{{ route('logout') }}" method="POST" class="mt-2">
+                                @csrf
+                                <button type="submit" class="w-full text-left text-red-400 hover:text-red-300 py-2">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Cerrar Sesión
+                                </button>
+                            </form>
+                        </div>
+                    @else
+                        <div class="border-t border-white/10 pt-3 mt-3">
+                            <a href="{{ route('login') }}" class="block text-white hover:text-yellow-400 py-2">
+                                <i class="fas fa-sign-in-alt mr-2"></i>Iniciar Sesión
+                            </a>
+                            <a href="{{ route('register') }}" class="block bg-yellow-400 text-purple-900 px-4 py-2 rounded-full hover:bg-yellow-300 transition font-semibold text-center">
+                                Registrarse
+                            </a>
+                        </div>
+                    @endauth
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <main>
+            @yield('content')
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900 text-white mt-16">
+            <div class="max-w-7xl mx-auto px-4 py-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">EventHub</h3>
+                        <p class="text-gray-400">Plataforma de gestión de eventos y competencias</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-4">Enlaces</h4>
+                        <ul class="space-y-2 text-gray-400">
+                            <li><a href="{{ route('events.index') }}" class="hover:text-white transition">Eventos</a></li>
+                            <li><a href="{{ route('teams.index') }}" class="hover:text-white transition">Equipos</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-4">Contacto</h4>
+                        <p class="text-gray-400">
+                            <i class="fas fa-envelope mr-2"></i>info@eventhub.com
+                        </p>
+                    </div>
+                </div>
+                <div class="border-t border-gray-800 mt-8 pt-6 text-center text-gray-500">
+                    <p>&copy; {{ date('Y') }} EventHub. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Mobile Menu Toggle Script -->
+    <script>
+        document.getElementById('mobile-menu-button')?.addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+
+    @stack('scripts')
+</body>
+>>>>>>> Stashed changes
 </html>

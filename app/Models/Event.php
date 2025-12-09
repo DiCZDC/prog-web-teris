@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use App\Models\EvaluationCriteria;
+use App\Models\TeamScore;
 
 class Event extends Model
 {
@@ -29,7 +32,7 @@ class Event extends Model
         'popular' => 'boolean'
     ];
 
-    // Scopes
+    // ================= SCOPES ======================
     public function scopePopulares($query)
     {
         return $query->where('popular', true)->where('estado', 'Activo');
@@ -40,59 +43,86 @@ class Event extends Model
         return $query->where('estado', 'Activo');
     }
 
-    // Relaciones existentes
+    // ================= RELACIONES ======================
     public function teams()
     {
         return $this->hasMany(Team::class, 'evento_id');
     }
 
-    // ============================================
-    // NUEVAS RELACIONES PARA JUECES
-    // ============================================
-    
-    /**
-     * Jueces asignados a este evento
-     */
-    public function jueces()
+    // Jueces asignados
+    public function judges()
     {
-        return $this->belongsToMany(User::class, 'event_judge', 'event_id', 'user_id')
-                    ->withTimestamps()
-                    ->withPivot('assigned_at');
+        return $this->belongsToMany(User::class, 'event_judge')->withTimestamps();
     }
 
-    /**
-     * Verificar si un usuario es juez de este evento
-     */
-    public function esJuez($userId)
+    public function criteria()
     {
-        return $this->jueces()->where('user_id', $userId)->exists();
+        return $this->hasMany(EvaluationCriteria::class, 'event_id');
     }
 
-    /**
-     * Asignar un juez al evento
-     */
-    public function asignarJuez($userId)
+    public function scores()
     {
-        if (!$this->esJuez($userId)) {
-            $this->jueces()->attach($userId, ['assigned_at' => now()]);
+        return $this->hasMany(TeamScore::class, 'event_id');
+    }
+
+    // ============ GESTIÓN DE JUECES ====================
+    public function assignJudge(User $user)
+    {
+        if ($user->hasRole('juez')) {
+            $this->judges()->syncWithoutDetaching($user->id);
             return true;
         }
         return false;
     }
 
-    /**
-     * Remover un juez del evento
-     */
-    public function removerJuez($userId)
+    public function removeJudge(User $user)
     {
-        return $this->jueces()->detach($userId);
+        return $this->judges()->detach($user->id);
     }
 
-    /**
-     * Obtener cantidad de jueces asignados
-     */
-    public function cantidadJueces()
+    public function hasJudge($userId)
     {
-        return $this->jueces()->count();
+        return $this->judges()->where('user_id', $userId)->exists();
+    }
+
+    // ============ CRITERIOS ====================
+    public function createDefaultCriteria()
+    {
+        $defaultCriteria = EvaluationCriteria::getDefaultCriteria();
+        foreach ($defaultCriteria as $criteria) {
+            $this->criteria()->create($criteria);
+        }
+        return $this;
+    }
+
+    // ============ CALIFICACIONES ====================
+    public function getTeamAverageScore($teamId)
+    {
+        $scores = $this->scores()
+            ->where('team_id', $teamId)
+            ->with('criteria')
+            ->get();
+
+        if ($scores->isEmpty()) {
+            return 0;
+        }
+
+        $judgeScores = $scores->groupBy('user_id');
+        $judgeAverages = [];
+
+        foreach ($judgeScores as $judgeScore) {
+            $totalWeighted = 0;
+            $totalWeight = 0;
+
+            foreach ($judgeScore as $score) {
+                $normalized = ($score->score / $score->criteria->max_score);
+                $totalWeighted += $normalized * $score->criteria->weight;
+                $totalWeight += $score->criteria->weight;
+            }
+
+            $judgeAverages[] = ($totalWeighted / $totalWeight) * 10;
+        }
+
+        return round(array_sum($judgeAverages) / count($judgeAverages), 2);
     }
 }

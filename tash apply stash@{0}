@@ -1,0 +1,35 @@
+stash@{0}: WIP on rol_Juez: cc8e675 juez
+
+ app/Http/Controllers/EventController.php           | 303 [32m+++++++++++[m[31m--[m
+ app/Models/Event.php                               | 295 [32m+++++++++++[m[31m-[m
+ app/Models/EventUser.php                           |  65 [32m++[m[31m-[m
+ app/Models/Project.php                             | 118 [32m++++[m[31m-[m
+ app/Models/Team.php                                | 208 [32m++++++++[m[31m-[m
+ app/Models/User.php                                | 189 [32m+++++++[m[31m-[m
+ bootstrap/app.php                                  |  12 [32m+[m[31m-[m
+ database/factories/EventUserFactory.php            |  55 [32m++[m[31m-[m
+ database/factories/ProjectFactory.php              |  35 [32m+[m[31m-[m
+ database/factories/TeamFactory.php                 |  69 [32m++[m[31m-[m
+ .../2025_11_29_232201_create_projects_table.php    |  21 [32m+[m[31m-[m
+ database/seeders/DatabaseSeeder.php                | 125 [32m+++++[m[31m-[m
+ database/seeders/EventUserSeeder.php               |  60 [32m++[m[31m-[m
+ database/seeders/ProjectSeeder.php                 |  49 [32m+[m[31m-[m
+ database/seeders/TeamSeeder.php                    | 134 [32m+++++[m[31m-[m
+ database/seeders/UserSeeder.php                    | 173 [32m+++++[m[31m--[m
+ resources/views/layouts/app.blade.php              | 497 [32m++++++++++[m[31m-----------[m
+ routes/web.php                                     | 137 [32m+++[m[31m---[m
+ 18 files changed, 2073 insertions(+), 472 deletions(-)
+stash@{1}: On fuse-header: !!GitHub_Desktop<fuse-header>
+
+ app/Http/Controllers/ProfileController.php |   9 [32m+[m
+ resources/views/auth/login.blade.php       | 474 [32m++++++++++++++++++[m[31m--------[m
+ resources/views/auth/register.blade.php    | 513 [32m++++++++++++++++++++++++[m[31m-----[m
+ resources/views/layouts/app.blade.php      | 449 [32m+++++++++++++++++++++[m[31m----[m
+ resources/views/teams/create.blade.php     |   2 [32m+[m[31m-[m
+ resources/views/teams/join.blade.php       |   2 [32m+[m[31m-[m
+ resources/views/teams/show.blade.php       |   2 [32m+[m[31m-[m
+ 7 files changed, 1143 insertions(+), 308 deletions(-)
+stash@{2}: On ventana-eventos: !!GitHub_Desktop<ventana-eventos>
+
+ routes/web.php | 3 [32m++[m[31m-[m
+ 1 file changed, 2 insertions(+), 1 deletion(-)
