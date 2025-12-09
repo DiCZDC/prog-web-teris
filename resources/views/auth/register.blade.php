@@ -266,6 +266,42 @@
             text-decoration: underline;
         }
 
+        .password-requirements {
+            background: #f8f9ff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        .password-requirements h4 {
+            color: #667eea;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .requirement svg {
+            flex-shrink: 0;
+        }
+
+        .requirement.valid {
+            color: #10b981;
+        }
+
+        .requirement.invalid {
+            color: #ef4444;
+        }
+
         .btn-submit {
             width: 100%;
             padding: 16px;
@@ -397,6 +433,7 @@
                             value="{{ old('name') }}"
                             placeholder="Juan"
                             required
+                            oninput="validateName(this)"
                         >
                     </div>
 
@@ -433,6 +470,9 @@
                             name="password"
                             placeholder="Mínimo 8 caracteres"
                             required
+                            oninput="validatePassword()"
+                            onfocus="showPasswordRequirements()"
+                            onblur="hidePasswordRequirements()"
                         >
                         <button type="button" class="toggle-password" onclick="togglePassword('password')">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="eye-open-password">
@@ -442,6 +482,59 @@
                                 </g>
                             </svg>
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="eye-closed-password" style="display: none;">
+                                <g fill="none" stroke="#666" stroke-width="2">
+                                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
+                                    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61M2 2l20 20"/>
+                                </g>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="password-requirements" id="passwordRequirements" style="display: none;">
+                        <h4>Requisitos de la contraseña:</h4>
+                        <div class="requirement" id="req-length">
+                            
+                            </svg>
+                            <span>- Mínimo 8 caracteres</span>
+                        </div>
+                        <div class="requirement" id="req-lowercase">
+                           
+                            <span>- Una letra minúscula (a-z)</span>
+                        </div>
+                        <div class="requirement" id="req-uppercase">
+                            
+                            <span>- Una letra mayúscula (A-Z)</span>
+                        </div>
+                        <div class="requirement" id="req-number">
+                           
+                            <span>- Un número (0-9)</span>
+                        </div>
+                        <div class="requirement" id="req-special">
+                           
+                            <span>- Un carácter especial (@$!%*#?&)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password_confirmation">Confirmar Contraseña</label>
+                    <div class="input-wrapper">
+                        <input
+                            type="password"
+                            id="password_confirmation"
+                            name="password_confirmation"
+                            placeholder="Repite tu contraseña"
+                            required
+                            oninput="validatePasswordMatch()"
+                        >
+                        <button type="button" class="toggle-password" onclick="togglePassword('password_confirmation')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="eye-open-confirmation">
+                                <g fill="none" stroke="#666" stroke-width="2">
+                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </g>
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="eye-closed-confirmation" style="display: none;">
                                 <g fill="none" stroke="#666" stroke-width="2">
                                     <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
                                     <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61M2 2l20 20"/>
@@ -489,6 +582,99 @@
                 passwordInput.type = 'password';
                 eyeOpen.style.display = 'block';
                 eyeClosed.style.display = 'none';
+            }
+        }
+
+        function validateName(input) {
+            // Permitir solo letras, espacios y caracteres con acentos
+            const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/;
+            if (!regex.test(input.value)) {
+                input.value = input.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+            }
+        }
+
+        function showPasswordRequirements() {
+            const password = document.getElementById('password').value;
+            const requirementsDiv = document.getElementById('passwordRequirements');
+
+            // Solo mostrar si hay texto en el campo
+            if (password.length > 0) {
+                requirementsDiv.style.display = 'block';
+            }
+        }
+
+        function hidePasswordRequirements() {
+            const requirementsDiv = document.getElementById('passwordRequirements');
+            requirementsDiv.style.display = 'none';
+        }
+
+        function validatePassword() {
+            const password = document.getElementById('password').value;
+            const lengthReq = document.getElementById('req-length');
+            const lowercaseReq = document.getElementById('req-lowercase');
+            const uppercaseReq = document.getElementById('req-uppercase');
+            const numberReq = document.getElementById('req-number');
+            const specialReq = document.getElementById('req-special');
+
+            // Validar longitud mínima
+            if (password.length >= 8) {
+                lengthReq.classList.remove('invalid');
+                lengthReq.classList.add('valid');
+            } else {
+                lengthReq.classList.remove('valid');
+                lengthReq.classList.add('invalid');
+            }
+
+            // Validar letra minúscula
+            if (/[a-z]/.test(password)) {
+                lowercaseReq.classList.remove('invalid');
+                lowercaseReq.classList.add('valid');
+            } else {
+                lowercaseReq.classList.remove('valid');
+                lowercaseReq.classList.add('invalid');
+            }
+
+            // Validar letra mayúscula
+            if (/[A-Z]/.test(password)) {
+                uppercaseReq.classList.remove('invalid');
+                uppercaseReq.classList.add('valid');
+            } else {
+                uppercaseReq.classList.remove('valid');
+                uppercaseReq.classList.add('invalid');
+            }
+
+            // Validar número
+            if (/[0-9]/.test(password)) {
+                numberReq.classList.remove('invalid');
+                numberReq.classList.add('valid');
+            } else {
+                numberReq.classList.remove('valid');
+                numberReq.classList.add('invalid');
+            }
+
+            // Validar carácter especial
+            if (/[@$!%*#?&]/.test(password)) {
+                specialReq.classList.remove('invalid');
+                specialReq.classList.add('valid');
+            } else {
+                specialReq.classList.remove('valid');
+                specialReq.classList.add('invalid');
+            }
+        }
+
+        function validatePasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('password_confirmation').value;
+            const confirmInput = document.getElementById('password_confirmation');
+
+            if (confirmPassword.length > 0) {
+                if (password === confirmPassword) {
+                    confirmInput.style.borderColor = '#10b981';
+                } else {
+                    confirmInput.style.borderColor = '#ef4444';
+                }
+            } else {
+                confirmInput.style.borderColor = '#e0e0e0';
             }
         }
     </script>
