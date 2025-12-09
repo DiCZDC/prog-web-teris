@@ -1,5 +1,3 @@
-<x-app-layout>
-    @push('styles')
     <style>
         :root {
             --primary-color: #667eea;
@@ -658,7 +656,8 @@
             opacity: 0;
         }
     </style>
-    @endpush
+<x-app-layout>
+    
 
     <div class="form-wrapper">
         <div class="form-background"></div>

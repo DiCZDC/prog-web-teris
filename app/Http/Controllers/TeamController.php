@@ -327,18 +327,6 @@ class TeamController extends Controller
             return back()->with('error', 'No puedes invitarte a ti mismo');
         }
 
-        // Verificar que el usuario no esté ya en un equipo
-        $usuarioYaTieneEquipo = Team::where(function($query) use ($usuario) {
-            $query->where('lider_id', $usuario->id)
-                  ->orWhere('disenador_id', $usuario->id)
-                  ->orWhere('frontprog_id', $usuario->id)
-                  ->orWhere('backprog_id', $usuario->id);
-        })->exists();
-
-        if ($usuarioYaTieneEquipo) {
-            return back()->with('error', 'Este usuario ya pertenece a un equipo');
-        }
-
         // Verificar que el rol esté disponible
         $rolDisponible = false;
         switch ($validated['rol']) {
@@ -552,45 +540,67 @@ class TeamController extends Controller
      * Ver mis invitaciones
      */
     public function myInvitations()
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    // INVITACIONES RECIBIDAS (cuando un líder invita al usuario)
-    $invitacionesPendientes = TeamInvitation::where('user_id', $user->id)
-        ->where('tipo', 'invitacion')
-        ->where('status', 'pendiente')
-        ->get();
+        // ============ INVITACIONES RECIBIDAS ============
+        // (cuando un líder me invita)
+        $invitacionesPendientes = TeamInvitation::where('user_id', $user->id)
+            ->where('tipo', 'invitacion')
+            ->where('status', 'pendiente')
+            ->with(['team', 'invitador'])
+            ->get();
 
-    $invitacionesRespondidas = TeamInvitation::where('user_id', $user->id)
-        ->where('tipo', 'invitacion')
-        ->whereIn('status', ['aceptada', 'rechazada'])
-        ->get();
+        $invitacionesRespondidas = TeamInvitation::where('user_id', $user->id)
+            ->where('tipo', 'invitacion')
+            ->whereIn('status', ['aceptada', 'rechazada'])
+            ->with(['team', 'invitador'])
+            ->orderBy('responded_at', 'desc')
+            ->get();
 
+        // ============ SOLICITUDES RECIBIDAS ============
+        // (cuando otros usuarios solicitan unirse a MIS equipos donde soy líder)
+        $solicitudesPendientes = TeamInvitation::where('tipo', 'solicitud')
+            ->where('status', 'pendiente')
+            ->whereHas('team', function ($q) use ($user) {
+                $q->where('lider_id', $user->id);
+            })
+            ->with(['team', 'invitador'])
+            ->get();
 
-    // SOLICITUDES (cuando otros usuarios piden unirse a un equipo del líder)
-    $solicitudesPendientes = TeamInvitation::where('tipo', 'solicitud')
-        ->where('status', 'pendiente')
-        ->whereHas('team', function ($q) use ($user) {
-            $q->where('lider_id', $user->id);
-        })
-        ->get();
+        $solicitudesRespondidas = TeamInvitation::where('tipo', 'solicitud')
+            ->whereIn('status', ['aceptada', 'rechazada'])
+            ->whereHas('team', function ($q) use ($user) {
+                $q->where('lider_id', $user->id);
+            })
+            ->with(['team', 'invitador'])
+            ->orderBy('responded_at', 'desc')
+            ->get();
 
-    $solicitudesRespondidas = TeamInvitation::where('tipo', 'solicitud')
-        ->whereIn('status', ['aceptada', 'rechazada'])
-        ->whereHas('team', function ($q) use ($user) {
-            $q->where('lider_id', $user->id);
-        })
-        ->get();
+        // ============ SOLICITUDES QUE YO ENVIÉ ============
+        // (cuando YO solicité unirme a otros equipos)
+        $misSolicitudesPendientes = TeamInvitation::where('user_id', $user->id)
+            ->where('tipo', 'solicitud')
+            ->where('status', 'pendiente')
+            ->with(['team', 'team.lider'])
+            ->get();
 
+        $misSolicitudesRespondidas = TeamInvitation::where('user_id', $user->id)
+            ->where('tipo', 'solicitud')
+            ->whereIn('status', ['aceptada', 'rechazada'])
+            ->with(['team', 'team.lider'])
+            ->orderBy('responded_at', 'desc')
+            ->get();
 
-    return view('teams.my-invitations', compact(
-        'invitacionesPendientes',
-        'solicitudesPendientes',
-        'invitacionesRespondidas',
-        'solicitudesRespondidas'
-    ));
-}
-
+        return view('teams.my-invitations', compact(
+            'invitacionesPendientes',
+            'invitacionesRespondidas',
+            'solicitudesPendientes',
+            'solicitudesRespondidas',
+            'misSolicitudesPendientes',
+            'misSolicitudesRespondidas'
+        ));
+    }
 
     /**
      * Aceptar invitación
@@ -901,6 +911,8 @@ class TeamController extends Controller
             'mensaje' => "Solicitud para unirse al equipo como $request->rol"
         ]);
         
+        $mailController = new MailController();
+        $mailController->sendSolitudeTeamEmail($team, Auth::user(), $team->lider,Auth::user());
         
         return redirect()->route('teams.join')->with('success', 'Solicitud enviada al líder. Espera su aprobación.');
     }

@@ -32,7 +32,8 @@
     .logo-icon {
         width: 40px;
         height: 40px;
-        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        /* Antes amarillo */
+        background: linear-gradient(135deg, #a855f7, #c084fc);
         border-radius: 8px;
     }
 
@@ -216,13 +217,14 @@
 
     .team-code-large {
         display: inline-block;
-        background: rgba(255, 215, 0, 0.3);
-        border: 2px solid #ffd700;
+        /* Antes amarillo */
+        background: rgba(168, 85, 247, 0.3);
+        border: 2px solid #a855f7;
         padding: 10px 25px;
         border-radius: 25px;
         font-size: 24px;
         font-weight: bold;
-        color: #ffd700;
+        color: #a855f7;
         margin-bottom: 15px;
     }
 
@@ -291,11 +293,11 @@
     }
 
     .role-input {
-        background: rgba(255, 215, 0, 0.2);
-        border: 1px solid #ffd700;
+        background: rgba(168, 85, 247, 0.2); /* antes amarillo */
+        border: 1px solid #a855f7;
         border-radius: 10px;
         padding: 12px 15px;
-        color: #ffd700;
+        color: #a855f7;
         font-size: 14px;
         font-weight: bold;
         text-align: center;
@@ -354,13 +356,14 @@
     }
 
     .btn-primary {
-        background: rgba(255, 215, 0, 0.3);
-        border: 2px solid #ffd700;
-        color: #ffd700;
+        /* Antes amarillo */
+        background: rgba(168, 85, 247, 0.3);
+        border: 2px solid #a855f7;
+        color: #a855f7;
     }
 
     .btn-primary:hover {
-        background: rgba(255, 215, 0, 0.5);
+        background: rgba(168, 85, 247, 0.5);
         transform: translateY(-2px);
     }
 
@@ -405,10 +408,17 @@
         }
     }
 </style>
+
 <x-app-layout>
     <div class="container">
         <a href="{{ route('teams.index') }}" class="back-link">
-            ← Volver a equipos
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                style="vertical-align: middle; margin-right: 6px; display: inline-block;">
+                <path d="M15 18l-6-6 6-6" 
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Regresar
         </a>
 
         <h1>Ver Equipo</h1>
@@ -533,19 +543,19 @@
             @auth
             <div class="action-buttons">
                 @if($team->lider_id === Auth::id())
-                    <a href="{{ route('teams.edit', $team) }}" class="btn btn-primary">✏️ Editar Equipo</a>
+                    <a href="{{ route('teams.edit', $team) }}" class="btn btn-primary">Editar Equipo</a>
                     <form action="{{ route('teams.destroy', $team) }}" method="POST" style="display: inline;" onsubmit="return confirm('¿Estás seguro de eliminar este equipo?');">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger">🗑️ Eliminar Equipo</button>
+                        <button type="submit" class="btn btn-danger">Eliminar Equipo</button>
                     </form>
                 @elseif($team->esMiembro(Auth::id()))
                     <form action="{{ route('teams.leave', $team) }}" method="POST" style="display: inline;" onsubmit="return confirm('¿Estás seguro de salir de este equipo?');">
                         @csrf
-                        <button type="submit" class="btn btn-danger">🚪 Salir del Equipo</button>
+                        <button type="submit" class="btn btn-danger">Salir del Equipo</button>
                     </form>
                 @elseif(!$team->estaCompleto())
-                    <a href="{{ route('teams.join') }}" class="btn btn-primary">🤝 Unirse a este Equipo</a>
+                    <a href="{{ route('teams.join') }}" class="btn btn-primary">Unirse a este Equipo</a>
                 @endif
                 
                 <a href="{{ route('teams.index') }}" class="btn btn-secondary">← Volver</a>
