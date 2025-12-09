@@ -341,7 +341,7 @@
         <div class="form-card">
             <div class="info-box">
                 <p>📋 <strong>Importante:</strong></p>
-                <p>• Serás asignado automáticamente como GERENTE del equipo</p>
+                <p>• Serás asignado automáticamente como LIDER de equipo</p>
                 <p>• El código del equipo se generará automáticamente</p>
                 <p>• Otros usuarios podrán unirse usando el código</p>
             </div>
