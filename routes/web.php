@@ -243,6 +243,17 @@ Route::middleware(['auth', \App\Http\Middleware\CheckJudge::class])
 
 /*
 |--------------------------------------------------------------------------
+| API ENDPOINTS
+|--------------------------------------------------------------------------
+*/
+
+// API para buscar jueces (requiere autenticación de admin)
+Route::middleware(['auth', 'role:admin'])->prefix('api')->name('api.')->group(function () {
+    Route::get('/judges/search', [JudgeController::class, 'searchJudges'])->name('judges.search');
+});
+
+/*
+|--------------------------------------------------------------------------
 | RUTAS DE PRUEBA (Solo en desarrollo)
 |--------------------------------------------------------------------------
 */

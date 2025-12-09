@@ -26,19 +26,20 @@
             }
 
             body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 50%, #8e24aa 100%);
+                font-family: 'Inter', 'Arial', sans-serif;
+                background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
                 min-height: 100vh;
-                color: white;
+                color: #e0e7ff;
             }
 
             .navbar {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 20px 40px;
-                background: rgba(0, 0, 0, 0.3);
-                backdrop-filter: blur(10px);
+                padding: 1.5rem 2.5rem;
+                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+                box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+                border-bottom: 3px solid rgba(167, 139, 250, 0.3);
             }
 
             .logo {
@@ -46,14 +47,16 @@
                 align-items: center;
                 gap: 10px;
                 font-size: 28px;
-                font-weight: bold;
+                font-weight: 700;
+                color: white;
             }
 
             .logo-icon {
                 width: 40px;
                 height: 40px;
-                background: linear-gradient(135deg, #ffd700, #ffed4e);
+                background: linear-gradient(135deg, #c4b5fd, #a78bfa);
                 border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(167, 139, 250, 0.4);
             }
 
             .search-box {
@@ -61,17 +64,25 @@
             }
 
             .search-box input {
-                background: rgba(255, 255, 255, 0.15);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                border-radius: 20px;
-                padding: 10px 20px;
-                color: white;
-                width: 300px;
+                background: rgba(30, 27, 75, 0.7);
+                border: 2px solid rgba(167, 139, 250, 0.4);
+                border-radius: 25px;
+                padding: 12px 20px;
+                color: #e0e7ff;
+                width: 350px;
                 outline: none;
+                transition: all 0.2s ease;
+                box-shadow: 0 2px 10px rgba(139, 92, 246, 0.2);
+            }
+
+            .search-box input:focus {
+                border-color: #a78bfa;
+                box-shadow: 0 4px 20px rgba(167, 139, 250, 0.4);
+                background: rgba(30, 27, 75, 0.9);
             }
 
             .search-box input::placeholder {
-                color: rgba(255, 255, 255, 0.7);
+                color: #a78bfa;
             }
 
             .nav-menu {
@@ -88,26 +99,32 @@
                 align-items: center;
                 gap: 8px;
                 font-size: 27px;
-                transition: opacity 0.3s;
+                transition: all 0.2s ease;
             }
 
             .nav-menu a:hover {
-                opacity: 0.8;
+                opacity: 0.85;
+                transform: translateY(-2px);
             }
 
             .auth-btn {
-                background: rgba(255, 255, 255, 0.2);
-                padding: 8px 20px;
-                border-radius: 20px;
-                border: 1px solid rgba(255, 255, 255, 0.3);
+                background: rgba(167, 139, 250, 0.2);
+                padding: 10px 24px;
+                border-radius: 25px;
+                border: 2px solid rgba(167, 139, 250, 0.4);
                 color: white;
                 font-size: 16px;
+                font-weight: 600;
                 cursor: pointer;
-                transition: all 0.3s;
+                transition: all 0.2s ease;
+                box-shadow: 0 2px 10px rgba(139, 92, 246, 0.2);
             }
 
             .auth-btn:hover {
-                background: rgba(255, 255, 255, 0.3);
+                background: rgba(167, 139, 250, 0.3);
+                border-color: #a78bfa;
+                box-shadow: 0 4px 20px rgba(167, 139, 250, 0.4);
+                transform: translateY(-2px);
             }
 
             .user-info {
@@ -117,22 +134,28 @@
             }
 
             .user-name {
-                color: rgba(255, 255, 255, 0.9);
+                color: #e0e7ff;
                 font-size: 16px;
+                font-weight: 500;
             }
 
             .logout-btn {
-                background: rgba(255, 0, 0, 0.3);
-                border: 1px solid rgba(255, 0, 0, 0.5);
-                padding: 8px 20px;
-                border-radius: 20px;
+                background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(220, 38, 38, 0.3));
+                border: 2px solid rgba(239, 68, 68, 0.5);
+                padding: 10px 24px;
+                border-radius: 25px;
                 color: white;
+                font-weight: 600;
                 cursor: pointer;
-                transition: all 0.3s;
+                transition: all 0.2s ease;
+                box-shadow: 0 2px 10px rgba(239, 68, 68, 0.2);
             }
 
             .logout-btn:hover {
-                background: rgba(255, 0, 0, 0.5);
+                background: linear-gradient(135deg, rgba(239, 68, 68, 0.5), rgba(220, 38, 38, 0.5));
+                border-color: rgba(239, 68, 68, 0.7);
+                box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+                transform: translateY(-2px);
             }
 
             .container {
@@ -143,112 +166,44 @@
 
             h1 {
                 text-align: center;
-                font-size: 48px;
+                font-size: 2.5rem;
+                font-weight: 800;
                 margin-bottom: 50px;
                 text-transform: uppercase;
                 letter-spacing: 4px;
-                text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
-            }
-
-            .eventos-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-                gap: 30px;
-                padding: 20px;
-            }
-
-            .evento-card {
-                background: rgba(0, 0, 0, 0.4);
-                border-radius: 15px;
-                overflow: hidden;
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-                transition: transform 0.3s, box-shadow 0.3s;
-                cursor: pointer;
-            }
-
-            .evento-card:hover {
-                transform: translateY(-10px);
-                box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
-            }
-
-            .evento-imagen {
-                width: 100%;
-                height: 250px;
-                object-fit: cover;
-                background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 50%, #6c5b7b 100%);
-            }
-
-            .evento-content {
-                padding: 25px;
-            }
-
-            .evento-titulo {
-                font-size: 28px;
-                font-weight: bold;
-                margin-bottom: 15px;
-                text-transform: uppercase;
-                letter-spacing: 2px;
-            }
-
-            .evento-descripcion {
-                color: rgba(255, 255, 255, 0.85);
-                margin-bottom: 20px;
-                line-height: 1.6;
-            }
-
-            .evento-info {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                font-size: 14px;
-                color: rgba(255, 255, 255, 0.9);
-            }
-
-            .evento-info strong {
-                color: #ffd700;
-            }
-
-            .detalles-link {
-                display: inline-block;
-                margin-top: 15px;
-                padding: 10px 20px;
-                background: rgba(255, 215, 0, 0.2);
-                border: 1px solid #ffd700;
-                border-radius: 8px;
-                color: #ffd700;
-                text-decoration: none;
-                transition: all 0.3s;
-            }
-
-            .detalles-link:hover {
-                background: rgba(255, 215, 0, 0.4);
-                transform: scale(1.05);
+                background: linear-gradient(135deg, #c4b5fd, #a78bfa, #ddd6fe);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
             }
 
             @media (max-width: 768px) {
-                .eventos-grid {
-                    grid-template-columns: 1fr;
-                }
-
                 .navbar {
                     flex-direction: column;
                     gap: 20px;
+                    padding: 1rem;
                 }
 
                 .search-box input {
                     width: 100%;
                 }
+
+                .nav-menu {
+                    flex-wrap: wrap;
+                    gap: 20px;
+                    justify-content: center;
+                }
             }
         </style>
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div class="min-h-screen">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
             @isset($header)
-                <header class="nav-bar bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <header class="shadow" style="background: linear-gradient(135deg, rgba(49, 46, 129, 0.95), rgba(76, 29, 149, 0.95)); border-bottom: 2px solid rgba(167, 139, 250, 0.3);">
+                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8" style="color: #e0e7ff;">
                         {{ $header }}
                     </div>
                 </header>
@@ -263,7 +218,7 @@
                 @endif
             </main>
         </div>
-        
+
         <!-- Stack para scripts adicionales de vistas -->
         @stack('scripts')
     </body>

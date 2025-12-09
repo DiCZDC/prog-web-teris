@@ -682,8 +682,8 @@
                          onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xMSA1VjNNMTMgM1Y1TTQgMTBIMjBNNSAyMUgxOU0yMCAxNkwxNiAxMk04IDEyTDQgMTZNMTIgMTZIOE0xMiA4SDE2TTEyIDhWMTYiIHN0cm9rZT0iIzY2N2VlYSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4='">
                 </div>
                 
-                <h1 class="form-title">Crear Nuevo Evento</h1>
-                <p class="form-subtitle">Organiza experiencias inolvidables. Cada detalle cuenta para crear momentos extraordinarios en la comunidad TERIS.</p>
+                <h1 class="form-title">Editar Evento</h1>
+                <p class="form-subtitle">Actualiza la información del evento. Mejora los detalles para optimizar la experiencia de los participantes.</p>
             </div>
             
             @if ($errors->any())
@@ -711,8 +711,9 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('admin.events.store') }}" id="eventForm">
+            <form method="POST" action="{{ route('admin.events.update', $event->id) }}" id="eventForm">
                 @csrf
+                @method('PUT')
                 
                 <!-- Sección: Información Básica -->
                 <div class="form-section">
@@ -729,8 +730,8 @@
                                 <i>📝</i>
                                 Nombre del Evento
                             </label>
-                            <input type="text" name="name" class="form-input" 
-                                   value="{{ old('name') }}" 
+                            <input type="text" name="name" class="form-input"
+                                   value="{{ old('name', $event->nombre) }}"
                                    placeholder="Ej: Hackathon TERIS 2024 • Innovación Digital"
                                    required>
                             @error('name')
@@ -747,9 +748,9 @@
                             </label>
                             <select name="modalidad" class="form-input" required>
                                 <option value="">Seleccione una modalidad</option>
-                                <option value="Presencial" {{ old('modalidad') == 'Presencial' ? 'selected' : '' }}>🎯 Presencial</option>
-                                <option value="Virtual" {{ old('modalidad') == 'Virtual' ? 'selected' : '' }}>🌐 Virtual</option>
-                                <option value="Híbrido" {{ old('modalidad') == 'Híbrido' ? 'selected' : '' }}>🔀 Híbrido</option>
+                                <option value="Presencial" {{ old('modalidad', $event->modalidad) == 'Presencial' ? 'selected' : '' }}>🎯 Presencial</option>
+                                <option value="Virtual" {{ old('modalidad', $event->modalidad) == 'Virtual' ? 'selected' : '' }}>🌐 Virtual</option>
+                                <option value="Híbrido" {{ old('modalidad', $event->modalidad) == 'Híbrido' ? 'selected' : '' }}>🔀 Híbrido</option>
                             </select>
                             @error('modalidad')
                                 <span class="error-message">
@@ -764,10 +765,10 @@
                             <i>📄</i>
                             Descripción
                         </label>
-                        <textarea name="description" class="form-input" 
+                        <textarea name="description" class="form-input"
                                   placeholder="Describe el evento, su propósito, objetivos, y qué pueden esperar los participantes..."
                                   rows="6"
-                                  required>{{ old('description') }}</textarea>
+                                  required>{{ old('description', $event->descripcion) }}</textarea>
                         <div class="char-count" id="description-count">
                             <i>📊</i><span>0/2000 caracteres</span>
                         </div>
@@ -793,9 +794,9 @@
                             <i>🖼️</i>
                             URL de la Imagen
                         </label>
-                        <input type="url" name="image_url" id="image_url" 
-                               class="form-input" 
-                               value="{{ old('image_url') }}" 
+                        <input type="url" name="image_url" id="image_url"
+                               class="form-input"
+                               value="{{ old('image_url', $event->imagen) }}"
                                placeholder="https://ejemplo.com/imagen-eventos-teris.jpg"
                                required
                                oninput="previewImage(this.value)">
@@ -835,9 +836,9 @@
                                 <i>📅</i>
                                 Fecha de Inicio
                             </label>
-                            <input type="date" name="inicio_evento" 
-                                   class="form-input" 
-                                   value="{{ old('inicio_evento') }}" 
+                            <input type="date" name="inicio_evento"
+                                   class="form-input"
+                                   value="{{ old('inicio_evento', $event->inicio_evento) }}"
                                    required>
                             @error('inicio_evento')
                                 <span class="error-message">
@@ -851,9 +852,9 @@
                                 <i>🏁</i>
                                 Fecha de Finalización
                             </label>
-                            <input type="date" name="fin_evento" 
-                                   class="form-input" 
-                                   value="{{ old('fin_evento') }}" 
+                            <input type="date" name="fin_evento"
+                                   class="form-input"
+                                   value="{{ old('fin_evento', $event->fin_evento) }}"
                                    required>
                             @error('fin_evento')
                                 <span class="error-message">
@@ -868,9 +869,9 @@
                             <i>🏙️</i>
                             Ubicación
                         </label>
-                        <input type="text" name="ubicacion" 
-                               class="form-input" 
-                               value="{{ old('ubicacion') }}"
+                        <input type="text" name="ubicacion"
+                               class="form-input"
+                               value="{{ old('ubicacion', $event->ubicacion) }}"
                                placeholder="Ej: Centro de Convenciones TERIS • Av. Principal 123, Ciudad, País">
                         <p class="text-sm text-gray-600 mt-4 pl-4 border-l-4 border-green-300 bg-green-50/50 p-3 rounded-r-xl">
                             <i class="text-green-600 mr-2">ℹ️</i>
@@ -899,9 +900,9 @@
                                 <i>📋</i>
                                 Reglas del Evento
                             </label>
-                            <textarea name="reglas" class="form-input" 
+                            <textarea name="reglas" class="form-input"
                                       placeholder="Reglas específicas, requisitos de participación, criterios de evaluación, código de conducta..."
-                                      rows="5">{{ old('reglas') }}</textarea>
+                                      rows="5">{{ old('reglas', $event->reglas) }}</textarea>
                             <div class="char-count" id="rules-count">
                                 <i>📊</i><span>0/1500 caracteres</span>
                             </div>
@@ -917,9 +918,9 @@
                                 <i>🏆</i>
                                 Premios y Reconocimientos
                             </label>
-                            <textarea name="premios" class="form-input" 
+                            <textarea name="premios" class="form-input"
                                       placeholder="Premios en efectivo, becas, certificados, oportunidades de empleo, mentorías, herramientas..."
-                                      rows="5">{{ old('premios') }}</textarea>
+                                      rows="5">{{ old('premios', $event->premios) }}</textarea>
                             <div class="char-count" id="prizes-count">
                                 <i>📊</i><span>0/1500 caracteres</span>
                             </div>
@@ -994,11 +995,31 @@
                         </svg>
                         Configuración del Evento
                     </h2>
-                    
+
+                    <div class="form-group">
+                        <label class="form-label required">
+                            <i>🔄</i>
+                            Estado del Evento
+                        </label>
+                        <select name="estado" class="form-input" required>
+                            <option value="Activo" {{ old('estado', $event->estado) == 'Activo' ? 'selected' : '' }}>✅ Activo</option>
+                            <option value="Inactivo" {{ old('estado', $event->estado) == 'Inactivo' ? 'selected' : '' }}>❌ Inactivo</option>
+                        </select>
+                        <p class="text-sm text-gray-600 mt-4 pl-4 border-l-4 border-yellow-300 bg-yellow-50/50 p-3 rounded-r-xl">
+                            <i class="text-yellow-600 mr-2">ℹ️</i>
+                            <strong>Nota:</strong> Los eventos inactivos no aparecerán en las búsquedas públicas ni en la página principal.
+                        </p>
+                        @error('estado')
+                            <span class="error-message">
+                                <i>⚠️</i>{{ $message }}
+                            </span>
+                        @enderror
+                    </div>
+
                     <div class="checkbox-container" onclick="toggleCheckbox()">
-                        <input type="checkbox" name="popular" id="popular" 
+                        <input type="checkbox" name="popular" id="popular"
                                class="checkbox-input"
-                               {{ old('popular') ? 'checked' : '' }}>
+                               {{ old('popular', $event->popular) ? 'checked' : '' }}>
                         <label for="popular" class="checkbox-label">
                             <strong>⭐ Marcar como Evento Destacado</strong>
                             <p>Los eventos destacados aparecen en la sección principal del sitio web, tienen mayor visibilidad y prioridad en las búsquedas. Recomendado para eventos especiales y de gran importancia.</p>
@@ -1353,8 +1374,18 @@
         // FUNCIONALIDAD DE BÚSQUEDA Y SELECCIÓN DE JUECES
         // ============================================
 
-        let selectedJudges = [];
+        let selectedJudges = @json($event->jueces->map(function($judge) {
+            return ['id' => $judge->id, 'name' => $judge->name, 'email' => $judge->email];
+        })->toArray());
         let searchTimeout = null;
+
+        // Pre-cargar jueces actuales del evento
+        document.addEventListener('DOMContentLoaded', function() {
+            if (selectedJudges.length > 0) {
+                updateSelectedJudgesUI();
+                updateJudgesInput();
+            }
+        });
 
         // Buscar jueces
         function searchJudges(query) {
