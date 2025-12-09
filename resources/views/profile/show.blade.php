@@ -574,7 +574,7 @@
             <!-- Sección para cambiar contraseña -->
             <div class="section-card">
                 <h2 class="section-title">Cambiar Contraseña</h2>
-                <form method="POST" action="{{ route('password.update') }}">
+                <form method="POST" action="{{ route('profile.password.update') }}">
                     @csrf
                     @method('PUT')
 
