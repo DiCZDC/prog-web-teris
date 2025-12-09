@@ -301,7 +301,7 @@
                 <span class="font-medium">← Regresar</span>
                 </a>
             </div>
-        <h1>🏆 Mis Equipos</h1>
+        <h1>Mis Equipos</h1>
         <p class="subtitle">Equipos en los que participas</p>
 
         @if(session('success'))
@@ -318,10 +318,6 @@
                 <div class="empty-icon">📋</div>
                 <h2>No tienes equipos aún</h2>
                 <p>Crea un nuevo equipo o únete a uno existente para empezar</p>
-                <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
-                    <a href="{{ route('teams.create') }}" class="btn btn-primary">Crear Equipo</a>
-                    <a href="{{ route('teams.join') }}" class="btn btn-secondary">Unirse a Equipo</a>
-                </div>
             </div>
         @else
             <div class="teams-grid">

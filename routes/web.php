@@ -78,6 +78,8 @@ Route::middleware(['auth','role:user'])->group(function () {
     // Rutas para unirse a equipos
     Route::get('/teams/join/form', [TeamController::class, 'join'])->name('teams.join');
     Route::post('/teams/join/process', [TeamController::class, 'joinTeam'])->name('teams.join.process');
+    Route::post('/teams/join/send', [TeamController::class, 'sendJoinRequest'])
+    ->name('teams.join.send');
     Route::post('/teams/{team}/leave', [TeamController::class, 'leave'])->name('teams.leave');
 
     //Rutas para invitaciones del lider a nuevos miembros
