@@ -61,7 +61,6 @@ class Team extends Model
     {
         return $this->belongsTo(User::class, 'backprog_id');
     }
-
     // Relación con invitaciones
     public function invitaciones()
     {
@@ -81,7 +80,15 @@ class Team extends Model
                $this->frontprog_id == $userId || 
                $this->backprog_id == $userId;
     }
-
+    public function contarMiembros()
+    {
+        $count = 0;
+        if ($this->lider_id) $count++;
+        if ($this->disenador_id) $count++;
+        if ($this->frontprog_id) $count++;
+        if ($this->backprog_id) $count++;
+        return $count;
+    }
     public function esLider($userId)
     {
         return $this->lider_id == $userId;
