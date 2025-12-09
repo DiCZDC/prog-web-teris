@@ -829,7 +829,8 @@ class TeamController extends Controller
 
         // Aceptar la solicitud (asigna al usuario al equipo)
         $solicitud->aceptar();
-
+        $mailController = new MailController();
+        $mailController->sendApplicationTeamEmailResponse($user,$team,'aceptada');
         return back()->with('success', '✅ Solicitud aceptada. El usuario se ha unido al equipo.');
     }
 
@@ -856,50 +857,52 @@ class TeamController extends Controller
         }
 
         $solicitud->rechazar();
-
+        $mailController = new MailController();
+        $mailController->sendApplicationTeamEmailResponse($user,$team,'rechazada');
         return back()->with('success', 'Solicitud rechazada');
     }
     public function sendJoinRequest(Request $request)
-{
-    $request->validate([
-        'codigo' => 'required',
-        'rol' => 'required'
-    ]);
+    {
+        $request->validate([
+            'codigo' => 'required',
+            'rol' => 'required'
+        ]);
 
-    $team = Team::where('codigo', $request->codigo)->first();
+        $team = Team::where('codigo', $request->codigo)->first();
 
-    if (!$team) {
-        return back()->with('error', 'El equipo no existe.');
+        if (!$team) {
+            return back()->with('error', 'El equipo no existe.');
+        }
+
+        // Validar que el rol está disponible
+        if (!$team->rolDisponible($request->rol)) {
+            return back()->with('error', 'Ese rol ya está ocupado en este equipo.');
+        }
+
+        // Validar que no tenga ya una solicitud pendiente
+        $existe = TeamInvitation::where('team_id', $team->id)
+            ->where('user_id', Auth::id())
+            ->where('tipo', 'solicitud')
+            ->where('status', 'pendiente')
+            ->first();
+
+        if ($existe) {
+            return back()->with('error', 'Ya tienes una solicitud pendiente para este equipo.');
+        }
+
+        // ✔ Crear solicitud al líder
+        TeamInvitation::create([
+            'team_id' => $team->id,
+            'user_id' => Auth::id(),
+            'invited_by' => $team->lider_id, // líder recibe la solicitud
+            'tipo' => 'solicitud',
+            'rol' => $request->rol,
+            'status' => 'pendiente',
+            'mensaje' => "Solicitud para unirse al equipo como $request->rol"
+        ]);
+        
+        
+        return redirect()->route('teams.join')->with('success', 'Solicitud enviada al líder. Espera su aprobación.');
     }
-
-    // Validar que el rol está disponible
-    if (!$team->rolDisponible($request->rol)) {
-        return back()->with('error', 'Ese rol ya está ocupado en este equipo.');
-    }
-
-    // Validar que no tenga ya una solicitud pendiente
-    $existe = TeamInvitation::where('team_id', $team->id)
-        ->where('user_id', Auth::id())
-        ->where('tipo', 'solicitud')
-        ->where('status', 'pendiente')
-        ->first();
-
-    if ($existe) {
-        return back()->with('error', 'Ya tienes una solicitud pendiente para este equipo.');
-    }
-
-    // ✔ Crear solicitud al líder
-    TeamInvitation::create([
-        'team_id' => $team->id,
-        'user_id' => Auth::id(),
-        'invited_by' => $team->lider_id, // líder recibe la solicitud
-        'tipo' => 'solicitud',
-        'rol' => $request->rol,
-        'status' => 'pendiente',
-        'mensaje' => "Solicitud para unirse al equipo como $request->rol"
-    ]);
-
-    return redirect()->route('teams.join')->with('success', 'Solicitud enviada al líder. Espera su aprobación.');
-}
 
 }
