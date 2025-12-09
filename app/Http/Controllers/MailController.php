@@ -11,7 +11,7 @@ use App\Mail\{
 
 class MailController extends Controller
 {
-    private $mailsender ="noreply_teris@test-ywj2lpnxppqg7oqz.mlsender.net";
+    private $mailsender ="fmauro@nubograma.com";
     
     function sendCreatedAccountEmail($user){
         \Mail::to($user->email)
