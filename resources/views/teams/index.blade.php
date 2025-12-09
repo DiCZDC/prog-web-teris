@@ -504,8 +504,7 @@
         @endif
 
         @auth   
-
-            @if(Auth::user()->role === 'user')
+            @if(auth()->user()->hasRole('user'))
                 <div class="action-buttons">
                     <a href="{{ route('teams.my-teams') }}" class="btn btn-secondary">🤝 Mis equipos</a>
                     <a href="{{ route('teams.create') }}" class="btn btn-primary">➕ Crear Nuevo Equipo</a>

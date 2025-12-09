@@ -122,16 +122,16 @@ Route::middleware('auth')->group(function () {
     });
     
     // Equipos (usuarios autenticados)
-    Route::prefix('teams')->name('teams.')->group(function () {
-        Route::get('/create', [TeamController::class, 'create'])->name('create');
-        Route::post('/', [TeamController::class, 'store'])->name('store');
-        Route::get('/{team}/edit', [TeamController::class, 'edit'])->name('edit');
-        Route::put('/{team}', [TeamController::class, 'update'])->name('update');
-        Route::delete('/{team}', [TeamController::class, 'destroy'])->name('destroy');
-        Route::get('/join/form', [TeamController::class, 'join'])->name('join');
-        Route::post('/join/process', [TeamController::class, 'joinTeam'])->name('join.process');
-        Route::post('/{team}/leave', [TeamController::class, 'leave'])->name('leave');
-    });
+    // Route::prefix('teams')->name('teams.')->group(function () {
+    //     Route::get('/create', [TeamController::class, 'create'])->name('create');
+    //     Route::post('/', [TeamController::class, 'store'])->name('store');
+    //     Route::get('/{team}/edit', [TeamController::class, 'edit'])->name('edit');
+    //     Route::put('/{team}', [TeamController::class, 'update'])->name('update');
+    //     Route::delete('/{team}', [TeamController::class, 'destroy'])->name('destroy');
+    //     Route::get('/join/form', [TeamController::class, 'join'])->name('join');
+    //     Route::post('/join/process', [TeamController::class, 'joinTeam'])->name('join.process');
+    //     Route::post('/{team}/leave', [TeamController::class, 'leave'])->name('leave');
+    // });
     
     // Proyectos
     Route::resource('projects', ProjectController::class);
