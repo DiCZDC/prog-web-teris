@@ -36,7 +36,7 @@
         .logo-icon {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            background: linear-gradient(135deg, #a855f7, #c084fc);
             border-radius: 8px;
         }
 
@@ -185,7 +185,7 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 10px;
             padding: 12px 15px;
-            color: white;
+            color: black;
             font-size: 16px;
             outline: none;
             transition: all 0.3s;
@@ -193,7 +193,7 @@
 
         .form-input:focus, .form-select:focus, .form-textarea:focus {
             background: rgba(255, 255, 255, 0.15);
-            border-color: #ffd700;
+            border-color: #a855f7;
         }
 
         .form-input::placeholder {
@@ -242,7 +242,7 @@
 
         .file-input-label:hover {
             background: rgba(255, 255, 255, 0.15);
-            border-color: #ffd700;
+            border-color: #a855f7;
         }
 
         .file-name {
@@ -293,13 +293,13 @@
         }
 
         .btn-primary {
-            background: rgba(255, 215, 0, 0.3);
-            border: 2px solid #ffd700;
-            color: #ffd700;
+            background: rgba(168, 85, 247, 0.3); /* lila */
+            border: 2px solid #a855f7;
+            color: #a855f7;
         }
 
         .btn-primary:hover {
-            background: rgba(255, 215, 0, 0.5);
+            background: rgba(168, 85, 247, 0.5);
             transform: translateY(-2px);
         }
 
@@ -333,14 +333,21 @@
 <x-app-layout>
     <div class="container">
         <a href="{{ route('teams.index') }}" class="back-link">
-            ← Volver a equipos
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                style="vertical-align: middle; margin-right: 6px; display: inline-block;">
+                <path d="M15 18l-6-6 6-6" 
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Regresar
         </a>
+
 
         <h1>Crear Nuevo Equipo</h1>
 
         <div class="form-card">
             <div class="info-box">
-                <p>📋 <strong>Importante:</strong></p>
+                <p><strong>Importante:</strong></p>
                 <p>• Serás asignado automáticamente como LIDER de equipo</p>
                 <p>• El código del equipo se generará automáticamente</p>
                 <p>• Otros usuarios podrán unirse usando el código</p>
@@ -390,8 +397,16 @@
                                 onchange="displayFileName(this)"
                             >
                             <label for="icono" class="file-input-label">
-                                📁 Seleccionar imagen
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="margin-right: 6px;">
+                                    <path d="M3 5h5l2 2h11v12H3V5z" 
+                                        stroke="currentColor" 
+                                        stroke-width="2" 
+                                        stroke-linecap="round" 
+                                        stroke-linejoin="round"/>
+                                </svg>
+                                Seleccionar imagen
                             </label>
+
                         </div>
                         <div class="file-name" id="file-name"></div>
                         @error('icono')

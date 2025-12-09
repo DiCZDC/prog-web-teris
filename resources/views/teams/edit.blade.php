@@ -12,7 +12,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 50%, #8e24aa 100%);
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
             min-height: 100vh;
             color: white;
         }
@@ -373,190 +373,203 @@
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">
-            <div class="logo-icon"></div>
-            <span>TERIS</span>
-        </div>
 
-        <ul class="nav-menu">
-            <li><a href="{{ route('home') }}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#ffffff" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8z"/></svg>
-                Inicio
-            </a></li>
-            
-            <li class="dropdown">
-                <a href="#">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 2048 2048"><path fill="#ffffff" d="M1850 688q45 25 82 61t62 80t40 93t14 102h-128q0-52-20-99t-55-81t-82-55t-99-21q-53 0-99 20t-81 55t-55 82t-21 99q0 91-41 173t-115 136q65 33 117 81t90 108t57 128t20 142h-128q0-79-30-149t-83-122t-122-82t-149-31q-79 0-149 30t-122 83t-82 122t-31 149H512q0-73 20-141t57-128t89-108t118-82q-73-54-114-136t-42-173q0-52-20-99t-55-81t-82-55t-99-21q-53 0-99 20t-81 55t-55 82t-21 99H0q0-52 14-101t39-93t63-80t82-62q-33-35-51-81t-19-95q0-52 20-99t55-81t81-55t100-21q52 0 99 20t81 55t55 82t21 99q0 49-18 95t-52 81q82 45 134 124q54-80 138-126t182-46q97 0 181 46t139 126q52-79 134-124q-33-35-51-81t-19-95q0-52 20-99t55-81t81-55t100-21q52 0 99 20t81 55t55 82t21 99q0 49-18 95t-52 81M256 512q0 27 10 50t27 40t41 28t50 10q27 0 50-10t40-27t28-41t10-50q0-27-10-50t-27-40t-41-28t-50-10q-27 0-50 10t-40 27t-28 41t-10 50m768 768q52 0 99-20t81-55t55-81t21-100q0-52-20-99t-55-81t-82-55t-99-21q-53 0-99 20t-81 55t-55 82t-21 99q0 53 20 99t55 81t81 55t100 21m512-768q0 27 10 50t27 40t41 28t50 10q27 0 50-10t40-27t28-41t10-50q0-27-10-50t-27-40t-41-28t-50-10q-27 0-50 10t-40 27t-28 41t-10 50"/></svg>
-                    Equipo
-                </a>
-                <div class="dropdown-content">
-                    <a href="{{ route('teams.index') }}">Ver equipos</a>
-                    <a href="{{ route('teams.create') }}">Crear equipo</a>
-                    <a href="{{ route('teams.join') }}">Unir a equipo</a>
-                </div>
-            </li>
-            
-            <li><a href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M14.272 10.445L18 2m-8.684 8.632L5 2m7.762 8.048L8.835 2m5.525 0l-1.04 2.5M6 16a6 6 0 1 0 12 0a6 6 0 0 0-12 0"/><path d="m10.5 15l2-1.5v5"/></g></svg>
-                Concursos
-            </a></li>
-            
-            <li><a href="{{ route('events.index') }}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#ffffff" d="M12 14.154q-.31 0-.54-.23t-.23-.54t.23-.539t.54-.23t.54.23t.23.54t-.23.539t-.54.23m-4 0q-.31 0-.54-.23t-.23-.54t.23-.539t.54-.23t.54.23t.23.54t-.23.539t-.54.23m8 0q-.31 0-.54-.23t-.23-.54t.23-.539t.54-.23t.54.23t.23.54t-.23.539t-.54.23M12 18q-.31 0-.54-.23t-.23-.54t.23-.539t.54-.23t.54.23t.23.54t-.23.54T12 18m-4 0q-.31 0-.54-.23t-.23-.54t.23-.539t.54-.23t.54.23t.23.54t-.23.54T8 18m8 0q-.31 0-.54-.23t-.23-.54t.23-.539t.54-.23t.54.23t.23.54t-.23.54T16 18M5.616 21q-.691 0-1.153-.462T4 19.385V6.615q0-.69.463-1.152T5.616 5h1.769V2.77h1.077V5h7.154V2.77h1V5h1.769q.69 0 1.153.463T20 6.616v12.769q0 .69-.462 1.153T18.384 21zm0-1h12.769q.23 0 .423-.192t.192-.424v-8.768H5v8.769q0 .23.192.423t.423.192"/></svg>
-                Eventos
-            </a></li>
-            
-            <li>
-                <div class="user-info">
-                    <span style="color: rgba(255, 255, 255, 0.9);">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="display: inline; vertical-align: middle;">
-                            <g fill="none" fill-rule="evenodd"><path fill="#ffffff" d="M16 14a5 5 0 0 1 4.995 4.783L21 19v1a2 2 0 0 1-1.85 1.995L19 22H5a2 2 0 0 1-1.995-1.85L3 20v-1a5 5 0 0 1 4.783-4.995L8 14zm0 2H8a3 3 0 0 0-2.995 2.824L5 19v1h14v-1a3 3 0 0 0-2.824-2.995zM12 2a5 5 0 1 1 0 10a5 5 0 0 1 0-10m0 2a3 3 0 1 0 0 6a3 3 0 0 0 0-6"/></g>
-                        </svg>
-                        {{ Auth::user()->name }}
-                    </span>
-                    <form action="{{ route('logout') }}" method="POST" style="display: inline; margin: 0;">
-                        @csrf
-                        <button type="submit" class="logout-btn">Cerrar sesión</button>
-                    </form>
-                </div>
-            </li>
-        </ul>
-    </nav>
-
-    <div class="container">
-        <a href="{{ route('teams.show', $team) }}" class="back-link">
-            ← Volver al equipo
+<div class="container">
+    <a href="{{ route('teams.index') }}" class="back-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                style="vertical-align: middle; margin-right: 6px; display: inline-block;">
+                <path d="M15 18l-6-6 6-6" 
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Regresar
         </a>
 
-        <h1>Editar Equipo</h1>
+    <h1>Editar Equipo</h1>
 
-        <div class="form-card">
-            @if($team->icono)
-                <div class="current-icon">
-                    <img src="{{ asset('storage/' . $team->icono) }}" alt="{{ $team->nombre }}">
-                    <p style="margin-top: 10px; font-size: 14px; color: rgba(255,255,255,0.7);">Icono actual</p>
+    <div class="form-card">
+
+        {{-- ICONO ACTUAL O PLACEHOLDER --}}
+        @if($team->icono)
+            <div class="current-icon">
+                <img src="{{ asset('storage/' . $team->icono) }}" alt="{{ $team->nombre }}">
+                <p style="margin-top: 10px; font-size: 14px; color: rgba(255,255,255,0.7);">Icono actual</p>
+            </div>
+        @else
+            <div class="current-icon">
+                <div class="current-icon-placeholder">
+                    <!-- SVG PERSONA / EQUIPO -->
+                    <svg width="60" height="60" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
+                        <path d="M4 20c0-4 4-6 8-6s8 2 8 6"
+                              stroke="currentColor" stroke-width="2"
+                              stroke-linecap="round"/>
+                    </svg>
                 </div>
-            @else
-                <div class="current-icon">
-                    <div class="current-icon-placeholder">👥</div>
-                    <p style="margin-top: 10px; font-size: 14px; color: rgba(255,255,255,0.7);">Sin icono personalizado</p>
+                <p style="margin-top: 10px; font-size: 14px; color: rgba(255,255,255,0.7);">Sin icono personalizado</p>
+            </div>
+        @endif
+
+
+        <form action="{{ route('teams.update', $team) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+
+            <div class="form-grid">
+
+                {{-- NOMBRE --}}
+                <div class="form-group">
+                    <label class="form-label">
+                        Nombre del Equipo <span class="required">*</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        name="nombre" 
+                        class="form-input" 
+                        placeholder="Ingrese el nombre del equipo"
+                        value="{{ old('nombre', $team->nombre) }}"
+                        required
+                    >
+                    @error('nombre')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
                 </div>
-            @endif
 
-            <form action="{{ route('teams.update', $team) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
+                {{-- CÓDIGO --}}
+                <div class="form-group">
+                    <label class="form-label">Código</label>
+                    <input 
+                        type="text" 
+                        class="form-input" 
+                        value="{{ $team->codigo }}"
+                        disabled
+                    >
+                    <span class="info-text">El código no se puede modificar</span>
+                </div>
 
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">
-                            Nombre del Equipo <span class="required">*</span>
+                {{-- DESCRIPCIÓN --}}
+                <div class="form-group full-width">
+                    <label class="form-label">Descripción</label>
+                    <textarea 
+                        name="descripcion" 
+                        class="form-textarea"
+                        placeholder="Describe tu equipo, objetivos, habilidades requeridas..."
+                    >{{ old('descripcion', $team->descripcion) }}</textarea>
+                    @error('descripcion')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                {{-- SUBIR ICONO --}}
+                <div class="form-group">
+                    <label class="form-label">Cambiar Icono del Equipo</label>
+
+                    <div class="file-input-wrapper">
+                        <input 
+                            type="file" 
+                            name="icono" 
+                            id="icono"
+                            accept="image/*"
+                            onchange="displayFileName(this)"
+                        >
+                        <label for="icono" class="file-input-label">
+                            <!-- ÍCONO DE CARPETA -->
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                style="vertical-align: middle; margin-right: 6px;">
+                                <path d="M3 6h6l2 2h10v10H3V6z"
+                                    stroke="currentColor" stroke-width="2"
+                                    stroke-linejoin="round"/>
+                            </svg>
+                            Seleccionar nueva imagen
                         </label>
-                        <input 
-                            type="text" 
-                            name="nombre" 
-                            class="form-input" 
-                            placeholder="Ingrese el nombre del equipo"
-                            value="{{ old('nombre', $team->nombre) }}"
-                            required
-                        >
-                        @error('nombre')
-                            <span class="error-message">{{ $message }}</span>
-                        @enderror
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Código</label>
-                        <input 
-                            type="text" 
-                            class="form-input" 
-                            value="{{ $team->codigo }}"
-                            disabled
-                        >
-                        <span class="info-text">El código no se puede modificar</span>
-                    </div>
+                    <div class="file-name" id="file-name"></div>
 
-                    <div class="form-group full-width">
-                        <label class="form-label">Descripción</label>
-                        <textarea 
-                            name="descripcion" 
-                            class="form-textarea"
-                            placeholder="Describe tu equipo, objetivos, habilidades requeridas..."
-                        >{{ old('descripcion', $team->descripcion) }}</textarea>
-                        @error('descripcion')
-                            <span class="error-message">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Cambiar Icono del Equipo</label>
-                        <div class="file-input-wrapper">
-                            <input 
-                                type="file" 
-                                name="icono" 
-                                id="icono"
-                                accept="image/*"
-                                onchange="displayFileName(this)"
-                            >
-                            <label for="icono" class="file-input-label">
-                                📁 Seleccionar nueva imagen
-                            </label>
-                        </div>
-                        <div class="file-name" id="file-name"></div>
-                        @error('icono')
-                            <span class="error-message">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Evento</label>
-                        <select name="evento_id" class="form-select">
-                            <option value="">Sin evento asignado</option>
-                            @foreach($eventos as $evento)
-                                <option value="{{ $evento->id }}" 
-                                    {{ old('evento_id', $team->evento_id) == $evento->id ? 'selected' : '' }}>
-                                    {{ $evento->nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('evento_id')
-                            <span class="error-message">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="form-group full-width">
-                        <div class="checkbox-group">
-                            <input 
-                                type="checkbox" 
-                                name="estado" 
-                                id="estado" 
-                                value="1"
-                                {{ old('estado', $team->estado) ? 'checked' : '' }}
-                            >
-                            <label for="estado">Equipo activo</label>
-                        </div>
-                        <span class="info-text">Si desmarcas esta opción, el equipo aparecerá como inactivo</span>
-                    </div>
+                    @error('icono')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
                 </div>
 
-                <div class="action-buttons">
-                    <button type="submit" class="btn btn-primary">💾 Guardar Cambios</button>
-                    <a href="{{ route('teams.show', $team) }}" class="btn btn-secondary">✕ Cancelar</a>
+                {{-- EVENTO --}}
+                <div class="form-group">
+                    <label class="form-label">Evento</label>
+                    <select name="evento_id" class="form-select">
+                        <option value="">Sin evento asignado</option>
+                        @foreach($eventos as $evento)
+                            <option value="{{ $evento->id }}" 
+                                {{ old('evento_id', $team->evento_id) == $evento->id ? 'selected' : '' }}>
+                                {{ $evento->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('evento_id')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
                 </div>
-            </form>
-        </div>
+
+                {{-- ESTADO --}}
+                <div class="form-group full-width">
+                    <div class="checkbox-group">
+                        <input 
+                            type="checkbox" 
+                            name="estado" 
+                            id="estado" 
+                            value="1"
+                            {{ old('estado', $team->estado) ? 'checked' : '' }}
+                        >
+                        <label for="estado">Equipo activo</label>
+                    </div>
+                    <span class="info-text">Si desmarcas esta opción, el equipo aparecerá como inactivo</span>
+                </div>
+            </div>
+
+            {{-- BOTONES --}}
+            <div class="action-buttons">
+
+                {{-- GUARDAR --}}
+                <button type="submit" class="btn btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        style="vertical-align: middle; margin-right: 6px;">
+                        <path d="M5 3h14l2 2v14H3V3h2zm0 4h14M9 3v4m6-4v4"
+                              stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    Guardar Cambios
+                </button>
+
+                {{-- CANCELAR --}}
+                <a href="{{ route('teams.show', $team) }}" class="btn btn-secondary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        style="vertical-align: middle; margin-right: 6px;">
+                        <path d="M6 6l12 12M18 6L6 18"
+                              stroke="currentColor" stroke-width="2"
+                              stroke-linecap="round"/>
+                    </svg>
+                    Cancelar
+                </a>
+
+            </div>
+        </form>
     </div>
+</div>
 
-    <script>
-        function displayFileName(input) {
-            const fileNameDisplay = document.getElementById('file-name');
-            if (input.files && input.files[0]) {
-                fileNameDisplay.textContent = '📄 ' + input.files[0].name;
-            } else {
-                fileNameDisplay.textContent = '';
-            }
+<script>
+    function displayFileName(input) {
+        const fileNameDisplay = document.getElementById('file-name');
+        if (input.files && input.files[0]) {
+            fileNameDisplay.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    style="vertical-align: middle; margin-right: 6px;">
+                    <path d="M4 4h14v16H4z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M4 8h14" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                ${input.files[0].name}
+            `;
+        } else {
+            fileNameDisplay.textContent = '';
         }
-    </script>
+    }
+</script>
+
 </body>
 </x-app-layout>
