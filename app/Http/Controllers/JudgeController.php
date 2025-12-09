@@ -346,17 +346,46 @@ class JudgeController extends Controller
     public function cambiarPassword(Request $request)
     {
         $user = Auth::user();
-        
+
         $validated = $request->validate([
             'current_password' => 'required|current_password',
             'password' => 'required|min:8|confirmed',
         ]);
-        
+
         $user->update([
             'password' => bcrypt($validated['password']),
         ]);
-        
+
         return redirect()->route('judge.perfil')
             ->with('success', 'Contraseña cambiada correctamente');
+    }
+
+    /**
+     * API: Buscar jueces por nombre o email
+     * Para usar en la asignación de jueces a eventos
+     */
+    public function searchJudges(Request $request)
+    {
+        $query = $request->input('q', '');
+
+        if (strlen($query) < 2) {
+            return response()->json([
+                'judges' => []
+            ]);
+        }
+
+        // Buscar usuarios con rol de juez que coincidan con el criterio
+        $judges = User::role('juez')
+            ->where(function($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('email', 'like', "%{$query}%");
+            })
+            ->select('id', 'name', 'email')
+            ->limit(10)
+            ->get();
+
+        return response()->json([
+            'judges' => $judges
+        ]);
     }
 }
