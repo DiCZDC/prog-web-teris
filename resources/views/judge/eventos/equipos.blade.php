@@ -36,7 +36,7 @@
                     <i class="fas fa-calendar-alt mr-1"></i> {{ $evento->inicio_evento->format('d/m/Y') }} - {{ $evento->fin_evento->format('d/m/Y') }}
                 </div>
                 <div class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                    <i class="fas fa-users mr-1"></i> {{ $eventos->count() }} equipos
+                    <i class="fas fa-users mr-1"></i> {{ $equipos->count() }} equipos
                 </div>
                 <div class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
                     <i class="fas fa-map-marker-alt mr-1"></i> {{ $evento->modalidad }}

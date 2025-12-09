@@ -8,23 +8,20 @@ use App\Http\Controllers\{
     ProjectController,
     TeamController,
     AdminController,
-    JudgeController,
-    MailController,
+    JudgeController
 };
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
-| RUTAS PÚBLICAS
+| RUTAS PÚBLICAS (Sin autenticación)
 |--------------------------------------------------------------------------
 */
 
-// Página principal - Lista de eventos
+// Home - Lista de eventos públicos
 Route::get('/', [EventController::class, 'index'])->name('home');
 
-// Eventos públicos
+// Eventos públicos (solo lectura)
 Route::prefix('events')->name('events.')->group(function () {
     Route::get('/', [EventController::class, 'index'])->name('index');
     Route::get('/search', [EventController::class, 'search'])->name('search');
@@ -37,7 +34,7 @@ Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
 
 /*
 |--------------------------------------------------------------------------
-| RUTAS DE AUTENTICACIÓN
+| AUTENTICACIÓN
 |--------------------------------------------------------------------------
 */
 
@@ -45,9 +42,9 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
-    
 });
 
+Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
 // Login POST (con redirección por rol)
 Route::post('/login', [AuthController::class, 'login'])->name('login.post')->middleware('guest');
 
@@ -101,64 +98,60 @@ Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show')
 // Ruta de logout (requiere estar autenticado)
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
-// Reset password (placeholder)
 Route::get('/password/reset', function () {
     return redirect()->route('login')->with('error', 'Función en desarrollo');
 })->name('password.request');
 
 /*
 |--------------------------------------------------------------------------
-| RUTAS DE USUARIOS AUTENTICADOS
+| RUTAS AUTENTICADAS (Usuarios normales)
 |--------------------------------------------------------------------------
 */
 
 Route::middleware('auth')->group(function () {
     
-    // ==================== PERFIL ====================
+    // Perfil
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'show'])->name('show');
         Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
         Route::patch('/', [ProfileController::class, 'update'])->name('update');
         Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
-        
-        // Cambiar contraseña
         Route::get('/password', [ProfileController::class, 'editPassword'])->name('edit-password');
         Route::put('/password', [ProfileController::class, 'updatePassword'])->name('password.update');
     });
     
-    // ==================== EQUIPOS ====================
+    // Equipos (usuarios autenticados)
     Route::prefix('teams')->name('teams.')->group(function () {
         Route::get('/create', [TeamController::class, 'create'])->name('create');
         Route::post('/', [TeamController::class, 'store'])->name('store');
         Route::get('/{team}/edit', [TeamController::class, 'edit'])->name('edit');
         Route::put('/{team}', [TeamController::class, 'update'])->name('update');
         Route::delete('/{team}', [TeamController::class, 'destroy'])->name('destroy');
-        
-        // Unirse a equipos
         Route::get('/join/form', [TeamController::class, 'join'])->name('join');
         Route::post('/join/process', [TeamController::class, 'joinTeam'])->name('join.process');
         Route::post('/{team}/leave', [TeamController::class, 'leave'])->name('leave');
     });
     
-    // ==================== PROYECTOS ====================
+    // Proyectos
     Route::resource('projects', ProjectController::class);
 });
 
 /*
 |--------------------------------------------------------------------------
-| RUTAS DE ADMINISTRADOR
+| ADMINISTRADOR
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', \App\Http\Middleware\CheckAdmin::class])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\CheckAdmin::class])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
     
     // Dashboard
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-    
-    // Estadísticas
     Route::get('/estadisticas', [AdminController::class, 'estadisticas'])->name('estadisticas');
     
-    // ==================== GESTIÓN DE EVENTOS ====================
+    // Gestión de Eventos (ADMIN)
     Route::prefix('events')->name('events.')->group(function () {
         Route::get('/create', [EventController::class, 'create'])->name('create');
         Route::post('/', [EventController::class, 'store'])->name('store');
@@ -172,21 +165,26 @@ Route::middleware(['auth', \App\Http\Middleware\CheckAdmin::class])->prefix('adm
         Route::delete('/{id}/jueces/{juezId}', [AdminController::class, 'removerJuez'])->name('remover-juez');
     });
     
-    // ==================== GESTIÓN DE JUECES ====================
+    // Gestión de Jueces
     Route::prefix('jueces')->name('jueces.')->group(function () {
         Route::get('/', [AdminController::class, 'jueces'])->name('index');
     });
     
-    // ==================== GESTIÓN DE USUARIOS ====================
+    // Gestión de Usuarios
     Route::prefix('usuarios')->name('usuarios.')->group(function () {
         Route::get('/', [AdminController::class, 'usuarios'])->name('index');
         Route::get('/{id}', [AdminController::class, 'mostrarUsuario'])->name('show');
-        Route::put('/{id}/rol', [AdminController::class, 'cambiarRol'])->name('cambiar-rol');
+        
+        // ELIMINA ESTA LÍNEA COMENTADA Y DEJA SOLO UNA:
+        Route::post('/cambiar-rol', [AdminController::class, 'cambiarRol'])->name('cambiar-rol');
+        // O si prefieres PUT en lugar de POST:
+        // Route::put('/cambiar-rol', [AdminController::class, 'cambiarRol'])->name('cambiar-rol');
+        
         Route::delete('/{id}/banear', [AdminController::class, 'banearUsuario'])->name('banear');
         Route::post('/{id}/restaurar', [AdminController::class, 'restaurarUsuario'])->name('restaurar');
     });
     
-    // ==================== GESTIÓN DE EQUIPOS ====================
+    // Gestión de Equipos
     Route::prefix('equipos')->name('equipos.')->group(function () {
         Route::get('/', [AdminController::class, 'equipos'])->name('index');
         Route::get('/{id}', [AdminController::class, 'mostrarEquipo'])->name('show');
@@ -194,25 +192,26 @@ Route::middleware(['auth', \App\Http\Middleware\CheckAdmin::class])->prefix('adm
         Route::put('/{id}/desbanear', [AdminController::class, 'desbanearEquipo'])->name('desbanear');
     });
     
-    // Resource de usuarios
+    // Users resource
     Route::resource('users', UserController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
 });
 
 /*
 |--------------------------------------------------------------------------
-| RUTAS DE JUEZ
+| JUEZ
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', \App\Http\Middleware\CheckJudge::class])->prefix('judge')->name('judge.')->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\CheckJudge::class])
+    ->prefix('judge')
+    ->name('judge.')
+    ->group(function () {
     
     // Dashboard
     Route::get('/dashboard', [JudgeController::class, 'dashboard'])->name('dashboard');
-    
-    // Estadísticas
     Route::get('/estadisticas', [JudgeController::class, 'estadisticas'])->name('estadisticas');
     
-    // Perfil
+    // Perfil del juez
     Route::prefix('perfil')->name('perfil.')->group(function () {
         Route::get('/', [JudgeController::class, 'perfil'])->name('index');
         Route::put('/', [JudgeController::class, 'actualizarPerfil'])->name('update');
@@ -226,7 +225,7 @@ Route::middleware(['auth', \App\Http\Middleware\CheckJudge::class])->prefix('jud
         Route::get('/{evento}/equipo/{equipo}', [JudgeController::class, 'verEquipo'])->name('equipo.show');
     });
     
-    // Proyectos (evaluar)
+    // Evaluar proyectos
     Route::prefix('proyectos')->name('proyectos.')->group(function () {
         Route::get('/{proyecto}/evaluar', [JudgeController::class, 'evaluarProyecto'])->name('evaluar');
         Route::post('/{proyecto}/calificar', [JudgeController::class, 'calificarProyecto'])->name('calificar');
@@ -241,18 +240,16 @@ Route::middleware(['auth', \App\Http\Middleware\CheckJudge::class])->prefix('jud
 
 /*
 |--------------------------------------------------------------------------
-| RUTAS DE PRUEBA (DESARROLLO)
+| RUTAS DE PRUEBA (Solo en desarrollo)
 |--------------------------------------------------------------------------
 */
 
 if (app()->environment('local')) {
     Route::get('/test-admin', function () {
-        $user = Auth::user();
-        return 'Eres admin! ✅ - Usuario: ' . $user->name;
+        return 'Eres admin! ✅';
     })->middleware(['auth', \App\Http\Middleware\CheckAdmin::class]);
 
     Route::get('/test-juez', function () {
-        $user = Auth::user();
-        return 'Eres juez! ✅ - Usuario: ' . $user->name;
+        return 'Eres juez! ✅';
     })->middleware(['auth', \App\Http\Middleware\CheckJudge::class]);
 }
