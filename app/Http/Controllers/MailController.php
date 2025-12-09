@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use App\Mail\createdAccount;
 use Illuminate\Http\Request;
 use App\Mail\pdfSent;
+use App\Mail\teamInvitation;
+
 class MailController extends Controller
 {
     private $mailsender ="noreply_teris@test-ywj2lpnxppqg7oqz.mlsender.net";
@@ -40,6 +42,11 @@ class MailController extends Controller
     function sendPdfEmail($team, $user, $event, $date){
         \Mail::to($user->email)
             ->send(new pdfSent($team, $user, $this->mailsender, $event, $date));
+        return "E-mail Enviado";
+    }
+    function sendTeamInvitationEmail($user, $team){
+        \Mail::to($user->email)
+            ->send(new teamInvitation($user, $team, $this->mailsender));
         return "E-mail Enviado";
     }
 }

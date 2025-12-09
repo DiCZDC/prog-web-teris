@@ -28,7 +28,15 @@ class Team extends Model
         'updated_at' => 'datetime',
     ];
 
-    // Relaciones
+    // Relaciones con Users (tabla pivote)
+    public function miembros()
+    {
+        return $this->belongsToMany(User::class, 'team_user')
+            ->withPivot('rol')
+            ->withTimestamps();
+    }
+
+    // Relaciones individuales (mantener compatibilidad)
     public function evento()
     {
         return $this->belongsTo(Event::class, 'evento_id');
@@ -53,8 +61,18 @@ class Team extends Model
     {
         return $this->belongsTo(User::class, 'backprog_id');
     }
+    // Relación con invitaciones
+    public function invitaciones()
+    {
+        return $this->hasMany(TeamInvitation::class);
+    }
 
-    // Método para verificar si un usuario es miembro del equipo
+    public function invitacionesPendientes()
+    {
+        return $this->hasMany(TeamInvitation::class)->where('status', 'pendiente');
+    }
+
+    // Métodos auxiliares
     public function esMiembro($userId)
     {
         return $this->lider_id == $userId || 
@@ -62,19 +80,29 @@ class Team extends Model
                $this->frontprog_id == $userId || 
                $this->backprog_id == $userId;
     }
-
-    // Método para obtener todos los miembros del equipo
-    public function miembros()
+    public function contarMiembros()
     {
-        $miembros = [];
-        if ($this->lider) $miembros['GERENTE'] = $this->lider;
-        if ($this->disenador) $miembros['DISEÑADOR'] = $this->disenador;
-        if ($this->frontprog) $miembros['PROGRAMADOR FRONT'] = $this->frontprog;
-        if ($this->backprog) $miembros['PROGRAMADOR BACK'] = $this->backprog;
-        return $miembros;
+        $count = 0;
+        if ($this->lider_id) $count++;
+        if ($this->disenador_id) $count++;
+        if ($this->frontprog_id) $count++;
+        if ($this->backprog_id) $count++;
+        return $count;
+    }
+    public function esLider($userId)
+    {
+        return $this->lider_id == $userId;
     }
 
-    // Verificar posiciones disponibles
+    public function getRolDelUsuario($userId)
+    {
+        if ($this->lider_id == $userId) return 'LIDER';
+        if ($this->disenador_id == $userId) return 'DISEÑADOR';
+        if ($this->frontprog_id == $userId) return 'PROGRAMADOR FRONT';
+        if ($this->backprog_id == $userId) return 'PROGRAMADOR BACK';
+        return null;
+    }
+
     public function posicionesDisponibles()
     {
         $disponibles = [];
@@ -84,12 +112,36 @@ class Team extends Model
         return $disponibles;
     }
 
-    // Verificar si el equipo está completo
     public function estaCompleto()
     {
         return $this->lider_id && 
                $this->disenador_id && 
                $this->frontprog_id && 
                $this->backprog_id;
+    }
+
+    public function getTodosMiembros()
+    {
+        $miembros = [];
+        if ($this->lider) $miembros['LIDER'] = $this->lider;
+        if ($this->disenador) $miembros['DISEÑADOR'] = $this->disenador;
+        if ($this->frontprog) $miembros['PROGRAMADOR FRONT'] = $this->frontprog;
+        if ($this->backprog) $miembros['PROGRAMADOR BACK'] = $this->backprog;
+        return $miembros;
+    }
+        /**
+     * Proyecto del equipo
+     */
+    public function proyecto()
+    {
+        return $this->hasOne(Project::class, 'team_id');
+    }
+
+    /**
+     * Verificar si tiene proyecto
+     */
+    public function tieneProyecto()
+    {
+        return $this->proyecto()->exists();
     }
 }

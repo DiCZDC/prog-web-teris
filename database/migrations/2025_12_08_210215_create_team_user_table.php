@@ -11,15 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('event_judge', function (Blueprint $table) {
+        Schema::create('team_user', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
+            $table->foreignId('team_id')->constrained('teams')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->enum('rol', ['LIDER', 'DISEÑADOR', 'PROGRAMADOR FRONT', 'PROGRAMADOR BACK']);
             $table->timestamps();
             
-            $table->unique(['event_id', 'user_id']);
-            $table->index('event_id');
+            // Un usuario puede tener un rol por equipo
+            $table->unique(['team_id', 'user_id']);
+            
+            // Índices
             $table->index('user_id');
+            $table->index('team_id');
         });
     }
 
@@ -28,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('events_judge');
+        Schema::dropIfExists('team_user');
     }
 };
