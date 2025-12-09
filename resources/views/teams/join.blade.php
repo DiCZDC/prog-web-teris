@@ -300,7 +300,7 @@
         </div>
 
         <div class="form-card">
-            <form action="{{ route('teams.join.process') }}" method="POST">
+            <form action="{{ route('teams.join.send') }}" method="POST">
                 @csrf
 
                 <div class="form-group">
@@ -369,7 +369,7 @@
                 </div>
 
                 <div class="action-buttons">
-                    <button type="submit" class="btn btn-primary">🚀 Unirse al Equipo</button>
+                    <button type="submit" class="btn btn-primary">🚀 Enviar solicitud</button>
                     <a href="{{ route('teams.index') }}" class="btn btn-secondary">✕ Cancelar</a>
                 </div>
             </form>
