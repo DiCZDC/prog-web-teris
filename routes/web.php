@@ -50,14 +50,14 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post')->mid
 
 // Logout
 
-// Route::get('/test-email', function () {
-//     $user = \App\Models\User::find(54);
-//     $userDestination = \App\Models\User::find(55);
-//     $team = \App\Models\Team::first();
-//     $answer = 'aceptada';
-//     $mailController = new \App\Http\Controllers\MailController();
-//     return $mailController->sendTeamAnswerEmail($user, $userDestination, $team, $answer);
-// });
+Route::get('/test-email', function () {
+    $user = \App\Models\User::find(54);
+    $userDestination = \App\Models\User::find(55);
+    $team = \App\Models\Team::first();
+    $answer = 'aceptada';
+    $mailController = new \App\Http\Controllers\MailController();
+    return $mailController->sendTeamAnswerEmail($user, $userDestination, $team, $answer);
+});
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/events/create', [EventController::class, 'create'])->name('events.create');

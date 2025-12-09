@@ -7,6 +7,7 @@ use App\Mail\{
     pdfSent,
     teamInvitation,
     teamAnswer,
+    solitudeTeam,
 };
 
 class MailController extends Controller
@@ -58,8 +59,13 @@ class MailController extends Controller
         return "E-mail Enviado";
     }
     function sendApplicationTeamEmailResponse($user, $team, $response){
-        \Mail::to($team->owner->email)
+        \Mail::to($team->lider->email)
             ->send(new applicationTeam($user, $team, $response, $this->mailsender));
+        return "E-mail Enviado";
+    }
+    function sendSolitudeTeamEmail($team, $userRequest, $userDestination){
+        \Mail::to($userDestination->email)
+            ->send(new solitudeTeam($team, $userRequest, $userDestination, $this->mailsender));
         return "E-mail Enviado";
     }
 }

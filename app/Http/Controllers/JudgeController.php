@@ -9,6 +9,7 @@ use App\Models\Evaluation;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class JudgeController extends Controller
 {
@@ -21,53 +22,57 @@ class JudgeController extends Controller
         
         // Eventos donde es juez (activos y próximos)
         $eventos = $user->eventosComoJuez()
-            ->withCount(['teams', 'teams as teams_con_proyecto' => function($query) {
-                $query->whereHas('proyecto');
-            }])
-            ->where('fin_evento', '>=', now()->subDays(7)) // Eventos recientes o futuros
+            ->withCount([
+                'teams',
+                'teams as teams_con_proyecto' => function($query) {
+                    $query->whereHas('proyecto');
+                }
+            ])
+            ->where('fin_evento', '>=', now()->subDays(7))
             ->orderBy('inicio_evento', 'desc')
             ->take(6)
             ->get();
         
-        // Equipos pendientes por calificar
+        // Equipos pendientes por calificar (top 5 más urgentes)
         $pendientesPorCalificar = Team::whereHas('evento', function($query) use ($user) {
                 $query->whereHas('jueces', function($q) use ($user) {
                     $q->where('users.id', $user->id);
-                });
+                })
+                ->where('fin_evento', '>=', now());
             })
             ->whereHas('proyecto')
-            ->with(['evento', 'lider', 'proyecto' => function($query) use ($user) {
-                $query->with(['evaluaciones' => function($q) use ($user) {
-                    $q->where('judge_id', $user->id);
-                }]);
-            }])
-            ->get()
-            ->filter(function($equipo) {
-                // Solo equipos con proyecto
-                return $equipo->proyecto !== null;
+            ->whereDoesntHave('proyecto.evaluaciones', function($query) use ($user) {
+                $query->where('judge_id', $user->id);
             })
-            ->filter(function($equipo) {
-                // Que no haya sido evaluado por este juez
-                return $equipo->proyecto->evaluaciones->isEmpty();
-            })
-            ->take(5);
+            ->with(['evento', 'lider', 'proyecto'])
+            ->orderBy('created_at', 'asc')
+            ->take(5)
+            ->get();
         
         // Estadísticas del juez
+        $totalEvaluaciones = Evaluation::where('judge_id', $user->id)->count();
+        $promedioGeneral = Evaluation::where('judge_id', $user->id)->avg('total_score') ?? 0;
+        
         $stats = [
             'total_eventos' => $user->eventosComoJuez()->count(),
-            'total_evaluaciones' => Evaluation::where('judge_id', $user->id)->count(),
+            'total_evaluaciones' => $totalEvaluaciones,
             'pendientes_por_calificar' => $pendientesPorCalificar->count(),
-            'promedio_calificaciones' => Evaluation::where('judge_id', $user->id)->avg('total_score') ?? 0,
+            'promedio_calificaciones' => round($promedioGeneral, 2),
         ];
         
         // Últimas evaluaciones realizadas
         $ultimasEvaluaciones = Evaluation::where('judge_id', $user->id)
-            ->with(['project.team.evento'])
+            ->with(['project.team.evento', 'project.team.lider'])
             ->latest()
             ->take(5)
             ->get();
         
-        return view('judge.dashboard', compact('eventos', 'pendientesPorCalificar', 'stats', 'ultimasEvaluaciones'));
+        return view('judge.dashboard', compact(
+            'eventos', 
+            'pendientesPorCalificar', 
+            'stats', 
+            'ultimasEvaluaciones'
+        ));
     }
     
     /**
@@ -82,7 +87,17 @@ class JudgeController extends Controller
                 $query->whereHas('proyecto');
             }])
             ->orderBy('inicio_evento', 'desc')
-            ->paginate(12);
+            ->paginate(12)
+            ->through(function($evento) use ($user) {
+                // Agregar estadísticas de evaluación para cada evento
+                $evento->mis_evaluaciones = Evaluation::where('judge_id', $user->id)
+                    ->whereHas('project.team', function($query) use ($evento) {
+                        $query->where('evento_id', $evento->id);
+                    })
+                    ->count();
+                
+                return $evento;
+            });
         
         return view('judge.eventos.index', compact('eventos'));
     }
@@ -100,15 +115,37 @@ class JudgeController extends Controller
             abort(403, 'No tienes permisos para ver los equipos de este evento');
         }
         
+        // Obtener equipos con sus proyectos y evaluaciones del juez actual
         $equipos = Team::where('evento_id', $eventoId)
-            ->with(['lider', 'proyecto' => function($query) use ($user) {
-                $query->with(['evaluaciones' => function($q) use ($user) {
-                    $q->where('judge_id', $user->id);
-                }]);
-            }])
+            ->with([
+                'lider', 
+                'proyecto' => function($query) use ($user) {
+                    $query->with(['evaluaciones' => function($q) use ($user) {
+                        $q->where('judge_id', $user->id);
+                    }]);
+                }
+            ])
+            ->orderBy('nombre')
             ->paginate(20);
         
-        return view('judge.eventos.equipos', compact('evento', 'equipos'));
+        // Estadísticas del evento para este juez
+        $estadisticasEvento = [
+            'total_equipos' => Team::where('evento_id', $eventoId)->count(),
+            'con_proyecto' => Team::where('evento_id', $eventoId)->whereHas('proyecto')->count(),
+            'evaluados_por_mi' => Evaluation::where('judge_id', $user->id)
+                ->whereHas('project.team', function($query) use ($eventoId) {
+                    $query->where('evento_id', $eventoId);
+                })
+                ->count(),
+            'pendientes' => Team::where('evento_id', $eventoId)
+                ->whereHas('proyecto')
+                ->whereDoesntHave('proyecto.evaluaciones', function($query) use ($user) {
+                    $query->where('judge_id', $user->id);
+                })
+                ->count(),
+        ];
+        
+        return view('judge.eventos.equipos', compact('evento', 'equipos', 'estadisticasEvento'));
     }
     
     /**
@@ -130,9 +167,12 @@ class JudgeController extends Controller
             'backprog', 
             'evento',
             'proyecto' => function($query) use ($user) {
-                $query->with(['evaluaciones' => function($q) use ($user) {
-                    $q->where('judge_id', $user->id);
-                }]);
+                $query->with([
+                    'evaluaciones' => function($q) use ($user) {
+                        $q->where('judge_id', $user->id);
+                    },
+                    'evaluaciones as todas_evaluaciones'
+                ]);
             }
         ])->findOrFail($equipoId);
         
@@ -141,7 +181,18 @@ class JudgeController extends Controller
             abort(404, 'El equipo no pertenece a este evento');
         }
         
-        return view('judge.eventos.equipo', compact('equipo'));
+        // Obtener estadísticas del proyecto si existe
+        $estadisticasProyecto = null;
+        if ($equipo->proyecto) {
+            $estadisticasProyecto = [
+                'total_evaluaciones' => $equipo->proyecto->evaluaciones->count(),
+                'promedio_general' => $equipo->proyecto->evaluaciones->avg('total_score') ?? 0,
+                'evaluado_por_mi' => $equipo->proyecto->evaluaciones->where('judge_id', $user->id)->isNotEmpty(),
+                'mi_calificacion' => $equipo->proyecto->evaluaciones->where('judge_id', $user->id)->first()?->total_score ?? null,
+            ];
+        }
+        
+        return view('judge.eventos.equipo', compact('equipo', 'estadisticasProyecto'));
     }
     
     /**
@@ -150,7 +201,7 @@ class JudgeController extends Controller
     public function evaluarProyecto($proyectoId)
     {
         $user = Auth::user();
-        $proyecto = Project::with(['team', 'team.evento'])->findOrFail($proyectoId);
+        $proyecto = Project::with(['team.evento', 'team.lider'])->findOrFail($proyectoId);
         
         // Verificar que el juez puede evaluar este proyecto
         if (!$user->esJuezDe($proyecto->team->evento_id) && !$user->hasRole('admin')) {
@@ -162,7 +213,13 @@ class JudgeController extends Controller
             ->where('project_id', $proyectoId)
             ->first();
         
-        return view('judge.proyectos.evaluar', compact('proyecto', 'evaluacionExistente'));
+        // Obtener otras evaluaciones del proyecto (para referencia)
+        $otrasEvaluaciones = Evaluation::where('project_id', $proyectoId)
+            ->where('judge_id', '!=', $user->id)
+            ->with('judge:id,name')
+            ->get();
+        
+        return view('judge.proyectos.evaluar', compact('proyecto', 'evaluacionExistente', 'otrasEvaluaciones'));
     }
     
     /**
@@ -171,7 +228,7 @@ class JudgeController extends Controller
     public function calificarProyecto(Request $request, $proyectoId)
     {
         $user = Auth::user();
-        $proyecto = Project::findOrFail($proyectoId);
+        $proyecto = Project::with('team.evento')->findOrFail($proyectoId);
         
         // Verificar permisos
         if (!$user->esJuezDe($proyecto->team->evento_id) && !$user->hasRole('admin')) {
@@ -184,6 +241,14 @@ class JudgeController extends Controller
             'score_diseno' => 'required|integer|min:1|max:10',
             'score_presentacion' => 'required|integer|min:1|max:10',
             'comments' => 'nullable|string|max:1000',
+        ], [
+            'score_innovacion.required' => 'La calificación de innovación es obligatoria',
+            'score_innovacion.min' => 'La calificación mínima es 1',
+            'score_innovacion.max' => 'La calificación máxima es 10',
+            'score_funcionalidad.required' => 'La calificación de funcionalidad es obligatoria',
+            'score_diseno.required' => 'La calificación de diseño es obligatoria',
+            'score_presentacion.required' => 'La calificación de presentación es obligatoria',
+            'comments.max' => 'Los comentarios no pueden exceder 1000 caracteres',
         ]);
         
         // Calcular puntaje total (promedio de las 4 categorías)
@@ -195,7 +260,7 @@ class JudgeController extends Controller
         ) / 4;
         
         // Crear o actualizar evaluación
-        Evaluation::updateOrCreate(
+        $evaluacion = Evaluation::updateOrCreate(
             [
                 'judge_id' => $user->id,
                 'project_id' => $proyectoId,
@@ -210,30 +275,53 @@ class JudgeController extends Controller
             ]
         );
         
+        $mensaje = $evaluacion->wasRecentlyCreated 
+            ? 'Proyecto calificado exitosamente' 
+            : 'Evaluación actualizada correctamente';
+        
         return redirect()->route('judge.eventos.equipos', $proyecto->team->evento_id)
-            ->with('success', 'Proyecto calificado exitosamente');
+            ->with('success', $mensaje);
     }
     
     /**
      * Historial de evaluaciones del juez
      */
-    public function historialEvaluaciones()
+    public function historialEvaluaciones(Request $request)
     {
         $user = Auth::user();
         
-        $evaluaciones = Evaluation::where('judge_id', $user->id)
-            ->with(['project.team.evento'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
+        $query = Evaluation::where('judge_id', $user->id)
+            ->with(['project.team.evento', 'project.team.lider']);
+        
+        // Filtros opcionales
+        if ($request->filled('evento_id')) {
+            $query->whereHas('project.team', function($q) use ($request) {
+                $q->where('evento_id', $request->evento_id);
+            });
+        }
+        
+        if ($request->filled('score_range')) {
+            $range = explode('-', $request->score_range);
+            if (count($range) == 2) {
+                $query->whereBetween('total_score', [(float)$range[0], (float)$range[1]]);
+            }
+        }
+        
+        $evaluaciones = $query->orderBy('created_at', 'desc')->paginate(20);
         
         $estadisticas = [
-            'total_evaluaciones' => $evaluaciones->total(),
+            'total_evaluaciones' => Evaluation::where('judge_id', $user->id)->count(),
             'promedio_general' => Evaluation::where('judge_id', $user->id)->avg('total_score') ?? 0,
             'mejor_calificacion' => Evaluation::where('judge_id', $user->id)->max('total_score') ?? 0,
             'peor_calificacion' => Evaluation::where('judge_id', $user->id)->min('total_score') ?? 0,
         ];
         
-        return view('judge.historial.index', compact('evaluaciones', 'estadisticas'));
+        // Obtener lista de eventos para el filtro
+        $eventosConEvaluaciones = Event::whereHas('teams.proyecto.evaluaciones', function($query) use ($user) {
+            $query->where('judge_id', $user->id);
+        })->pluck('nombre', 'id');
+        
+        return view('judge.historial.index', compact('evaluaciones', 'estadisticas', 'eventosConEvaluaciones'));
     }
     
     /**
@@ -244,10 +332,25 @@ class JudgeController extends Controller
         $user = Auth::user();
         
         $evaluacion = Evaluation::where('judge_id', $user->id)
-            ->with(['project.team.evento', 'project.team.lider'])
+            ->with([
+                'project.team.evento', 
+                'project.team.lider',
+                'project.team.miembros',
+                'judge'
+            ])
             ->findOrFail($evaluacionId);
         
-        return view('judge.historial.show', compact('evaluacion'));
+        // Obtener otras evaluaciones del mismo proyecto (para comparación)
+        $otrasEvaluaciones = Evaluation::where('project_id', $evaluacion->project_id)
+            ->where('judge_id', '!=', $user->id)
+            ->with('judge:id,name')
+            ->get();
+        
+        // Calcular promedio del proyecto
+        $promedioProyecto = Evaluation::where('project_id', $evaluacion->project_id)
+            ->avg('total_score') ?? 0;
+        
+        return view('judge.historial.show', compact('evaluacion', 'otrasEvaluaciones', 'promedioProyecto'));
     }
     
     /**
@@ -265,6 +368,10 @@ class JudgeController extends Controller
                 ->count('project_id'),
             'total_evaluaciones' => Evaluation::where('judge_id', $user->id)->count(),
             'promedio_general' => Evaluation::where('judge_id', $user->id)->avg('total_score') ?? 0,
+            'promedio_innovacion' => Evaluation::where('judge_id', $user->id)->avg('score_innovacion') ?? 0,
+            'promedio_funcionalidad' => Evaluation::where('judge_id', $user->id)->avg('score_funcionalidad') ?? 0,
+            'promedio_diseno' => Evaluation::where('judge_id', $user->id)->avg('score_diseno') ?? 0,
+            'promedio_presentacion' => Evaluation::where('judge_id', $user->id)->avg('score_presentacion') ?? 0,
         ];
         
         // Distribución de calificaciones
@@ -278,8 +385,10 @@ class JudgeController extends Controller
         // Eventos con más evaluaciones
         $eventosActivos = $user->eventosComoJuez()
             ->where('fin_evento', '>=', now()->subDays(30))
-            ->withCount(['evaluaciones' => function($query) use ($user) {
-                $query->where('judge_id', $user->id);
+            ->withCount(['teams as evaluaciones_count' => function($query) use ($user) {
+                $query->whereHas('proyecto.evaluaciones', function($q) use ($user) {
+                    $q->where('judge_id', $user->id);
+                });
             }])
             ->orderBy('evaluaciones_count', 'desc')
             ->take(5)
@@ -292,100 +401,24 @@ class JudgeController extends Controller
             ->take(10)
             ->get();
         
-        return view('judge.estadisticas.index', compact('stats', 'distribucionCalificaciones', 'eventosActivos', 'ultimasEvaluaciones'));
-    }
-    
-    /**
-     * Ver perfil del juez
-     */
-    public function perfil()
-    {
-        $user = Auth::user();
-        
-        $estadisticas = [
-            'total_eventos' => $user->eventosComoJuez()->count(),
-            'total_evaluaciones' => Evaluation::where('judge_id', $user->id)->count(),
-            'fecha_registro' => $user->created_at->format('d/m/Y'),
-            'ultima_evaluacion' => Evaluation::where('judge_id', $user->id)
-                ->latest()
-                ->first()
-                ->created_at->diffForHumans() ?? 'Nunca',
-        ];
-        
-        return view('judge.perfil.index', compact('user', 'estadisticas'));
-    }
-    
-    /**
-     * Actualizar perfil del juez
-     */
-    public function actualizarPerfil(Request $request)
-    {
-        $user = Auth::user();
-        
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'biografia' => 'nullable|string|max:500',
-            'especialidad' => 'nullable|string|max:255',
-        ]);
-        
-        $user->update([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'biografia' => $validated['biografia'] ?? null,
-            'especialidad' => $validated['especialidad'] ?? null,
-        ]);
-        
-        return redirect()->route('judge.perfil')
-            ->with('success', 'Perfil actualizado correctamente');
-    }
-    
-    /**
-     * Cambiar contraseña del juez
-     */
-    public function cambiarPassword(Request $request)
-    {
-        $user = Auth::user();
-
-        $validated = $request->validate([
-            'current_password' => 'required|current_password',
-            'password' => 'required|min:8|confirmed',
-        ]);
-
-        $user->update([
-            'password' => bcrypt($validated['password']),
-        ]);
-
-        return redirect()->route('judge.perfil')
-            ->with('success', 'Contraseña cambiada correctamente');
-    }
-
-    /**
-     * API: Buscar jueces por nombre o email
-     * Para usar en la asignación de jueces a eventos
-     */
-    public function searchJudges(Request $request)
-    {
-        $query = $request->input('q', '');
-
-        if (strlen($query) < 2) {
-            return response()->json([
-                'judges' => []
-            ]);
-        }
-
-        // Buscar usuarios con rol de juez que coincidan con el criterio
-        $judges = User::role('juez')
-            ->where(function($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('email', 'like', "%{$query}%");
-            })
-            ->select('id', 'name', 'email')
-            ->limit(10)
+        // Actividad por mes (últimos 6 meses)
+        $actividadMensual = Evaluation::where('judge_id', $user->id)
+            ->where('created_at', '>=', now()->subMonths(6))
+            ->select(
+                DB::raw('DATE_FORMAT(created_at, "%Y-%m") as mes'),
+                DB::raw('COUNT(*) as total'),
+                DB::raw('AVG(total_score) as promedio')
+            )
+            ->groupBy('mes')
+            ->orderBy('mes', 'desc')
             ->get();
-
-        return response()->json([
-            'judges' => $judges
-        ]);
+        
+        return view('judge.estadisticas.index', compact(
+            'stats', 
+            'distribucionCalificaciones', 
+            'eventosActivos', 
+            'ultimasEvaluaciones',
+            'actividadMensual'
+        ));
     }
 }
