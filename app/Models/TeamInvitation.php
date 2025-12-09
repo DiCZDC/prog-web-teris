@@ -58,17 +58,28 @@ class TeamInvitation extends Model
         return $query->where('status', 'rechazada');
     }
 
-    public function scopeInvitaciones($query)
+    public function scopeSoloInvitaciones($query)
     {
         return $query->where('tipo', 'invitacion');
     }
 
-    public function scopeSolicitudes($query)
+    public function scopeSoloSolicitudes($query)
     {
         return $query->where('tipo', 'solicitud');
     }
 
-    // Métodos auxiliares
+    // Métodos auxiliares para tipo
+    public function isInvitacion()
+    {
+        return $this->tipo === 'invitacion';
+    }
+
+    public function isSolicitud()
+    {
+        return $this->tipo === 'solicitud';
+    }
+
+    // Métodos auxiliares para estado
     public function isPendiente()
     {
         return $this->status === 'pendiente';
@@ -84,47 +95,14 @@ class TeamInvitation extends Model
         return $this->status === 'rechazada';
     }
 
-    // NUEVOS: Métodos para tipo
-    public function esInvitacion()
-    {
-        return $this->tipo === 'invitacion';
-    }
-
-    public function esSolicitud()
-    {
-        return $this->tipo === 'solicitud';
-    }
-
-    // NUEVOS: Scopes para tipo
-    public function scopeSoloInvitaciones($query)
-    {
-        return $query->where('tipo', 'invitacion');
-    }
-
-    public function scopeSoloSolicitudes($query)
-    {
-        return $query->where('tipo', 'solicitud');
-    }
-
-    public function isInvitacion()
-    {
-        return $this->tipo === 'invitacion';
-    }
-
-    public function isSolicitud()
-    {
-        return $this->tipo === 'solicitud';
-    }
-
     public function aceptar()
     {
         $this->status = 'aceptada';
         $this->responded_at = now();
         $this->save();
-        
-        // Asignar el usuario al equipo según el rol
+
         $team = $this->team;
-        
+
         switch ($this->rol) {
             case 'DISEÑADOR':
                 $team->disenador_id = $this->user_id;
@@ -136,9 +114,9 @@ class TeamInvitation extends Model
                 $team->backprog_id = $this->user_id;
                 break;
         }
-        
+
         $team->save();
-        
+
         return true;
     }
 

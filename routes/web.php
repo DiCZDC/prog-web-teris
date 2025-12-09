@@ -78,6 +78,8 @@ Route::middleware(['auth','role:user'])->group(function () {
     // Rutas para unirse a equipos
     Route::get('/teams/join/form', [TeamController::class, 'join'])->name('teams.join');
     Route::post('/teams/join/process', [TeamController::class, 'joinTeam'])->name('teams.join.process');
+    Route::post('/teams/join/send', [TeamController::class, 'sendJoinRequest'])
+    ->name('teams.join.send');
     Route::post('/teams/{team}/leave', [TeamController::class, 'leave'])->name('teams.leave');
 
     //Rutas para invitaciones del lider a nuevos miembros
@@ -239,6 +241,17 @@ Route::middleware(['auth', \App\Http\Middleware\CheckJudge::class])
         Route::get('/', [JudgeController::class, 'historialEvaluaciones'])->name('index');
         Route::get('/evaluacion/{id}', [JudgeController::class, 'verEvaluacion'])->name('show');
     });
+});
+
+/*
+|--------------------------------------------------------------------------
+| API ENDPOINTS
+|--------------------------------------------------------------------------
+*/
+
+// API para buscar jueces (requiere autenticación de admin)
+Route::middleware(['auth', 'role:admin'])->prefix('api')->name('api.')->group(function () {
+    Route::get('/judges/search', [JudgeController::class, 'searchJudges'])->name('judges.search');
 });
 
 /*

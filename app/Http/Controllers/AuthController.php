@@ -64,9 +64,28 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => ['required', 'string', 'max:255', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:8|confirmed',
+            'password' => [
+                'required',
+                'min:8',
+                'confirmed',
+                'regex:/[a-z]/',      // al menos una minúscula
+                'regex:/[A-Z]/',      // al menos una mayúscula
+                'regex:/[0-9]/',      // al menos un número
+                'regex:/[@$!%*#?&]/', // al menos un carácter especial
+            ],
+        ], [
+            'name.required' => 'El nombre es obligatorio.',
+            'name.max' => 'El nombre no puede tener más de 255 caracteres.',
+            'name.regex' => 'El nombre solo puede contener letras y espacios.',
+            'email.required' => 'El correo electrónico es obligatorio.',
+            'email.email' => 'El correo electrónico debe ser una dirección válida.',
+            'email.unique' => 'Este correo electrónico ya está registrado.',
+            'password.required' => 'La contraseña es obligatoria.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.regex' => 'La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial (@$!%*#?&).',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 
         $user = User::create([

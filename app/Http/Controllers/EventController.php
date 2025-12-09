@@ -45,7 +45,7 @@ class EventController extends Controller
             'ubicacion' => 'nullable|string|max:255',
             'reglas' => 'nullable|string',
             'premios' => 'nullable|string',
-            'popular' => 'sometimes|boolean' // Cambiado a sometimes
+            'judges' => 'nullable|string' // JSON string con IDs de jueces
         ]);
 
         // Crear el evento con la URL de la imagen
@@ -60,8 +60,16 @@ class EventController extends Controller
             'ubicacion' => $validated['ubicacion'] ?? null,
             'reglas' => $validated['reglas'] ?? null,
             'premios' => $validated['premios'] ?? null,
-            'popular' => $request->has('popular') // Solo si está marcado
+            'popular' => $request->has('popular') // Solo si está marcado (true/false)
         ]);
+
+        // Asignar jueces al evento si se proporcionaron
+        if ($request->has('judges') && !empty($request->judges)) {
+            $judgeIds = json_decode($request->judges, true);
+            if (is_array($judgeIds) && count($judgeIds) > 0) {
+                $event->jueces()->attach($judgeIds, ['assigned_at' => now()]);
+            }
+        }
 
         return redirect()->route('events.show', $event->id)
             ->with('success', 'Evento creado exitosamente');
@@ -72,7 +80,7 @@ class EventController extends Controller
      */
     public function show($id)
     {
-        $event = Event::findOrFail($id);
+        $event = Event::with('jueces')->findOrFail($id);
         return view('events.show', compact('event'));
     }
 
@@ -103,15 +111,21 @@ class EventController extends Controller
      */
     public function search(Request $request)
     {
-        $query = $request->input('q');
-        $eventos = Event::activos()
-            ->where(function($q) use ($query) {
-                $q->where('nombre', 'like', "%{$query}%")
-                  ->orWhere('descripcion', 'like', "%{$query}%")
-                  ->orWhere('ubicacion', 'like', "%{$query}%");
+        $query = $request->input('q', '');
+
+        // Buscar en todos los eventos (activos e inactivos)
+        $eventos = Event::query()
+            ->when($query, function($q) use ($query) {
+                $q->where(function($subQuery) use ($query) {
+                    $subQuery->where('nombre', 'like', "%{$query}%")
+                             ->orWhere('descripcion', 'like', "%{$query}%")
+                             ->orWhere('ubicacion', 'like', "%{$query}%")
+                             ->orWhere('modalidad', 'like', "%{$query}%");
+                });
             })
+            ->orderBy('created_at', 'desc')
             ->paginate(12);
-        
+
         return view('events.search', compact('eventos', 'query'));
     }
 
@@ -130,7 +144,7 @@ class EventController extends Controller
     public function update(Request $request, $id)
     {
         $event = Event::findOrFail($id);
-        
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -142,7 +156,7 @@ class EventController extends Controller
             'ubicacion' => 'nullable|string|max:255',
             'reglas' => 'nullable|string',
             'premios' => 'nullable|string',
-            'popular' => 'sometimes|boolean'
+            'judges' => 'nullable|string' // JSON string con IDs de jueces
         ]);
 
         $event->update([
@@ -158,6 +172,22 @@ class EventController extends Controller
             'premios' => $validated['premios'] ?? null,
             'popular' => $request->has('popular')
         ]);
+
+        // Actualizar jueces asignados al evento
+        if ($request->has('judges')) {
+            if (empty($request->judges)) {
+                // Si está vacío, eliminar todos los jueces
+                $event->jueces()->detach();
+            } else {
+                // Actualizar con los nuevos jueces
+                $judgeIds = json_decode($request->judges, true);
+                if (is_array($judgeIds) && count($judgeIds) > 0) {
+                    $event->jueces()->sync($judgeIds);
+                } else {
+                    $event->jueces()->detach();
+                }
+            }
+        }
 
         return redirect()->route('events.show', $event->id)
             ->with('success', 'Evento actualizado exitosamente');

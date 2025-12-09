@@ -144,4 +144,12 @@ class Team extends Model
     {
         return $this->proyecto()->exists();
     }
+    public function rolDisponible($rol)
+    {
+        return !$this->miembros()
+            ->wherePivot('rol', strtoupper($rol))
+            ->exists();
+    }
+
+
 }
