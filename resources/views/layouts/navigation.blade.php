@@ -55,37 +55,58 @@
                     </li>
                 @endif
 
-                <!-- PERFIL Y LOGOUT -->
-                <li>
-                    <div class="user-info">
-                        <span class="user-name">
-                            <a href="{{ route('profile.show') }}" class="auth-btn">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="display: inline; vertical-align: middle;">
-                                    <g fill="none" fill-rule="evenodd">
-                                        <path fill="#ffffff" d="M16 14a5 5 0 0 1 4.995 4.783L21 19v1a2 2 0 0 1-1.85 1.995L19 22H5a2 2 0 0 1-1.995-1.85L3 20v-1a5 5 0 0 1 4.783-4.995L8 14zm0 2H8a3 3 0 0 0-2.995 2.824L5 19v1h14v-1a3 3 0 0 0-2.824-2.995zM12 2a5 5 0 1 1 0 10a5 5 0 0 1 0-10m0 2a3 3 0 1 0 0 6a3 3 0 0 0 0-6"/>
-                                    </g>
-                                </svg>
-                            </a>
-                            Hola, {{ Auth::user()->name }}
-                        </span>
-                        <form action="{{ route('logout') }}" method="POST" style="display: inline; margin: 0;">
+                <!-- PERFIL CON MENÚ DESPLEGABLE -->
+                <li style="position: relative;">
+                    <button onclick="toggleProfileMenu()" class="profile-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
+                            <g fill="none" fill-rule="evenodd">
+                                <path fill="#ffffff" d="M16 14a5 5 0 0 1 4.995 4.783L21 19v1a2 2 0 0 1-1.85 1.995L19 22H5a2 2 0 0 1-1.995-1.85L3 20v-1a5 5 0 0 1 4.783-4.995L8 14zm0 2H8a3 3 0 0 0-2.995 2.824L5 19v1h14v-1a3 3 0 0 0-2.824-2.995zM12 2a5 5 0 1 1 0 10a5 5 0 0 1 0-10m0 2a3 3 0 1 0 0 6a3 3 0 0 0 0-6"/>
+                            </g>
+                        </svg>
+                        <span class="profile-name">{{ Auth::user()->name }}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron-icon">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+
+                    <!-- Menú desplegable -->
+                    <div id="profileMenu" class="profile-dropdown" style="display: none;">
+                        <a href="{{ route('profile.show') }}" class="profile-menu-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            Mi cuenta
+                        </a>
+                        <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
                             @csrf
-                            <button type="submit" class="logout-btn">
-                                🚪 Cerrar sesión
+                            <button type="submit" class="profile-menu-item profile-menu-logout">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                    <polyline points="16 17 21 12 16 7"></polyline>
+                                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                                </svg>
+                                Salir
                             </button>
                         </form>
                     </div>
                 </li>
             @else
-                <!-- LOGIN para usuarios no autenticados -->
+                <!-- LOGIN Y REGISTRO para usuarios no autenticados -->
                 <li>
-                    <a href="{{ route('login') }}" class="auth-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="display: inline; vertical-align: middle;">
-                            <g fill="none" fill-rule="evenodd">
-                                <path fill="#ffffff" d="M16 14a5 5 0 0 1 4.995 4.783L21 19v1a2 2 0 0 1-1.85 1.995L19 22H5a2 2 0 0 1-1.995-1.85L3 20v-1a5 5 0 0 1 4.783-4.995L8 14zm0 2H8a3 3 0 0 0-2.995 2.824L5 19v1h14v-1a3 3 0 0 0-2.824-2.995zM12 2a5 5 0 1 1 0 10a5 5 0 0 1 0-10m0 2a3 3 0 1 0 0 6a3 3 0 0 0 0-6"/>
-                            </g>
-                        </svg>
+                    <a href="{{ route('login') }}" class="auth-btn-secondary">
                         Iniciar sesión
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('register') }}" class="auth-btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle; margin-right: 6px;">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                        Registrarse
                     </a>
                 </li>
             @endauth

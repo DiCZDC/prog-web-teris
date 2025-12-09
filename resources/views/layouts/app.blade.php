@@ -177,6 +177,165 @@
                 background-clip: text;
             }
 
+            /* Botón de perfil con menú desplegable */
+            .profile-btn {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                background: rgba(167, 139, 250, 0.2);
+                border: 2px solid rgba(167, 139, 250, 0.4);
+                border-radius: 30px;
+                padding: 12px 24px;
+                color: white;
+                font-size: 18px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 10px rgba(139, 92, 246, 0.2);
+            }
+
+            .profile-btn:hover {
+                background: rgba(167, 139, 250, 0.3);
+                border-color: #a78bfa;
+                box-shadow: 0 4px 20px rgba(167, 139, 250, 0.5);
+                transform: translateY(-2px);
+            }
+
+            .profile-name {
+                font-size: 18px;
+                font-weight: 600;
+                color: #e0e7ff;
+                max-width: 180px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .chevron-icon {
+                transition: transform 0.3s ease;
+                color: #e0e7ff;
+            }
+
+            .profile-btn.active .chevron-icon {
+                transform: rotate(180deg);
+            }
+
+            /* Menú desplegable del perfil */
+            .profile-dropdown {
+                position: absolute;
+                top: calc(100% + 12px);
+                right: 0;
+                background: linear-gradient(135deg, rgba(49, 46, 129, 0.98), rgba(76, 29, 149, 0.98));
+                border: 2px solid rgba(167, 139, 250, 0.4);
+                border-radius: 15px;
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 4px 15px rgba(139, 92, 246, 0.3);
+                min-width: 220px;
+                overflow: hidden;
+                z-index: 1000;
+                animation: slideDown 0.3s ease;
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .profile-menu-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 14px 20px;
+                color: #e0e7ff;
+                text-decoration: none;
+                font-size: 16px;
+                font-weight: 500;
+                transition: all 0.2s ease;
+                border: none;
+                background: transparent;
+                width: 100%;
+                text-align: left;
+                cursor: pointer;
+            }
+
+            .profile-menu-item:hover {
+                background: rgba(167, 139, 250, 0.25);
+                color: #ffffff;
+            }
+
+            .profile-menu-item svg {
+                stroke: #a78bfa;
+                transition: stroke 0.2s ease;
+            }
+
+            .profile-menu-item:hover svg {
+                stroke: #c4b5fd;
+            }
+
+            .profile-menu-logout {
+                border-top: 1px solid rgba(167, 139, 250, 0.2);
+            }
+
+            .profile-menu-logout:hover {
+                background: rgba(239, 68, 68, 0.2);
+                color: #fecaca;
+            }
+
+            .profile-menu-logout:hover svg {
+                stroke: #fca5a5;
+            }
+
+            /* Botones de autenticación para usuarios no autenticados */
+            .auth-btn-secondary {
+                display: inline-block;
+                background: rgba(167, 139, 250, 0.15);
+                border: 2px solid rgba(167, 139, 250, 0.3);
+                border-radius: 25px;
+                padding: 10px 24px;
+                color: #e0e7ff;
+                font-size: 16px;
+                font-weight: 500;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 10px rgba(139, 92, 246, 0.1);
+            }
+
+            .auth-btn-secondary:hover {
+                background: rgba(167, 139, 250, 0.25);
+                border-color: #a78bfa;
+                box-shadow: 0 4px 20px rgba(167, 139, 250, 0.3);
+                transform: translateY(-2px);
+            }
+
+            .auth-btn-primary {
+                display: inline-flex;
+                align-items: center;
+                background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+                border: 2px solid rgba(192, 132, 252, 0.5);
+                border-radius: 25px;
+                padding: 12px 28px;
+                color: white;
+                font-size: 16px;
+                font-weight: 700;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .auth-btn-primary:hover {
+                background: linear-gradient(135deg, #7c3aed 0%, #9333ea 100%);
+                border-color: #c084fc;
+                box-shadow: 0 6px 30px rgba(139, 92, 246, 0.6);
+                transform: translateY(-3px);
+            }
+
             @media (max-width: 768px) {
                 .navbar {
                     flex-direction: column;
@@ -192,6 +351,26 @@
                     flex-wrap: wrap;
                     gap: 20px;
                     justify-content: center;
+                }
+
+                .profile-btn {
+                    padding: 10px 16px;
+                    font-size: 16px;
+                }
+
+                .profile-name {
+                    max-width: 120px;
+                    font-size: 16px;
+                }
+
+                .profile-dropdown {
+                    min-width: 180px;
+                }
+
+                .auth-btn-primary,
+                .auth-btn-secondary {
+                    font-size: 14px;
+                    padding: 8px 18px;
                 }
             }
         </style>
@@ -221,5 +400,52 @@
 
         <!-- Stack para scripts adicionales de vistas -->
         @stack('scripts')
+
+        <!-- JavaScript para el menú desplegable del perfil -->
+        <script>
+            function toggleProfileMenu() {
+                const menu = document.getElementById('profileMenu');
+                const button = document.querySelector('.profile-btn');
+
+                if (menu.style.display === 'none' || menu.style.display === '') {
+                    menu.style.display = 'block';
+                    button.classList.add('active');
+                } else {
+                    menu.style.display = 'none';
+                    button.classList.remove('active');
+                }
+            }
+
+            // Cerrar el menú al hacer clic fuera de él
+            document.addEventListener('click', function(event) {
+                const menu = document.getElementById('profileMenu');
+                const button = document.querySelector('.profile-btn');
+
+                if (menu && button) {
+                    const isClickInsideButton = button.contains(event.target);
+                    const isClickInsideMenu = menu.contains(event.target);
+
+                    if (!isClickInsideButton && !isClickInsideMenu && menu.style.display === 'block') {
+                        menu.style.display = 'none';
+                        button.classList.remove('active');
+                    }
+                }
+            });
+
+            // Cerrar el menú al presionar la tecla Escape
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    const menu = document.getElementById('profileMenu');
+                    const button = document.querySelector('.profile-btn');
+
+                    if (menu && menu.style.display === 'block') {
+                        menu.style.display = 'none';
+                        if (button) {
+                            button.classList.remove('active');
+                        }
+                    }
+                }
+            });
+        </script>
     </body>
 </html>
