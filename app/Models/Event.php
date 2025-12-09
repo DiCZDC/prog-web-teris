@@ -95,4 +95,56 @@ class Event extends Model
     {
         return $this->jueces()->count();
     }
+
+    /**
+     * Relación: Un evento tiene muchos ganadores (máximo 3)
+     */
+    public function winners()
+    {
+        return $this->hasMany(EventWinner::class, 'event_id')
+                    ->orderBy('position');
+    }
+
+    /**
+     * Verificar si el evento tiene ganadores publicados
+     */
+    public function hasPublishedWinners()
+    {
+        return $this->winners_published;
+    }
+
+    /**
+     * Obtener el primer lugar
+     */
+    public function firstPlace()
+    {
+        return $this->winners()->where('position', '1')->first();
+    }
+
+    /**
+     * Obtener el segundo lugar
+     */
+    public function secondPlace()
+    {
+        return $this->winners()->where('position', '2')->first();
+    }
+
+    /**
+     * Obtener el tercer lugar
+     */
+    public function thirdPlace()
+    {
+        return $this->winners()->where('position', '3')->first();
+    }
+
+    /**
+     * Publicar ganadores (hacerlos visibles públicamente)
+     */
+    public function publishWinners()
+    {
+        $this->update([
+            'winners_published' => true,
+            'winners_announced_at' => now(),
+        ]);
+    }
 }
