@@ -5,6 +5,7 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -12,13 +13,21 @@ use Illuminate\Queue\SerializesModels;
 class teamAnswer extends Mailable
 {
     use Queueable, SerializesModels;
-
+    protected $user;
+    protected $userDestination;
+    protected $team;
+    protected $answer;
+    protected $mailSender;
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($user, $userDestination, $team, $answer, $mailSender)
     {
-        //
+        $this->user = $user;
+        $this->userDestination = $userDestination;
+        $this->team = $team;
+        $this->answer = $answer;
+        $this->mailSender = $mailSender;
     }
 
     /**
@@ -27,7 +36,8 @@ class teamAnswer extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Team Answer',
+            from: new Address($this->mailSender, "Support Teris"),
+            subject: 'Tu invitación al equipo ' . $this->team['nombre'] . ' ha sido respondida',
         );
     }
 
@@ -37,7 +47,13 @@ class teamAnswer extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            html: 'mails.team.answer',
+            with: [
+                'userName' => $this->userDestination['name'],
+                'teamMemberName' => $this->user['name'],
+                'teamName' => $this->team['nombre'],
+                'response' => $this->answer,
+            ]
         );
     }
 

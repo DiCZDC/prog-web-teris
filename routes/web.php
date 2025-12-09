@@ -49,14 +49,16 @@ Route::post('/login', [AuthController::class, 'login'])->middleware('guest');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post')->middleware('guest');
 
 // Logout
-// Route::get('/mailPdf', function(){
-//     $mailController = new MailController();
-//     $team = \App\Models\Team::find(1);
+
+// Route::get('/test-email', function () {
 //     $user = \App\Models\User::find(54);
-//     $event = \App\Models\Event::find(1);
-//     $date = now();
-//     return $mailController->sendPdfEmail($team, $user, $event, $date);
+//     $userDestination = \App\Models\User::find(55);
+//     $team = \App\Models\Team::first();
+//     $answer = 'aceptada';
+//     $mailController = new \App\Http\Controllers\MailController();
+//     return $mailController->sendTeamAnswerEmail($user, $userDestination, $team, $answer);
 // });
+
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
     Route::post('/events', [EventController::class, 'store'])->name('events.store');
@@ -244,13 +246,3 @@ Route::middleware(['auth', \App\Http\Middleware\CheckJudge::class])
 | RUTAS DE PRUEBA (Solo en desarrollo)
 |--------------------------------------------------------------------------
 */
-
-if (app()->environment('local')) {
-    Route::get('/test-admin', function () {
-        return 'Eres admin! ✅';
-    })->middleware(['auth', \App\Http\Middleware\CheckAdmin::class]);
-
-    Route::get('/test-juez', function () {
-        return 'Eres juez! ✅';
-    })->middleware(['auth', \App\Http\Middleware\CheckJudge::class]);
-}
