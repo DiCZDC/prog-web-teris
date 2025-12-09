@@ -901,6 +901,8 @@ class TeamController extends Controller
             'mensaje' => "Solicitud para unirse al equipo como $request->rol"
         ]);
         
+        $mailController = new MailController();
+        $mailController->sendSolitudeTeamEmail($team, Auth::user(), $team->lider);
         
         return redirect()->route('teams.join')->with('success', 'Solicitud enviada al líder. Espera su aprobación.');
     }
