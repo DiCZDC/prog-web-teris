@@ -485,8 +485,7 @@
 
 @if($team->esLider(Auth::id()) && !$team->tieneProyecto())
     <a href="{{ route('projects.create', ['team_id' => $team->id]) }}" 
-       class="btn btn-success">
-        <i class="fas fa-cloud-upload-alt mr-2"></i>
+       class="btn btn-secondary btn-success">
         Subir Proyecto
     </a>
 @endif
