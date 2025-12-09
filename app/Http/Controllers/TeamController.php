@@ -377,7 +377,7 @@ class TeamController extends Controller
             'mensaje' => $validated['mensaje'],
             'status' => 'pendiente'
         ]);
-        
+
         // Enviar correo de invitación
         $mailController = new MailController();
         $mailController->sendTeamInvitationEmail($usuario, $team);
@@ -622,7 +622,12 @@ class TeamController extends Controller
 
         // Aceptar la invitación
         $invitation->aceptar();
-
+        app(\App\Http\Controllers\MailController::class)->sendTeamAnswerEmail(
+            $invitation->invitador,
+            Auth::user(),
+            $team,
+            'aceptada'
+        );
         return redirect()->route('teams.show', $team)
             ->with('success', '¡Te has unido al equipo exitosamente como ' . $invitation->rol . '!');
     }
@@ -643,7 +648,12 @@ class TeamController extends Controller
         }
 
         $invitation->rechazar();
-
+        app(\App\Http\Controllers\MailController::class)->sendTeamAnswerEmail(
+            $invitation->invitador,
+            Auth::user(),
+            $invitation->team,
+            'rechazada'
+        );
         return back()->with('success', 'Has rechazado la invitación');
     }
 

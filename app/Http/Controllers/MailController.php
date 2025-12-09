@@ -1,10 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Mail\createdAccount;
 use Illuminate\Http\Request;
-use App\Mail\pdfSent;
-use App\Mail\teamInvitation;
+use App\Mail\{
+    createdAccount,
+    pdfSent,
+    teamInvitation,
+    teamAnswer,
+};
 
 class MailController extends Controller
 {
@@ -47,6 +50,11 @@ class MailController extends Controller
     function sendTeamInvitationEmail($user, $team){
         \Mail::to($user->email)
             ->send(new teamInvitation($user, $team, $this->mailsender));
+        return "E-mail Enviado";
+    }
+    function sendTeamAnswerEmail($user, $userDestination, $team, $answer){
+        \Mail::to($userDestination->email)
+            ->send(new teamAnswer($user, $userDestination, $team, $answer, $this->mailsender));
         return "E-mail Enviado";
     }
 }

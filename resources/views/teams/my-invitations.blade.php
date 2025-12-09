@@ -341,7 +341,6 @@
                     <span class="count-badge">{{ $invitacionesPendientes->count() }}</span>
                 @endif
             </h2>
-
             @if($invitacionesPendientes->isEmpty())
                 <div class="empty-state">
                     <div class="empty-icon">📭</div>
