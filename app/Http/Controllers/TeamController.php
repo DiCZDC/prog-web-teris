@@ -902,7 +902,7 @@ class TeamController extends Controller
         ]);
         
         $mailController = new MailController();
-        $mailController->sendSolitudeTeamEmail($team, Auth::user(), $team->lider);
+        $mailController->sendSolitudeTeamEmail($team, Auth::user(), $team->lider,Auth::user());
         
         return redirect()->route('teams.join')->with('success', 'Solicitud enviada al líder. Espera su aprobación.');
     }
