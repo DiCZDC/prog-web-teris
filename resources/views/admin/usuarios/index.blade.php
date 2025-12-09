@@ -4,7 +4,7 @@
     <div class="container mx-auto px-4 py-8">
         <!-- Botón Regresar -->
         <div class="mb-6">
-            <a href="{{ url()->previous() }}" class="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200">
+            <a href="{{ url()->previous() }}" class="inline-flex items-center text-gray-600 hover:text-white-900 transition-colors duration-200">
                 <i class="fas fa-arrow-left mr-2"></i>
                 <span class="font-medium">← Regresar</span>
             </a>
@@ -12,7 +12,7 @@
         
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">
+            <h1 class="text-3xl font-bold text-white-800 mb-2">
                 <i class="fas fa-users mr-3"></i>Gestión de Usuarios
             </h1>
             <p class="text-gray-600">Administra los usuarios del sistema</p>
