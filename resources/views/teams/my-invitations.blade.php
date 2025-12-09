@@ -452,14 +452,14 @@
                                 </div>
 
                                 <div class="action-buttons">
-                                    <form action="{{ route('solicitudes.aceptar', $solicitud) }}" method="POST" style="flex: 1;">
+                                    <form action="{{ route('solicitudes.accept', $solicitud) }}" method="POST" style="flex: 1;">
                                         @csrf
                                         <button type="submit" class="btn btn-accept" onclick="return confirm('¿Aceptar esta solicitud?')">
                                             ✓ Aceptar
                                         </button>
                                     </form>
 
-                                    <form action="{{ route('solicitudes.rechazar', $solicitud) }}" method="POST" style="flex: 1;">
+                                    <form action="{{ route('solicitudes.reject', $solicitud) }}" method="POST" style="flex: 1;">
                                         @csrf
                                         <button type="submit" class="btn btn-reject" onclick="return confirm('¿Rechazar esta solicitud?')">
                                             ✕ Rechazar

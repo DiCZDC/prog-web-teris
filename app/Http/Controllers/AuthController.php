@@ -20,37 +20,46 @@ class AuthController extends Controller
     }
 
     public function login(Request $request)
-{
-    $credentials = $request->validate([
-        'email' => 'required|email',
-        'password' => 'required',
-    ]);
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
 
-        $user = Auth::user();
-        
-        // Redirigir según el rol del usuario
-        if ($user->hasRole('admin')) {
-            return redirect()->route('events.index')
-                ->with('success', '¡Bienvenido Admin ' . $user->name . '!');
+            $user = Auth::user();
+            
+            // Redirigir según el rol del usuario
+            if ($user->hasRole('admin')) {
+                return redirect()->route('events.index')
+                    ->with('success', '¡Bienvenido Admin ' . $user->name . '!');
+            }
+            
+            if ($user->hasRole('juez')) {
+                return redirect()->route('judge.dashboard')
+                    ->with('success', '¡Bienvenido Juez ' . $user->name . '!');
+            }
+            
+            // Usuario normal
+            return redirect()->route('home')
+                ->with('success', '¡Bienvenido ' . $user->name . '!');
         }
-        
-        if ($user->hasRole('juez')) {
-            return redirect()->route('judge.dashboard')
-                ->with('success', '¡Bienvenido Juez ' . $user->name . '!');
-        }
-        
-        // Usuario normal
-        return redirect()->route('home')
-            ->with('success', '¡Bienvenido ' . $user->name . '!');
+
+        return back()->withErrors([
+            'email' => 'Las credenciales no coinciden con nuestros registros.',
+        ])->onlyInput('email');
     }
-
-    return back()->withErrors([
-        'email' => 'Las credenciales no coinciden con nuestros registros.',
-    ])->onlyInput('email');
-}
+    
+    // Mostrar formulario de registro
+    public function showRegisterForm()
+    {
+        if (Auth::check()) {
+            return redirect()->route('home');
+        }
+        return view('auth.register');
+    }
 
     public function register(Request $request)
     {

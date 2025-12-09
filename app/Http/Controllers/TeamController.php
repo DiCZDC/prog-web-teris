@@ -359,7 +359,7 @@ class TeamController extends Controller
 
         // Verificar que no exista una invitación pendiente para este usuario y rol
         $invitacionExistente = TeamInvitation::where('team_id', $team->id)
-            ->where('user_id', $validated['user_id'])
+            ->where('user_id', $usuario->id)
             ->where('status', 'pendiente')
             ->exists();
 
@@ -371,7 +371,7 @@ class TeamController extends Controller
         TeamInvitation::create([
             'team_id' => $team->id,
             'invited_by' => Auth::id(),
-            'user_id' => $validated['user_id'],
+            'user_id' => $usuario->id,
             'tipo' => 'invitacion', // Líder invita a usuario
             'rol' => $validated['rol'],
             'mensaje' => $validated['mensaje'],

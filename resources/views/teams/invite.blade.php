@@ -1,250 +1,244 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TERIS - Invitar Miembros</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 50%, #8e24aa 100%);
-            min-height: 100vh;
-            color: white;
-        }
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 50%, #8e24aa 100%);
+        min-height: 100vh;
+        color: white;
+    }
 
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            margin-bottom: 20px;
-            font-size: 16px;
-            transition: color 0.3s;
-        }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
 
-        .back-link:hover {
-            color: white;
-        }
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        margin-bottom: 20px;
+        font-size: 16px;
+        transition: color 0.3s;
+    }
 
-        h1 {
-            text-align: center;
-            font-size: 48px;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
-        }
+    .back-link:hover {
+        color: white;
+    }
 
-        .subtitle {
-            text-align: center;
-            font-size: 18px;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 40px;
-        }
+    h1 {
+        text-align: center;
+        font-size: 48px;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+    }
 
-        .alert {
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 16px;
-        }
+    .subtitle {
+        text-align: center;
+        font-size: 18px;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 40px;
+    }
 
-        .alert-success {
-            background: rgba(76, 175, 80, 0.3);
-            border: 1px solid rgba(76, 175, 80, 0.5);
-        }
+    .alert {
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-size: 16px;
+    }
 
-        .alert-error {
-            background: rgba(244, 67, 54, 0.3);
-            border: 1px solid rgba(244, 67, 54, 0.5);
-        }
+    .alert-success {
+        background: rgba(76, 175, 80, 0.3);
+        border: 1px solid rgba(76, 175, 80, 0.5);
+    }
 
+    .alert-error {
+        background: rgba(244, 67, 54, 0.3);
+        border: 1px solid rgba(244, 67, 54, 0.5);
+    }
+
+    .two-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-top: 30px;
+    }
+
+    .card {
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #ffd700;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .required {
+        color: #ff6b6b;
+    }
+
+    .form-select, .form-textarea {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+        padding: 12px 15px;
+        color: white;
+        font-size: 16px;
+        outline: none;
+        transition: all 0.3s;
+    }
+
+    .form-select:focus, .form-textarea:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: #ffd700;
+    }
+
+    .form-select option {
+        background: #4a148c;
+        color: white;
+    }
+
+    .form-textarea {
+        resize: vertical;
+        min-height: 100px;
+        font-family: inherit;
+    }
+
+    .error-message {
+        color: #ff6b6b;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: bold;
+        transition: all 0.3s;
+        display: inline-block;
+        cursor: pointer;
+        border: none;
+        width: 100%;
+    }
+
+    .btn-primary {
+        background: rgba(255, 215, 0, 0.3);
+        border: 2px solid #ffd700;
+        color: #ffd700;
+    }
+
+    .btn-primary:hover {
+        background: rgba(255, 215, 0, 0.5);
+        transform: translateY(-2px);
+    }
+
+    .invitations-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .invitation-item {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .invitation-info {
+        flex: 1;
+    }
+
+    .invitation-user {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .invitation-rol {
+        background: rgba(255, 215, 0, 0.3);
+        border: 1px solid #ffd700;
+        padding: 3px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        color: #ffd700;
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .invitation-date {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .btn-cancel {
+        background: rgba(244, 67, 54, 0.3);
+        border: 2px solid #f44336;
+        color: #f44336;
+        padding: 8px 15px;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-cancel:hover {
+        background: rgba(244, 67, 54, 0.5);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .empty-icon {
+        font-size: 60px;
+        margin-bottom: 15px;
+    }
+
+    @media (max-width: 968px) {
         .two-columns {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-top: 30px;
+            grid-template-columns: 1fr;
         }
-
-        .card {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        .card-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #ffd700;
-            text-align: center;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .required {
-            color: #ff6b6b;
-        }
-
-        .form-select, .form-textarea {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            padding: 12px 15px;
-            color: white;
-            font-size: 16px;
-            outline: none;
-            transition: all 0.3s;
-        }
-
-        .form-select:focus, .form-textarea:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: #ffd700;
-        }
-
-        .form-select option {
-            background: #4a148c;
-            color: white;
-        }
-
-        .form-textarea {
-            resize: vertical;
-            min-height: 100px;
-            font-family: inherit;
-        }
-
-        .error-message {
-            color: #ff6b6b;
-            font-size: 13px;
-            margin-top: 5px;
-        }
-
-        .btn {
-            padding: 12px 30px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: bold;
-            transition: all 0.3s;
-            display: inline-block;
-            cursor: pointer;
-            border: none;
-            width: 100%;
-        }
-
-        .btn-primary {
-            background: rgba(255, 215, 0, 0.3);
-            border: 2px solid #ffd700;
-            color: #ffd700;
-        }
-
-        .btn-primary:hover {
-            background: rgba(255, 215, 0, 0.5);
-            transform: translateY(-2px);
-        }
-
-        .invitations-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .invitation-item {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .invitation-info {
-            flex: 1;
-        }
-
-        .invitation-user {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .invitation-rol {
-            background: rgba(255, 215, 0, 0.3);
-            border: 1px solid #ffd700;
-            padding: 3px 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            color: #ffd700;
-            display: inline-block;
-            margin-right: 10px;
-        }
-
-        .invitation-date {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .btn-cancel {
-            background: rgba(244, 67, 54, 0.3);
-            border: 2px solid #f44336;
-            color: #f44336;
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-cancel:hover {
-            background: rgba(244, 67, 54, 0.5);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .empty-icon {
-            font-size: 60px;
-            margin-bottom: 15px;
-        }
-
-        @media (max-width: 968px) {
-            .two-columns {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
+    }
+</style>
+<x-app-layout>
     <div class="container">
         <a href="{{ route('teams.my-teams') }}" class="back-link">
             ← Volver a mis equipos
@@ -367,5 +361,4 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+</x-app-layout>
