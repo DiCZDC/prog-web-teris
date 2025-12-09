@@ -61,7 +61,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
     Route::post('/events', [EventController::class, 'store'])->name('events.store');
 });
-Route::middleware('auth')->group(function () {
+
+Route::middleware(['auth','role:user'])->group(function () {
     // Rutas CRUD de eventos
     // Rutas para ver mis equipos
     Route::get('/my-teams', [TeamController::class, 'myTeams'])->name('teams.my-teams');

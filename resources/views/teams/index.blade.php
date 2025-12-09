@@ -503,13 +503,16 @@
             <div class="alert alert-error">{{ session('error') }}</div>
         @endif
 
-        @auth
-            <div class="action-buttons">
-                <a href="{{ route('teams.my-teams') }}" class="btn btn-secondary">🤝 Mis equipos</a>
-                <a href="{{ route('teams.create') }}" class="btn btn-primary">➕ Crear Nuevo Equipo</a>
-                <a href="{{ route('teams.join') }}" class="btn btn-secondary">🤝 Unirse a un Equipo</a>
-                <a href="{{ route('teams.my-invitations') }}" class="btn btn-primary">📬 Mis invitaciones</a>
-            </div>
+        @auth   
+
+            @if(Auth::user()->role === 'user')
+                <div class="action-buttons">
+                    <a href="{{ route('teams.my-teams') }}" class="btn btn-secondary">🤝 Mis equipos</a>
+                    <a href="{{ route('teams.create') }}" class="btn btn-primary">➕ Crear Nuevo Equipo</a>
+                    <a href="{{ route('teams.join') }}" class="btn btn-secondary">🤝 Unirse a un Equipo</a>
+                    <a href="{{ route('teams.my-invitations') }}" class="btn btn-primary">📬 Mis invitaciones</a>
+                </div>
+            @endif
         @endauth
 
         <div class="teams-grid">
