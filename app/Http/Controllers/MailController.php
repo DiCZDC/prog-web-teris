@@ -59,7 +59,7 @@ class MailController extends Controller
         return "E-mail Enviado";
     }
     function sendApplicationTeamEmailResponse($user, $team, $response){
-        \Mail::to($team->owner->email)
+        \Mail::to($team->lider->email)
             ->send(new applicationTeam($user, $team, $response, $this->mailsender));
         return "E-mail Enviado";
     }

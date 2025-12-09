@@ -830,7 +830,7 @@ class TeamController extends Controller
         // Aceptar la solicitud (asigna al usuario al equipo)
         $solicitud->aceptar();
         $mailController = new MailController();
-        $mailController->sendApplicationTeamEmailResponse($team->lider,$team,'aceptada');
+        $mailController->sendApplicationTeamEmailResponse($user,$team,'aceptada');
         return back()->with('success', '✅ Solicitud aceptada. El usuario se ha unido al equipo.');
     }
 
@@ -858,7 +858,7 @@ class TeamController extends Controller
 
         $solicitud->rechazar();
         $mailController = new MailController();
-        $mailController->sendApplicationTeamEmailResponse($team->lider,$team,'rechazada');
+        $mailController->sendApplicationTeamEmailResponse($user,$team,'rechazada');
         return back()->with('success', 'Solicitud rechazada');
     }
     public function sendJoinRequest(Request $request)
