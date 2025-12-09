@@ -34,7 +34,6 @@ Route::prefix('events')->name('events.')->group(function () {
 
 // Equipos públicos (solo lectura)
 Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
-Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
 
 /*
 |--------------------------------------------------------------------------
@@ -95,6 +94,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/solicitudes/{invitation}/accept', [TeamController::class, 'acceptRequest'])->name('solicitudes.accept');
     Route::post('/solicitudes/{invitation}/reject', [TeamController::class, 'rejectRequest'])->name('solicitudes.reject');
 });
+
+// Ruta de teams/{team} al final para evitar conflictos
+Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
+
 // Ruta de logout (requiere estar autenticado)
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
