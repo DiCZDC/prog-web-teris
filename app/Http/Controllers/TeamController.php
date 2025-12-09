@@ -377,6 +377,10 @@ class TeamController extends Controller
             'mensaje' => $validated['mensaje'],
             'status' => 'pendiente'
         ]);
+        
+        // Enviar correo de invitación
+        $mailController = new MailController();
+        $mailController->sendTeamInvitationEmail($usuario, $team);
 
         return back()->with('success', '¡Invitación enviada exitosamente!');
     }

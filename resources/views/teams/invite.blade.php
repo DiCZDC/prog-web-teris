@@ -319,9 +319,9 @@
                         <button type="submit" class="btn btn-primary">
                             📤 Enviar Invitación
                         </button>
+
                     </form>
             </div>
-
             <!-- Lista de invitaciones pendientes -->
             <div class="card">
                 <h2 class="card-title">⏳ Invitaciones Pendientes</h2>
