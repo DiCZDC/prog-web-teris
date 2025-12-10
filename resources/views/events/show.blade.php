@@ -211,6 +211,23 @@
                                     Editar Evento
                                 </a>
 
+                                <!-- AGREGAR AQUÍ EL BOTÓN "GESTIONAR GANADORES" -->
+                                @if(auth()->check() && auth()->user()->hasRole('admin'))
+                                    <div class="mt-4">
+                                        <a href="{{ route('admin.events.winners.index', $event->id) }}" 
+                                           class="inline-flex items-center px-6 py-3 bg-yellow-500 text-white font-semibold rounded-lg hover:bg-yellow-600 transition">
+                                            <i class="fas fa-trophy mr-2"></i>
+                                            Gestionar Ganadores
+                                        </a>
+                                        
+                                        @if($event->winners_published)
+                                            <span class="ml-3 px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">
+                                                <i class="fas fa-check-circle mr-1"></i>Ganadores Publicados
+                                            </span>
+                                        @endif
+                                    </div>
+                                @endif
+
                                 <form action="{{ route('admin.events.destroy', $event->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este evento? Esta acción no se puede deshacer.');" class="inline-block">
                                     @csrf
                                     @method('DELETE')
@@ -224,11 +241,19 @@
                             </div>
                         @endif
                     </div>
+                    
+                    <!-- Si los ganadores están publicados, mostrar botón para verlos (público) -->
+                    @if($event->winners_published)
+                        <div class="mt-6">
+                            <a href="{{ route('events.winners', $event->id) }}" 
+                               class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold rounded-lg hover:from-yellow-500 hover:to-yellow-700 transition shadow-lg">
+                                <i class="fas fa-trophy mr-2"></i>
+                                🏆 VER GANADORES
+                            </a>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
-
-
-
 </x-app-layout>

@@ -19,62 +19,44 @@ class EventWinner extends Model
 
     protected $casts = [
         'final_score' => 'decimal:2',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
     ];
 
-    /**
-     * Relación: Un ganador pertenece a un evento
-     */
+    // Relaciones
     public function event()
     {
         return $this->belongsTo(Event::class);
     }
 
-    /**
-     * Relación: Un ganador pertenece a un equipo
-     */
     public function team()
     {
         return $this->belongsTo(Team::class);
     }
 
-    /**
-     * Obtener el nombre de la posición en texto
-     */
+    // Accesor para el nombre de la posición
     public function getPositionNameAttribute()
     {
         return match($this->position) {
-            '1' => '1er Lugar',
-            '2' => '2do Lugar',
-            '3' => '3er Lugar',
-            default => 'Posición desconocida'
+            '1' => '🥇 Primer Lugar',
+            '2' => '🥈 Segundo Lugar',
+            '3' => '🥉 Tercer Lugar',
+            default => 'Posición ' . $this->position,
         };
     }
 
-    /**
-     * Obtener el emoji de la medalla según la posición
-     */
-    public function getPositionEmojiAttribute()
+    // Accesor para el emoji de la medalla
+    public function getMedalEmojiAttribute()
     {
         return match($this->position) {
             '1' => '🥇',
             '2' => '🥈',
             '3' => '🥉',
-            default => '🏆'
+            default => '🏆',
         };
     }
 
-    /**
-     * Obtener el color para mostrar en la UI
-     */
-    public function getPositionColorAttribute()
+    // Scope para ordenar por posición
+    public function scopeOrdered($query)
     {
-        return match($this->position) {
-            '1' => 'yellow',  // Dorado
-            '2' => 'gray',    // Plateado
-            '3' => 'orange',  // Bronce
-            default => 'blue'
-        };
+        return $query->orderBy('position', 'asc');
     }
-}
+}   

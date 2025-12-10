@@ -61,6 +61,7 @@ class Team extends Model
     {
         return $this->belongsTo(User::class, 'backprog_id');
     }
+
     // Relación con invitaciones
     public function invitaciones()
     {
@@ -80,6 +81,7 @@ class Team extends Model
                $this->frontprog_id == $userId || 
                $this->backprog_id == $userId;
     }
+
     public function contarMiembros()
     {
         $count = 0;
@@ -89,6 +91,7 @@ class Team extends Model
         if ($this->backprog_id) $count++;
         return $count;
     }
+
     public function esLider($userId)
     {
         return $this->lider_id == $userId;
@@ -129,7 +132,8 @@ class Team extends Model
         if ($this->backprog) $miembros['PROGRAMADOR BACK'] = $this->backprog;
         return $miembros;
     }
-        /**
+
+    /**
      * Proyecto del equipo
      */
     public function proyecto()
@@ -144,6 +148,7 @@ class Team extends Model
     {
         return $this->proyecto()->exists();
     }
+
     public function rolDisponible($rol)
     {
         return !$this->miembros()
@@ -151,5 +156,76 @@ class Team extends Model
             ->exists();
     }
 
+    // ============================================
+    // NUEVAS RELACIONES PARA GANADORES
+    // ============================================
 
+    /**
+     * Relación con premios ganados (EventWinner)
+     */
+    public function eventoGanador()
+    {
+        return $this->hasOne(EventWinner::class, 'team_id');
+    }
+
+    /**
+     * Relación con todos los eventos ganados (un equipo puede ganar múltiples eventos)
+     */
+    public function eventosGanados()
+    {
+        return $this->hasMany(EventWinner::class, 'team_id');
+    }
+
+    /**
+     * Verificar si es ganador de un evento específico
+     */
+    public function esGanadorDe($eventId)
+    {
+        return $this->eventosGanados()
+                    ->where('event_id', $eventId)
+                    ->exists();
+    }
+
+    /**
+     * Obtener la posición ganadora en un evento específico
+     */
+    public function posicionGanadora($eventId)
+    {
+        $eventWinner = $this->eventosGanados()
+                          ->where('event_id', $eventId)
+                          ->first();
+        
+        return $eventWinner ? $eventWinner->position : null;
+    }
+
+    /**
+     * Obtener todos los eventos donde este equipo ha sido ganador
+     */
+    public function eventosDondeGano()
+    {
+        return Event::whereIn('id', function($query) {
+            $query->select('event_id')
+                  ->from('event_winners')
+                  ->where('team_id', $this->id);
+        })->get();
+    }
+
+    /**
+     * Verificar si el equipo ha ganado algún evento
+     */
+    public function haGanadoAlgunEvento()
+    {
+        return $this->eventosGanados()->exists();
+    }
+
+    /**
+     * Obtener el premio más reciente ganado
+     */
+    public function premioMasReciente()
+    {
+        return $this->eventosGanados()
+                    ->with('event')
+                    ->orderByDesc('created_at')
+                    ->first();
+    }
 }
