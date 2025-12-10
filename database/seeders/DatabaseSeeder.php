@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             EventSeeder::class, 
             TeamSeeder::class,
             ProjectSeeder::class,
+            EventJudgeSeeder::class,
         ]);
     }
 }

@@ -56,8 +56,7 @@ class EventJudgeSeeder extends Seeder
             }
         }
 
-        $this->command->info("
-✨ Asignación completada:");
+        $this->command->info("✨ Asignación completada:");
         $this->command->info("   - {$jueces->count()} jueces");
         $this->command->info("   - {$eventos->count()} eventos");
         $this->command->info("   - " . ($jueces->count() * $eventos->count()) . " asignaciones totales");

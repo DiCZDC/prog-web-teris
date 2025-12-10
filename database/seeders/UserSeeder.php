@@ -53,7 +53,7 @@ class userSeeder extends Seeder
         $normalUser->assignRole(Role::create(['name' => 'user']));
         User::factory(50)->create();
         User::all()->each(function ($user) {
-            if (!$user->hasRole('admin')) {
+            if (!$user->hasRole('admin') || !$user->hasRole('judge')) {
                 $user->assignRole('user');
             }
         });
