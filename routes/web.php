@@ -27,6 +27,9 @@ Route::prefix('events')->name('events.')->group(function () {
     Route::get('/search', [EventController::class, 'search'])->name('search');
     Route::get('/{id}', [EventController::class, 'show'])->name('show');
     Route::get('/{id}/teams', [EventController::class, 'teams'])->name('teams.index');
+
+    // Unirse a evento con equipo (solo líderes autenticados)
+    Route::post('/{id}/join-team', [EventController::class, 'joinTeam'])->name('join-team')->middleware('auth');
 });
 
 // Equipos públicos (solo lectura)
