@@ -336,7 +336,7 @@ class JudgeController extends Controller
                 'project.team.evento', 
                 'project.team.lider',
                 'project.team.miembros',
-                'judge'
+                juez
             ])
             ->findOrFail($evaluacionId);
         

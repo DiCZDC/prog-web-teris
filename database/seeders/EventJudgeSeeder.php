@@ -18,7 +18,7 @@ class EventJudgeSeeder extends Seeder
         DB::table('event_judge')->truncate();
 
         // Obtener todos los usuarios con rol de juez
-        $jueces = User::role('juez')->get();
+        $jueces = User::role('judge')->get();
 
         // Obtener todos los eventos
         $eventos = Event::all();
@@ -33,7 +33,7 @@ class EventJudgeSeeder extends Seeder
                 'password' => bcrypt('password'),
             ]);
             
-            $juez->assignRole('juez');
+            $juez->assignRole('judge');
             $jueces = collect([$juez]);
         }
 

@@ -79,8 +79,9 @@ class EventController extends Controller
      * Display the specified resource.
      */
     public function show($id)
-    {
-        $event = Event::with('jueces')->findOrFail($id);
+    {   
+        
+        $event = Event::with(['teams', 'jueces'])->findOrFail($id);
 
         // Obtener equipos donde el usuario autenticado es líder (solo si está autenticado)
         $misEquiposComoLider = [];

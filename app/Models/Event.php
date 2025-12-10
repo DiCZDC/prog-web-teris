@@ -55,7 +55,7 @@ class Event extends Model
      */
     public function jueces()
     {
-        return $this->belongsToMany(User::class, 'event_judge', 'event_id', 'user_id')
+        return $this->belongsToMany(User::class, 'event_judge', 'event_id', 'judge_id')
                     ->withTimestamps()
                     ->withPivot('assigned_at');
     }

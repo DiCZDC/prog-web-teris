@@ -35,6 +35,15 @@ Route::prefix('events')->name('events.')->group(function () {
 // Equipos públicos (solo lectura)
 Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
 
+Route::get('/test-email', function () {
+    $user = \App\Models\User::find(1);
+    $team = \App\Models\Team::find(2);
+    $userDestination =\App\Models\Team::find(2)->lider ;
+    console.log($team->lider->email);
+    $mailController = new \App\Http\Controllers\MailController();
+    return $mailController->sendTeamAnswerEmail($user, $userDestination, $team, 'aceptada');
+});
+
 /*
 |--------------------------------------------------------------------------
 | AUTENTICACIÓN
