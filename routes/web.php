@@ -30,10 +30,22 @@ Route::prefix('events')->name('events.')->group(function () {
     Route::get('/{id}/teams', [EventController::class, 'teams'])->name('teams.index');
     // 🎯 RUTA PÚBLICA para ver ganadores (para TODOS los usuarios)
     Route::get('/{id}/winners', [EventController::class, 'showWinners'])->name('winners');
+
+    // Unirse a evento con equipo (solo líderes autenticados)
+    Route::post('/{id}/join-team', [EventController::class, 'joinTeam'])->name('join-team')->middleware('auth');
 });
 
 // Equipos públicos (solo lectura)
 Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
+
+Route::get('/test-email', function () {
+    $user = \App\Models\User::find(1);
+    $team = \App\Models\Team::find(2);
+    $userDestination =\App\Models\Team::find(2)->lider ;
+    console.log($team->lider->email);
+    $mailController = new \App\Http\Controllers\MailController();
+    return $mailController->sendTeamAnswerEmail($user, $userDestination, $team, 'aceptada');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -242,7 +254,7 @@ Route::middleware(['auth', 'role:admin'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:juez'])
+Route::middleware(['auth', 'role:judge'])
     ->prefix('judge')
     ->name('judge.')
     ->group(function () {

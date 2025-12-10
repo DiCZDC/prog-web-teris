@@ -23,7 +23,7 @@ class AdminController extends Controller
             'eventos_activos' => Event::where('estado', 'Activo')->count(),
             'total_usuarios' => User::count(),
             'total_equipos' => Team::count(),
-            'total_jueces' => User::role('juez')->count(),
+            'total_jueces' => User::role('judge')->count(),
             'total_proyectos' => Project::count(),
         ];
 
@@ -78,7 +78,7 @@ class AdminController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'new_role' => 'required|in:admin,juez,user'
+            'new_role' => 'required|in:admin,judge,user'
         ]);
 
         try {
@@ -155,7 +155,7 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8|confirmed',
-            'role' => 'required|in:admin,juez,user',
+            'role' => 'required|in:admin,judge,user',
         ]);
 
         // Crear usuario
@@ -224,7 +224,7 @@ class AdminController extends Controller
      */
     public function jueces()
     {
-        $jueces = User::role('juez')
+        $jueces = User::role('judge')
             ->withCount('eventosComoJuez')
             ->with(['eventosComoJuez' => function($query) {
                 $query->select('events.id', 'events.nombre')->latest('events.created_at')->take(3);
@@ -243,7 +243,7 @@ class AdminController extends Controller
             $query->select('users.id', 'users.name', 'users.email');
         }])->findOrFail($id);
         
-        $juecesDisponibles = User::role('juez')
+        $juecesDisponibles = User::role('judge')
             ->whereNotIn('id', $evento->jueces->pluck('id'))
             ->get(['id', 'name', 'email']);
 
@@ -297,7 +297,7 @@ class AdminController extends Controller
             'eventos_inactivos' => Event::where('estado', 'Inactivo')->count(),
             'total_usuarios' => User::count(),
             'usuarios_admin' => User::role('admin')->count(),
-            'usuarios_juez' => User::role('juez')->count(),
+            'usuarios_juez' => User::role('judge')->count(),
             'usuarios_regular' => User::role('user')->count(),
             'total_equipos' => Team::count(),
             'equipos_activos' => Team::where('estado', 'Activo')->count(),
@@ -366,7 +366,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
-            'role' => 'required|in:admin,juez,user',
+            'role' => 'required|in:admin,judge,user',
         ]);
 
         $user->update([

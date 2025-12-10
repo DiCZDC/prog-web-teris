@@ -27,7 +27,7 @@ class CheckJudge
         }
 
         // Verificar si tiene rol de juez
-        if (!$user->hasRole('juez')) {
+        if (!$user->hasRole('judge')) {
             abort(403, 'No tienes permisos de juez para acceder a esta sección.');
         }
 

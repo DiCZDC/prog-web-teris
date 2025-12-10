@@ -66,7 +66,7 @@ class User extends Authenticatable
      */
     public function eventosComoJuez()
     {
-        return $this->belongsToMany(Event::class, 'event_judge', 'user_id', 'event_id')
+        return $this->belongsToMany(Event::class, 'event_judge', 'judge_id', 'event_id')
                     ->withTimestamps()
                     ->withPivot('assigned_at');
     }
@@ -88,7 +88,7 @@ class User extends Authenticatable
      */
     public function esJuez()
     {
-        return $this->hasRole('juez');
+        return $this->hasRole('judge');
     }
 
     /**
