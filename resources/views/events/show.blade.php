@@ -186,11 +186,67 @@
                         </p>
 
                         @if (auth()->check() && auth()->user()->hasRole('user'))
+                            {{-- Verificar si el usuario ya está inscrito con algún equipo --}}
+                            @if ($equipoInscrito)
+                                <div class="mb-4 p-4 rounded-lg" style="background: rgba(34, 197, 94, 0.2); border: 2px solid #22c55e;">
+                                    <div class="flex items-center">
+                                        <svg class="w-6 h-6 mr-2" style="color: #22c55e;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <div>
+                                            <p class="font-bold" style="color: #22c55e;">¡Inscrito!</p>
+                                            <p class="text-sm" style="color: #86efac;">Tu equipo "{{ $equipoInscrito->nombre }}" está inscrito en este evento</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @elseif (count($misEquiposComoLider) > 0)
+                                {{-- Formulario para inscribir equipo --}}
+                                <form action="{{ route('events.join-team', $event->id) }}" method="POST" class="mb-4">
+                                    @csrf
+                                    <div class="flex gap-3 items-end">
+                                        <div class="flex-1">
+                                            <label for="team_id" class="block text-sm font-medium mb-2" style="color: #c4b5fd;">
+                                                Selecciona tu equipo para inscribirte:
+                                            </label>
+                                            <select name="team_id" id="team_id" required
+                                                    class="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                    style="background: rgba(30, 27, 75, 0.5); border-color: rgba(167, 139, 250, 0.3); color: #e0e7ff;">
+                                                <option value="">-- Selecciona un equipo --</option>
+                                                @foreach ($misEquiposComoLider as $equipo)
+                                                    <option value="{{ $equipo->id }}">{{ $equipo->nombre }} ({{ $equipo->codigo }})</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="inline-flex items-center action-btn">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                                            </svg>
+                                            Unirse al Evento
+                                        </button>
+                                    </div>
+                                    <p class="text-xs mt-2" style="color: #a5b4fc;">
+                                        <strong>Nota:</strong> Solo puedes inscribir equipos donde eres el líder. Los equipos ya inscritos en otros eventos no aparecen en la lista.
+                                    </p>
+                                </form>
+                            @else
+                                <div class="mb-4 p-4 rounded-lg" style="background: rgba(249, 115, 22, 0.2); border: 2px solid #f97316;">
+                                    <div class="flex items-center">
+                                        <svg class="w-6 h-6 mr-2" style="color: #fb923c;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                        </svg>
+                                        <div>
+                                            <p class="font-bold" style="color: #fb923c;">No tienes equipos disponibles</p>
+                                            <p class="text-sm" style="color: #fdba74;">Debes ser líder de un equipo para inscribirte a un evento. <a href="{{ route('teams.create') }}" class="underline font-semibold">Crear equipo</a></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
                             <a href="{{ route('events.teams.index', $event->id) }}" class="inline-flex items-center action-btn">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                 </svg>
-                                Unirse al Evento
+                                Ver Equipos Inscritos
                             </a>
                         @else
                             <a href="{{ route('events.teams.index', $event->id) }}" class="inline-flex items-center action-btn">
