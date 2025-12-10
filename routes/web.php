@@ -255,7 +255,7 @@ Route::middleware(['auth', 'role:admin'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:juez'])
+Route::middleware(['auth', 'role:judge'])
     ->prefix('judge')
     ->name('judge.')
     ->group(function () {

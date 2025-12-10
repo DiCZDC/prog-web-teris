@@ -163,7 +163,7 @@ class ProjectController extends Controller
         // Verificar que el usuario tiene permiso para ver este proyecto
         $user = Auth::user();
         $canView = $user->hasRole('admin') || 
-                   $user->hasRole('juez') ||
+                   $user->hasRole('judge') ||
                    $project->team->esMiembro($user->id);
         
         if (!$canView) {
