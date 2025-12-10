@@ -442,7 +442,7 @@
         @endif
 
         @auth   
-        @if(auth()->user()->hasRole('user'))
+        @if(auth()->user()->hasRole('user') && !auth()->user()->is_banned && !auth()->user()->is_suspended && !auth()->user()->hasRole('admin') && !auth()->user()->hasRole('judge'))
             <div class="action-buttons">
 
                 <!-- MIS EQUIPOS -->

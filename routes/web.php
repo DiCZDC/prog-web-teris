@@ -10,7 +10,7 @@ use App\Http\Controllers\{
     AdminController,
     JudgeController
 };
-use App\Http\Controllers\Admin\WinnersController; // Añadir esta línea
+use App\Http\Controllers\Admin\WinnersController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,6 +28,8 @@ Route::prefix('events')->name('events.')->group(function () {
     Route::get('/search', [EventController::class, 'search'])->name('search');
     Route::get('/{id}', [EventController::class, 'show'])->name('show');
     Route::get('/{id}/teams', [EventController::class, 'teams'])->name('teams.index');
+    // 🎯 RUTA PÚBLICA para ver ganadores (para TODOS los usuarios)
+    Route::get('/{id}/winners', [EventController::class, 'showWinners'])->name('winners');
 
     // Unirse a evento con equipo (solo líderes autenticados)
     Route::post('/{id}/join-team', [EventController::class, 'joinTeam'])->name('join-team')->middleware('auth');
@@ -231,18 +233,15 @@ Route::middleware(['auth', 'role:admin'])
         Route::put('/{id}/desbanear', [AdminController::class, 'desbanearEquipo'])->name('desbanear');
     });
 
-    // RUTAS CORREGIDAS PARA GANADORES
-    Route::prefix('events/{eventId}')->name('events.')->group(function () {
-        // Rutas para gestión de ganadores
-        Route::prefix('winners')->name('winners.')->group(function () {
-            Route::get('/', [WinnersController::class, 'index'])->name('index');
-            Route::post('/assign-automatic', [WinnersController::class, 'assignAutomatic'])->name('assign-automatic');
-            Route::post('/assign-manual', [WinnersController::class, 'assignManual'])->name('assign-manual');
-            Route::post('/publish', [WinnersController::class, 'publish'])->name('publish');
-            Route::post('/unpublish', [WinnersController::class, 'unpublish'])->name('unpublish');
-            Route::delete('/{winnerId}', [WinnersController::class, 'removeWinner'])->name('remove');
-            Route::patch('/{winnerId}/recognition', [WinnersController::class, 'updateRecognition'])->name('update-recognition');
-        });
+    // 🏆 RUTAS DE GANADORES (Solo Admin)
+    Route::prefix('events/{eventId}/winners')->name('events.winners.')->group(function () {
+        Route::get('/', [WinnersController::class, 'index'])->name('index');
+        Route::post('/assign-automatic', [WinnersController::class, 'assignAutomatic'])->name('assign-automatic');
+        Route::post('/assign-manual', [WinnersController::class, 'assignManual'])->name('assign-manual');
+        Route::post('/publish', [WinnersController::class, 'publish'])->name('publish');
+        Route::post('/unpublish', [WinnersController::class, 'unpublish'])->name('unpublish');
+        Route::delete('/{winnerId}', [WinnersController::class, 'removeWinner'])->name('remove');
+        Route::patch('/{winnerId}/recognition', [WinnersController::class, 'updateRecognition'])->name('update-recognition');
     });
     
     // Users resource
