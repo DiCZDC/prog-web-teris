@@ -1,46 +1,42 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evaluar Proyecto - Juez</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<title>Evaluar Proyecto - Juez</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    .rating-slider {
+        width: 100%;
+        height: 8px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: #e5e7eb;
+        border-radius: 4px;
+        outline: none;
+    }
+    .rating-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #3b82f6;
+        cursor: pointer;
+        border: 3px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .rating-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #3b82f6;
+        min-width: 50px;
+        text-align: center;
+    }
+    .rating-label {
+        transition: color 0.3s;
+    }
+</style>
+<x-app-layout>
     
-    <style>
-        .rating-slider {
-            width: 100%;
-            height: 8px;
-            -webkit-appearance: none;
-            appearance: none;
-            background: #e5e7eb;
-            border-radius: 4px;
-            outline: none;
-        }
-        .rating-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #3b82f6;
-            cursor: pointer;
-            border: 3px solid white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        .rating-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #3b82f6;
-            min-width: 50px;
-            text-align: center;
-        }
-        .rating-label {
-            transition: color 0.3s;
-        }
-    </style>
-</head>
-<body class="bg-gray-50">
+     <!-- Navbar -->
     
     <nav class="bg-white shadow-lg">
         <div class="container mx-auto px-4 py-3">
@@ -280,10 +276,10 @@
                     
                     <textarea name="comments" 
                               rows="4"
-                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700"
                               placeholder="Proporciona retroalimentación constructiva para el equipo...">{{ $evaluacionExistente->comments ?? '' }}</textarea>
                     
-                    <p class="text-sm text-gray-500 mt-2">
+                    <p class="text-sm text-gray-700 mt-2">
                         Los comentarios serán visibles para los miembros del equipo después de que finalice el evento.
                     </p>
                 </div>
@@ -372,5 +368,4 @@
             calculateTotalScore();
         });
     </script>
-</body>
-</html>
+</x-app-layout>
