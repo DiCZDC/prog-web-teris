@@ -79,9 +79,27 @@ class EventController extends Controller
      * Display the specified resource.
      */
     public function show($id)
-    {
-        $event = Event::with('jueces')->findOrFail($id);
-        return view('events.show', compact('event'));
+    {   
+        
+        $event = Event::with(['teams', 'jueces'])->findOrFail($id);
+
+        // Obtener equipos donde el usuario autenticado es líder (solo si está autenticado)
+        $misEquiposComoLider = [];
+        $equipoInscrito = null;
+
+        if (auth()->check()) {
+            $user = auth()->user();
+            $misEquiposComoLider = Team::where('lider_id', $user->id)
+                ->whereNull('evento_id') // Solo equipos que NO están en un evento
+                ->get();
+
+            // Verificar si alguno de mis equipos ya está inscrito en este evento
+            $equipoInscrito = Team::where('lider_id', $user->id)
+                ->where('evento_id', $id)
+                ->first();
+        }
+
+        return view('events.show', compact('event', 'misEquiposComoLider', 'equipoInscrito'));
     }
 
     /**
@@ -203,5 +221,34 @@ class EventController extends Controller
 
         return redirect()->route('events.index')
             ->with('success', 'Evento eliminado exitosamente');
+    }
+
+    /**
+     * Unir equipo al evento (solo para líderes)
+     */
+    public function joinTeam(Request $request, $eventId)
+    {
+        $validated = $request->validate([
+            'team_id' => 'required|exists:teams,id'
+        ]);
+
+        $team = Team::findOrFail($validated['team_id']);
+        $user = auth()->user();
+
+        // Verificar que el usuario sea el líder del equipo
+        if ($team->lider_id !== $user->id) {
+            return back()->with('error', 'Solo el líder del equipo puede inscribirlo a un evento');
+        }
+
+        // Verificar que el equipo no esté ya en un evento
+        if ($team->evento_id !== null) {
+            return back()->with('error', 'Este equipo ya está inscrito en otro evento');
+        }
+
+        // Inscribir el equipo al evento
+        $team->evento_id = $eventId;
+        $team->save();
+
+        return back()->with('success', '¡Tu equipo se ha inscrito exitosamente al evento!');
     }
 }

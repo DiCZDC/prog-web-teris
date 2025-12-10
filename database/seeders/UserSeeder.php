@@ -45,7 +45,7 @@ class userSeeder extends Seeder
         
         
         $roleAdmin = Role::create(['name' =>  'admin']);
-        $roleJudge = Role::create(['name' =>  'juez']);
+        $roleJudge = Role::create(['name' =>  'judge']);
         $judgeUser ->assignRole($roleJudge);
         //Assign All Permissions to Admin
         $adminUser->assignRole($roleAdmin);
@@ -53,7 +53,7 @@ class userSeeder extends Seeder
         $normalUser->assignRole(Role::create(['name' => 'user']));
         User::factory(50)->create();
         User::all()->each(function ($user) {
-            if (!$user->hasRole('admin')) {
+            if (!$user->hasRole('admin') && !$user->hasRole('judge')) {
                 $user->assignRole('user');
             }
         });

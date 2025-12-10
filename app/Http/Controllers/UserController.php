@@ -87,7 +87,7 @@ class UserController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'new_role' => 'required|in:admin,juez,user'
+            'new_role' => 'required|in:admin,judge,user'
         ]);
         
         try {
