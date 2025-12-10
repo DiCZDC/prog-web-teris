@@ -243,8 +243,11 @@ class EventController extends Controller
                            ->get();
         
         return view('events.winners', compact('evento', 'ganadores'));
+    }
+        /*
      * Unir equipo al evento (solo para líderes)
      */
+
     public function joinTeam(Request $request, $eventId)
     {
         $validated = $request->validate([
