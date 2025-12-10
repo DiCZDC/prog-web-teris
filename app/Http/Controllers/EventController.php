@@ -224,6 +224,25 @@ class EventController extends Controller
     }
 
     /**
+     * Mostrar ganadores de un evento (público)
+     */
+    public function showWinners($id)
+    {
+        $evento = Event::with(['winners.team.lider', 'winners.team.proyecto'])
+                       ->findOrFail($id);
+        
+        // Verificar que los ganadores estén publicados
+        if (!$evento->winners_published) {
+            return redirect()->route('events.show', $id)
+                           ->with('info', 'Los ganadores de este evento aún no han sido anunciados.');
+        }
+        
+        $ganadores = $evento->winners()
+                           ->with(['team.lider', 'team.proyecto'])
+                           ->orderBy('position', 'asc')
+                           ->get();
+        
+        return view('events.winners', compact('evento', 'ganadores'));
      * Unir equipo al evento (solo para líderes)
      */
     public function joinTeam(Request $request, $eventId)

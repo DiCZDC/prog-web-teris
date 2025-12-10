@@ -20,13 +20,17 @@ class Event extends Model
         'ubicacion',
         'reglas',
         'premios',
-        'popular'
+        'popular',
+        'winners_published', // Agregado
+        'winners_announced_at' // Agregado
     ];
 
     protected $casts = [
         'inicio_evento' => 'datetime',
         'fin_evento' => 'datetime',
-        'popular' => 'boolean'
+        'popular' => 'boolean',
+        'winners_published' => 'boolean', // Agregado
+        'winners_announced_at' => 'datetime', // Agregado
     ];
 
     // Scopes
@@ -102,7 +106,7 @@ class Event extends Model
     public function winners()
     {
         return $this->hasMany(EventWinner::class, 'event_id')
-                    ->orderBy('position');
+                    ->orderBy('position', 'asc');
     }
 
     /**
@@ -110,7 +114,7 @@ class Event extends Model
      */
     public function hasPublishedWinners()
     {
-        return $this->winners_published;
+        return $this->winners_published && $this->winners()->count() >= 3;
     }
 
     /**
@@ -146,5 +150,13 @@ class Event extends Model
             'winners_published' => true,
             'winners_announced_at' => now(),
         ]);
+    }
+
+    /**
+     * Obtener ganador por posición (método nuevo)
+     */
+    public function getWinnerByPosition($position)
+    {
+        return $this->winners()->where('position', $position)->first();
     }
 }
