@@ -80,7 +80,7 @@ class TeamController extends Controller
      */
     public function show(Team $team)
     {
-        $team->load(['lider', 'disenador', 'frontprog', 'backprog', 'evento']);
+        $team->load(['lider', 'disenador', 'frontprog', 'backprog', 'evento', 'proyecto']);
         return view('teams.show', compact('team'));
     }
 
@@ -647,7 +647,7 @@ class TeamController extends Controller
         // Aceptar la invitación
         $invitation->aceptar();
         app(\App\Http\Controllers\MailController::class)->sendTeamAnswerEmail(
-            $invitation->invitador,
+            $team->lider,
             Auth::user(),
             $team,
             'aceptada'
@@ -673,7 +673,7 @@ class TeamController extends Controller
 
         $invitation->rechazar();
         app(\App\Http\Controllers\MailController::class)->sendTeamAnswerEmail(
-            $invitation->invitador,
+            $team->lider,
             Auth::user(),
             $invitation->team,
             'rechazada'
@@ -841,6 +841,7 @@ class TeamController extends Controller
         $solicitud->aceptar();
         $mailController = new MailController();
         $mailController->sendApplicationTeamEmailResponse($user,$team,'aceptada');
+
         return back()->with('success', '✅ Solicitud aceptada. El usuario se ha unido al equipo.');
     }
 

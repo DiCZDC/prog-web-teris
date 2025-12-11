@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(dir:*)",
-      "Bash(php artisan migrate:status:*)"
+      "Bash(php artisan migrate:status:*)",
+      "Bash(git merge:*)",
+      "Bash(php artisan:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

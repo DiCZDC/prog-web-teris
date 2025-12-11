@@ -21,7 +21,9 @@ class ProjectFactory extends Factory
             'nombre' => $this->faker->sentence,
             'descripcion' => $this->faker->paragraph,
             'team_id' => Team::inRandomOrder()->value('id'),
-            'url_repositorio' => $this->faker->url,
+            'repositorio_url' => $this->faker->url,
+            'demo_url' => $this->faker->url,
+            'documentacion_url' => $this->faker->url,
             'etapa_validacion' => $this->faker->word,
         ];
     }

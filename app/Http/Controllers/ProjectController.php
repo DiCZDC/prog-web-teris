@@ -18,15 +18,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        // Solo administradores pueden ver todos los proyectos
-        if (!Auth::user()->hasRole('admin')) {
-            abort(403, 'No tienes permiso para ver todos los proyectos.');
-        }
-        
-        $projects = Project::with(['team', 'creador'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
-            
+        $projects = Project::with(['team', 'team.evento'])->paginate(10);
         return view('projects.index', compact('projects'));
     }
 
@@ -52,6 +44,7 @@ class ProjectController extends Controller
      */
     public function create(Request $request)
     {
+        // Obtener el team_id de la query string
         $teamId = $request->query('team_id');
         $team = null;
         
@@ -76,20 +69,20 @@ class ProjectController extends Controller
                     ->with('error', 'El equipo debe estar en un evento activo para subir proyectos.');
             }
         }
-        
-        // Obtener equipos del usuario que son líder y no tienen proyecto
-        $misEquipos = Auth::user()->equiposComoLider()
-            ->whereDoesntHave('proyecto')
-            ->with('evento')
-            ->get()
-            ->filter(function($equipo) {
-                return $equipo->evento && $equipo->evento->estado === 'Activo';
-            });
-        
-        return view('projects.create', [
-            'team' => $team,
-            'misEquipos' => $misEquipos
-        ]);
+
+        $team = Team::findOrFail($teamId);
+
+        // Verificar que el usuario sea el líder del equipo
+        if ($team->lider_id !== Auth::id()) {
+            return redirect()->route('teams.show', $team)->with('error', 'Solo el líder del equipo puede enviar el proyecto.');
+        }
+
+        // Verificar si el equipo ya tiene un proyecto
+        if ($team->proyecto) {
+            return redirect()->route('projects.edit', $team->proyecto)->with('info', 'Este equipo ya tiene un proyecto. Puedes editarlo aquí.');
+        }
+
+        return view('projects.create', compact('team'));
     }
 
     /**
@@ -172,6 +165,21 @@ class ProjectController extends Controller
                 ->with('error', 'Ocurrió un error al subir el proyecto. Por favor, intenta nuevamente.')
                 ->withInput();
         }
+
+        // Crear el proyecto
+        $project = Project::create([
+            'nombre' => $validated['nombre'],
+            'descripcion' => $validated['descripcion'],
+            'team_id' => $team->id,
+            'estado' => true, // Activo por defecto
+            'repositorio_url' => $validated['repositorio_url'],
+            'demo_url' => $validated['demo_url'] ?? null,
+            'documentacion_url' => $validated['documentacion_url'] ?? null,
+            'created_by' => Auth::id(),
+            'updated_by' => Auth::id(),
+        ]);
+
+        return redirect()->route('teams.show', $team)->with('success', '¡Proyecto enviado exitosamente! Los jueces podrán revisarlo.');
     }
 
     /**
@@ -247,32 +255,13 @@ class ProjectController extends Controller
         */
     }
 
-    /**
-     * Proyectos por equipo
-     */
-    public function byTeam(Team $team)
-    {
-        $project = $team->proyecto;
-        
-        if (!$project) {
-            return redirect()->route('teams.show', $team)
-                ->with('info', 'Este equipo aún no ha subido un proyecto.');
+        // Verificar que el usuario sea el líder del equipo o admin
+        if ($team->lider_id !== Auth::id() && !Auth::user()->hasRole('admin')) {
+            return back()->with('error', 'No tienes permisos para eliminar este proyecto.');
         }
-        
-        return redirect()->route('projects.show', $project);
-    }
 
-    /**
-     * Mostrar proyecto de un equipo específico
-     */
-    public function showForTeam(Team $team)
-    {
-        $project = $team->proyecto;
-        
-        if (!$project) {
-            abort(404, 'Este equipo no tiene proyecto registrado.');
-        }
-        
-        return $this->show($project);
+        $project->delete();
+
+        return redirect()->route('teams.show', $team)->with('success', 'Proyecto eliminado exitosamente.');
     }
 }

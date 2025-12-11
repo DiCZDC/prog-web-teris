@@ -48,21 +48,25 @@ class MailController extends Controller
             ->send(new pdfSent($team, $user, $this->mailsender, $event, $date));
         return "E-mail Enviado";
     }
+    //invitar a unirse al equipo
     function sendTeamInvitationEmail($user, $team){
         \Mail::to($user->email)
             ->send(new teamInvitation($user, $team, $this->mailsender));
         return "E-mail Enviado";
     }
+    //responder a la invitacion de unirse al equipo
     function sendTeamAnswerEmail($user, $userDestination, $team, $answer){
-        \Mail::to($userDestination->email)
-            ->send(new teamAnswer($user, $userDestination, $team, $answer, $this->mailsender));
+        \Mail::to($user->email)
+            ->send(new teamAnswer($userDestination, $user, $team, $answer, $this->mailsender));
         return "E-mail Enviado";
     }
+    //Respuesta a la solicitud para unirse al equipo
     function sendApplicationTeamEmailResponse($user, $team, $response){
         \Mail::to($team->lider->email)
             ->send(new applicationTeam($user, $team, $response, $this->mailsender));
         return "E-mail Enviado";
     }
+    //solicitud para unirse al equipo
     function sendSolitudeTeamEmail($team, $userRequest, $userDestination){
         \Mail::to($userDestination->email)
             ->send(new solitudeTeam($team, $userRequest, $userDestination, $this->mailsender));
