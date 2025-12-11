@@ -249,7 +249,7 @@
                     stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             Regresar
-        </a>
+    </a>
 
     <h1>
         Invitar Miembros

@@ -32,7 +32,6 @@
     .logo-icon {
         width: 40px;
         height: 40px;
-        /* Antes amarillo */
         background: linear-gradient(135deg, #a855f7, #c084fc);
         border-radius: 8px;
     }
@@ -217,7 +216,6 @@
 
     .team-code-large {
         display: inline-block;
-        /* Antes amarillo */
         background: rgba(168, 85, 247, 0.3);
         border: 2px solid #a855f7;
         padding: 10px 25px;
@@ -293,7 +291,7 @@
     }
 
     .role-input {
-        background: rgba(168, 85, 247, 0.2); /* antes amarillo */
+        background: rgba(168, 85, 247, 0.2);
         border: 1px solid #a855f7;
         border-radius: 10px;
         padding: 12px 15px;
@@ -334,6 +332,189 @@
         opacity: 0.5;
     }
 
+    /* ===== ESTILOS AGREGADOS PARA LA SECCIÓN DE PROYECTO ===== */
+    .project-section {
+        margin-top: 30px;
+        padding-top: 30px;
+        border-top: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .project-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .project-card {
+        background: rgba(76, 175, 80, 0.15);
+        border: 2px solid rgba(76, 175, 80, 0.4);
+        border-radius: 15px;
+        padding: 25px;
+        position: relative;
+    }
+
+    .project-card-warning {
+        background: rgba(255, 193, 7, 0.15);
+        border: 2px solid rgba(255, 193, 7, 0.4);
+    }
+
+    .project-status-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(76, 175, 80, 0.3);
+        border: 1px solid #4CAF50;
+        color: #4CAF50;
+        padding: 6px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .project-info-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .project-icon {
+        font-size: 32px;
+        width: 50px;
+        height: 50px;
+        background: rgba(76, 175, 80, 0.2);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .project-info {
+        flex: 1;
+    }
+
+    .project-name {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: white;
+    }
+
+    .project-date {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .project-description {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.6;
+        font-size: 15px;
+    }
+
+    .project-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .project-btn {
+        padding: 10px 20px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: bold;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 2px solid;
+    }
+
+    .project-btn-primary {
+        background: rgba(33, 150, 243, 0.3);
+        border-color: #2196F3;
+        color: #2196F3;
+    }
+
+    .project-btn-primary:hover {
+        background: rgba(33, 150, 243, 0.5);
+        transform: translateY(-2px);
+    }
+
+    .project-btn-success {
+        background: rgba(76, 175, 80, 0.3);
+        border-color: #4CAF50;
+        color: #4CAF50;
+    }
+
+    .project-btn-success:hover {
+        background: rgba(76, 175, 80, 0.5);
+        transform: translateY(-2px);
+    }
+
+    .project-warning-icon {
+        font-size: 32px;
+        margin-right: 15px;
+    }
+
+    .project-warning-content {
+        flex: 1;
+    }
+
+    .project-warning-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #FFC107;
+    }
+
+    .project-warning-text {
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 15px;
+        line-height: 1.6;
+    }
+
+    .project-info-box {
+        background: rgba(33, 150, 243, 0.15);
+        border: 1px solid rgba(33, 150, 243, 0.3);
+        border-radius: 10px;
+        padding: 12px 15px;
+        margin-top: 15px;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .project-upload-note {
+        background: rgba(255, 193, 7, 0.2);
+        border: 1px solid rgba(255, 193, 7, 0.4);
+        border-radius: 10px;
+        padding: 12px 15px;
+        margin-top: 15px;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    /* ===== FIN DE ESTILOS AGREGADOS ===== */
+
     .action-buttons {
         display: flex;
         gap: 15px;
@@ -356,7 +537,6 @@
     }
 
     .btn-primary {
-        /* Antes amarillo */
         background: rgba(168, 85, 247, 0.3);
         border: 2px solid #a855f7;
         color: #a855f7;
@@ -405,6 +585,15 @@
         .navbar {
             flex-direction: column;
             gap: 20px;
+        }
+
+        .project-actions {
+            flex-direction: column;
+        }
+
+        .project-status-badge {
+            position: static;
+            margin-bottom: 15px;
         }
     }
 </style>
@@ -481,22 +670,94 @@
                 </div>
                 @endif
             </div>
-            {{-- En teams/show.blade.php, después de los botones de acción --}}
 
-@if($team->esLider(Auth::id()) && !$team->tieneProyecto())
-    <a href="{{ route('projects.create', ['team_id' => $team->id]) }}" 
-       class="btn btn-secondary btn-success">
-        Subir Proyecto
-    </a>
-@endif
+            {{-- ===== SECCIÓN DE PROYECTO AGREGADA ===== --}}
+            <div class="project-section">
+                <div class="project-title">
+                    📦 Proyecto del Equipo
+                </div>
 
-@if($team->tieneProyecto())
-    <a href="{{ route('projects.show', $team->proyecto) }}" 
-       class="btn btn-primary">
-        <i class="fas fa-eye mr-2"></i>
-        Ver Proyecto
-    </a>
-@endif
+                @if($team->tieneProyecto())
+                    {{-- PROYECTO EXISTENTE --}}
+                    <div class="project-card">
+                        <div class="project-status-badge">
+                            ✓ Enviado
+                        </div>
+
+                        <div class="project-info-header">
+                            <div class="project-icon">🚀</div>
+                            <div class="project-info">
+                                <div class="project-name">{{ $team->proyecto->nombre }}</div>
+                                <div class="project-date">
+                                    Enviado el {{ $team->proyecto->created_at->format('d/m/Y') }} 
+                                    a las {{ $team->proyecto->created_at->format('H:i') }}
+                                </div>
+                            </div>
+                        </div>
+
+                        @if($team->proyecto->descripcion)
+                        <div class="project-description">
+                            {{ Str::limit($team->proyecto->descripcion, 200) }}
+                        </div>
+                        @endif
+
+                        <div class="project-actions">
+                            <a href="{{ route('projects.show', $team->proyecto) }}" 
+                               class="project-btn project-btn-primary">
+                                👁️ Ver Proyecto Completo
+                            </a>
+                            
+                            <a href="{{ $team->proyecto->url }}" 
+                               target="_blank"
+                               class="project-btn project-btn-success">
+                                🔗 Abrir Proyecto
+                            </a>
+                        </div>
+
+                        <div class="project-info-box">
+                            🔒 El proyecto ha sido enviado y no puede ser modificado
+                        </div>
+                    </div>
+                @else
+                    {{-- SIN PROYECTO --}}
+                    <div class="project-card project-card-warning">
+                        <div class="project-info-header">
+                            <div class="project-warning-icon">⚠️</div>
+                            <div class="project-warning-content">
+                                <div class="project-warning-title">No hay proyecto subido</div>
+                                <div class="project-warning-text">
+                                    Este equipo aún no ha subido su proyecto para evaluación.
+                                    @if($team->esLider(Auth::id()))
+                                        Como líder del equipo, puedes subir el proyecto ahora.
+                                    @else
+                                        Solo el líder del equipo puede subir el proyecto.
+                                    @endif
+                                </div>
+
+                                @if($team->esLider(Auth::id()))
+                                    <div class="project-actions">
+                                        <a href="{{ route('projects.create', ['team_id' => $team->id]) }}" 
+                                           class="project-btn project-btn-success">
+                                            ⬆️ Subir Proyecto
+                                        </a>
+                                    </div>
+
+                                    <div class="project-upload-note">
+                                        <span>⚡</span>
+                                        <span><strong>Importante:</strong> Solo tendrás una oportunidad para subir el proyecto. Una vez enviado, no podrá ser editado ni eliminado.</span>
+                                    </div>
+                                @else
+                                    <div class="project-info-box">
+                                        👤 Líder del equipo: <strong>{{ $team->lider->name }}</strong>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+            {{-- ===== FIN DE SECCIÓN DE PROYECTO ===== --}}
+
             <div class="members-section">
                 <div class="members-title">Integrantes:</div>
 

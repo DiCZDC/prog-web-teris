@@ -14,6 +14,7 @@ class Project extends Model
         'descripcion',
         'team_id',
         'estado',
+        'url',                    // AGREGADO: URL principal del proyecto
         'repositorio_url',
         'demo_url',
         'documentacion_url',
@@ -86,6 +87,24 @@ class Project extends Model
     public function evaluacionPorJuez($juezId)
     {
         return $this->evaluaciones()->where('juez_id', $juezId)->first();
+    }
+
+    // AGREGADO: Verificar si el proyecto ha sido evaluado
+    public function hasBeenEvaluated()
+    {
+        return $this->evaluaciones()->whereNotNull('promedio')->exists();
+    }
+
+    // AGREGADO: Obtener el promedio de calificaciones
+    public function getPromedioCalificacionAttribute()
+    {
+        $evaluaciones = $this->evaluaciones()->whereNotNull('promedio')->get();
+        
+        if ($evaluaciones->isEmpty()) {
+            return null;
+        }
+
+        return $evaluaciones->avg('promedio');
     }
 
     // Scope para proyectos activos
