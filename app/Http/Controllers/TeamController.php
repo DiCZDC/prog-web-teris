@@ -647,7 +647,7 @@ class TeamController extends Controller
         // Aceptar la invitación
         $invitation->aceptar();
         app(\App\Http\Controllers\MailController::class)->sendTeamAnswerEmail(
-            $invitation->invitador,
+            $team->lider,
             Auth::user(),
             $team,
             'aceptada'
@@ -673,7 +673,7 @@ class TeamController extends Controller
 
         $invitation->rechazar();
         app(\App\Http\Controllers\MailController::class)->sendTeamAnswerEmail(
-            $invitation->invitador,
+            $team->lider,
             Auth::user(),
             $invitation->team,
             'rechazada'
