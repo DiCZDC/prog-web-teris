@@ -20,13 +20,17 @@ class Event extends Model
         'ubicacion',
         'reglas',
         'premios',
-        'popular'
+        'popular',
+        'winners_published', // Agregado
+        'winners_announced_at' // Agregado
     ];
 
     protected $casts = [
         'inicio_evento' => 'datetime',
         'fin_evento' => 'datetime',
-        'popular' => 'boolean'
+        'popular' => 'boolean',
+        'winners_published' => 'boolean', // Agregado
+        'winners_announced_at' => 'datetime', // Agregado
     ];
 
     // Scopes
@@ -55,7 +59,7 @@ class Event extends Model
      */
     public function jueces()
     {
-        return $this->belongsToMany(User::class, 'event_judge', 'event_id', 'user_id')
+        return $this->belongsToMany(User::class, 'event_judge', 'event_id', 'judge_id')
                     ->withTimestamps()
                     ->withPivot('assigned_at');
     }
@@ -94,5 +98,65 @@ class Event extends Model
     public function cantidadJueces()
     {
         return $this->jueces()->count();
+    }
+
+    /**
+     * Relación: Un evento tiene muchos ganadores (máximo 3)
+     */
+    public function winners()
+    {
+        return $this->hasMany(EventWinner::class, 'event_id')
+                    ->orderBy('position', 'asc');
+    }
+
+    /**
+     * Verificar si el evento tiene ganadores publicados
+     */
+    public function hasPublishedWinners()
+    {
+        return $this->winners_published && $this->winners()->count() >= 3;
+    }
+
+    /**
+     * Obtener el primer lugar
+     */
+    public function firstPlace()
+    {
+        return $this->winners()->where('position', '1')->first();
+    }
+
+    /**
+     * Obtener el segundo lugar
+     */
+    public function secondPlace()
+    {
+        return $this->winners()->where('position', '2')->first();
+    }
+
+    /**
+     * Obtener el tercer lugar
+     */
+    public function thirdPlace()
+    {
+        return $this->winners()->where('position', '3')->first();
+    }
+
+    /**
+     * Publicar ganadores (hacerlos visibles públicamente)
+     */
+    public function publishWinners()
+    {
+        $this->update([
+            'winners_published' => true,
+            'winners_announced_at' => now(),
+        ]);
+    }
+
+    /**
+     * Obtener ganador por posición (método nuevo)
+     */
+    public function getWinnerByPosition($position)
+    {
+        return $this->winners()->where('position', $position)->first();
     }
 }

@@ -70,7 +70,7 @@
                                 @endphp
                                 <span class="px-2 py-1 text-xs rounded-full 
                                     @if($roleName == 'admin') bg-purple-100 text-purple-800
-                                    @elseif($roleName == 'juez') bg-blue-100 text-blue-800
+                                    @elseif($roleName == 'judge') bg-blue-100 text-blue-800
                                     @else bg-green-100 text-green-800 @endif">
                                     {{ ucfirst($roleName) }}
                                 </span>

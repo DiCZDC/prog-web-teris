@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\Team;
+use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
@@ -16,6 +19,23 @@ class ProjectController extends Controller
     {
         $projects = Project::with(['team', 'team.evento'])->paginate(10);
         return view('projects.index', compact('projects'));
+    }
+
+    /**
+     * Mostrar proyectos del usuario actual
+     */
+    public function myProjects()
+    {
+        $user = Auth::user();
+        
+        // Obtener proyectos de los equipos del usuario
+        $teamIds = $user->todosLosEquipos()->pluck('id');
+        $projects = Project::whereIn('team_id', $teamIds)
+            ->with(['team', 'evento'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
+        return view('projects.my-projects', compact('projects'));
     }
 
     /**
@@ -175,4 +195,4 @@ class ProjectController extends Controller
 
         return redirect()->route('teams.show', $team)->with('success', 'Proyecto eliminado exitosamente.');
     }
-}
+} 

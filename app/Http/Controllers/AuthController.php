@@ -37,7 +37,7 @@ class AuthController extends Controller
                     ->with('success', '¡Bienvenido Admin ' . $user->name . '!');
             }
             
-            if ($user->hasRole('juez')) {
+            if ($user->hasRole('judge')) {
                 return redirect()->route('judge.dashboard')
                     ->with('success', '¡Bienvenido Juez ' . $user->name . '!');
             }

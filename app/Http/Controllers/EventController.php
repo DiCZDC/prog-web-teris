@@ -79,8 +79,9 @@ class EventController extends Controller
      * Display the specified resource.
      */
     public function show($id)
-    {
-        $event = Event::with('jueces')->findOrFail($id);
+    {   
+        
+        $event = Event::with(['teams', 'jueces'])->findOrFail($id);
 
         // Obtener equipos donde el usuario autenticado es líder (solo si está autenticado)
         $misEquiposComoLider = [];
@@ -223,8 +224,30 @@ class EventController extends Controller
     }
 
     /**
+     * Mostrar ganadores de un evento (público)
+     */
+    public function showWinners($id)
+    {
+        $evento = Event::with(['winners.team.lider', 'winners.team.proyecto'])
+                       ->findOrFail($id);
+        
+        // Verificar que los ganadores estén publicados
+        if (!$evento->winners_published) {
+            return redirect()->route('events.show', $id)
+                           ->with('info', 'Los ganadores de este evento aún no han sido anunciados.');
+        }
+        
+        $ganadores = $evento->winners()
+                           ->with(['team.lider', 'team.proyecto'])
+                           ->orderBy('position', 'asc')
+                           ->get();
+        
+        return view('events.winners', compact('evento', 'ganadores'));
+    }
+        /*
      * Unir equipo al evento (solo para líderes)
      */
+
     public function joinTeam(Request $request, $eventId)
     {
         $validated = $request->validate([

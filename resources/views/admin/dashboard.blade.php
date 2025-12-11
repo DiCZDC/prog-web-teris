@@ -104,14 +104,25 @@
         border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
+    .item-info {
+        flex: 1;
+    }
+
     .item-name {
         color: white;
         font-weight: bold;
+        margin-bottom: 5px;
     }
 
     .item-date {
         color: rgba(255,255,255,0.6);
         font-size: 14px;
+    }
+
+    .item-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
     .item-status {
@@ -129,6 +140,27 @@
     .status-inactive {
         background: rgba(244, 67, 54, 0.2);
         color: #f44336;
+    }
+
+    .btn-winners {
+        padding: 4px 8px;
+        background: rgba(255, 215, 0, 0.2);
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        color: #ffd700;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        min-width: 32px;
+        height: 32px;
+    }
+
+    .btn-winners:hover {
+        background: rgba(255, 215, 0, 0.3);
+        transform: translateY(-2px);
     }
 
     .view-all {
@@ -245,15 +277,27 @@
             <h2 class="section-title">📅 Eventos Recientes</h2>
             @foreach($eventosRecientes as $evento)
                 <div class="list-item">
-                    <div>
+                    <div class="item-info">
                         <div class="item-name">{{ $evento->nombre }}</div>
                         <div class="item-date">
-                            {{ $evento->created_at->format('d/m/Y') }}
+                            Creado: {{ $evento->created_at->format('d/m/Y') }}
+                            @if($evento->inicio_evento)
+                                • Inicia: {{ $evento->inicio_evento->format('d/m/Y') }}
+                            @endif
                         </div>
                     </div>
-                    <span class="item-status {{ $evento->estado == 'Activo' ? 'status-active' : 'status-inactive' }}">
-                        {{ $evento->estado }}
-                    </span>
+                    <div class="item-actions">
+                        <span class="item-status {{ $evento->estado == 'Activo' ? 'status-active' : 'status-inactive' }}">
+                            {{ $evento->estado }}
+                        </span>
+                        
+                        <!-- NUEVO BOTÓN: Gestionar Ganadores -->
+                        <a href="{{ route('admin.events.winners.index', $evento->id) }}" 
+                           class="btn-winners" 
+                           title="Gestionar Ganadores de {{ $evento->nombre }}">
+                            <i class="fas fa-trophy"></i>
+                        </a>
+                    </div>
                 </div>
             @endforeach
             <a href="{{ route('events.index') }}" class="view-all">Ver todos los eventos →</a>

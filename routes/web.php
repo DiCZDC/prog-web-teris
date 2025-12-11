@@ -10,6 +10,7 @@ use App\Http\Controllers\{
     AdminController,
     JudgeController
 };
+use App\Http\Controllers\Admin\WinnersController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,6 +28,8 @@ Route::prefix('events')->name('events.')->group(function () {
     Route::get('/search', [EventController::class, 'search'])->name('search');
     Route::get('/{id}', [EventController::class, 'show'])->name('show');
     Route::get('/{id}/teams', [EventController::class, 'teams'])->name('teams.index');
+    // 🎯 RUTA PÚBLICA para ver ganadores (para TODOS los usuarios)
+    Route::get('/{id}/winners', [EventController::class, 'showWinners'])->name('winners');
 
     // Unirse a evento con equipo (solo líderes autenticados)
     Route::post('/{id}/join-team', [EventController::class, 'joinTeam'])->name('join-team')->middleware('auth');
@@ -34,6 +37,15 @@ Route::prefix('events')->name('events.')->group(function () {
 
 // Equipos públicos (solo lectura)
 Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
+
+Route::get('/test-email', function () {
+    $user = \App\Models\User::find(1);
+    $team = \App\Models\Team::find(2);
+    $userDestination =\App\Models\Team::find(2)->lider ;
+    console.log($team->lider->email);
+    $mailController = new \App\Http\Controllers\MailController();
+    return $mailController->sendTeamAnswerEmail($user, $userDestination, $team, 'aceptada');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -129,20 +141,43 @@ Route::middleware('auth')->group(function () {
     });
     
     // Equipos (usuarios autenticados)
-    // Route::prefix('teams')->name('teams.')->group(function () {
-    //     Route::get('/create', [TeamController::class, 'create'])->name('create');
-    //     Route::post('/', [TeamController::class, 'store'])->name('store');
-    //     Route::get('/{team}/edit', [TeamController::class, 'edit'])->name('edit');
-    //     Route::put('/{team}', [TeamController::class, 'update'])->name('update');
-    //     Route::delete('/{team}', [TeamController::class, 'destroy'])->name('destroy');
-    //     Route::get('/join/form', [TeamController::class, 'join'])->name('join');
-    //     Route::post('/join/process', [TeamController::class, 'joinTeam'])->name('join.process');
-    //     Route::post('/{team}/leave', [TeamController::class, 'leave'])->name('leave');
-    // });
+    Route::middleware('role:user')->group(function () {
+        // Rutas para ver mis equipos
+        Route::get('/my-teams', [TeamController::class, 'myTeams'])->name('teams.my-teams');
+        // Rutas CRUD de equipos
+        Route::get('/teams/create', [TeamController::class, 'create'])->name('teams.create');
+        Route::post('/teams', [TeamController::class, 'store'])->name('teams.store');
+        Route::get('/teams/{team}/edit', [TeamController::class, 'edit'])->name('teams.edit');
+        Route::put('/teams/{team}', [TeamController::class, 'update'])->name('teams.update');
+        Route::delete('/teams/{team}', [TeamController::class, 'destroy'])->name('teams.destroy');
+        
+        // Rutas para unirse a equipos
+        Route::get('/teams/join/form', [TeamController::class, 'join'])->name('teams.join');
+        Route::post('/teams/join/process', [TeamController::class, 'joinTeam'])->name('teams.join.process');
+        Route::post('/teams/join/send', [TeamController::class, 'sendJoinRequest'])->name('teams.join.send');
+        Route::post('/teams/{team}/leave', [TeamController::class, 'leave'])->name('teams.leave');
+
+        //Rutas para invitaciones del lider a nuevos miembros
+        Route::get('/teams/{team}/invite', [TeamController::class, 'invite'])->name('teams.invite');
+        Route::post('/teams/{team}/invite', [TeamController::class, 'sendInvitation'])->name('teams.send-invitation');
+        Route::get('/my-invitations', [TeamController::class, 'myInvitations'])->name('teams.my-invitations');
+        Route::post('/invitations/{invitation}/accept', [TeamController::class, 'acceptInvitation'])->name('invitations.accept');
+        Route::post('/invitations/{invitation}/reject', [TeamController::class, 'rejectInvitation'])->name('invitations.reject');
+        Route::delete('/invitations/{invitation}/cancel', [TeamController::class, 'cancelInvitation'])->name('invitations.cancel');
+
+        //Rutas para nuevas solicitudes
+        Route::post('/teams/{team}/request', [TeamController::class, 'sendRequest'])->name('teams.send-request');
+        Route::get('/my-solicitudes', [TeamController::class, 'mySolicitudes'])->name('teams.my-solicitudes');
+        Route::post('/solicitudes/{invitation}/accept', [TeamController::class, 'acceptRequest'])->name('solicitudes.accept');
+        Route::post('/solicitudes/{invitation}/reject', [TeamController::class, 'rejectRequest'])->name('solicitudes.reject');
+    });
     
     // Proyectos
     Route::resource('projects', ProjectController::class);
 });
+
+// Ruta de teams/{team} al final para evitar conflictos
+Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
 
 /*
 |--------------------------------------------------------------------------
@@ -150,7 +185,7 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', \App\Http\Middleware\CheckAdmin::class])
+Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
@@ -185,8 +220,6 @@ Route::middleware(['auth', \App\Http\Middleware\CheckAdmin::class])
         
         // ELIMINA ESTA LÍNEA COMENTADA Y DEJA SOLO UNA:
         Route::post('/cambiar-rol', [AdminController::class, 'cambiarRol'])->name('cambiar-rol');
-        // O si prefieres PUT en lugar de POST:
-        // Route::put('/cambiar-rol', [AdminController::class, 'cambiarRol'])->name('cambiar-rol');
         
         Route::delete('/{id}/banear', [AdminController::class, 'banearUsuario'])->name('banear');
         Route::post('/{id}/restaurar', [AdminController::class, 'restaurarUsuario'])->name('restaurar');
@@ -199,6 +232,17 @@ Route::middleware(['auth', \App\Http\Middleware\CheckAdmin::class])
         Route::put('/{id}/banear', [AdminController::class, 'banearEquipo'])->name('banear');
         Route::put('/{id}/desbanear', [AdminController::class, 'desbanearEquipo'])->name('desbanear');
     });
+
+    // 🏆 RUTAS DE GANADORES (Solo Admin)
+    Route::prefix('events/{eventId}/winners')->name('events.winners.')->group(function () {
+        Route::get('/', [WinnersController::class, 'index'])->name('index');
+        Route::post('/assign-automatic', [WinnersController::class, 'assignAutomatic'])->name('assign-automatic');
+        Route::post('/assign-manual', [WinnersController::class, 'assignManual'])->name('assign-manual');
+        Route::post('/publish', [WinnersController::class, 'publish'])->name('publish');
+        Route::post('/unpublish', [WinnersController::class, 'unpublish'])->name('unpublish');
+        Route::delete('/{winnerId}', [WinnersController::class, 'removeWinner'])->name('remove');
+        Route::patch('/{winnerId}/recognition', [WinnersController::class, 'updateRecognition'])->name('update-recognition');
+    });
     
     // Users resource
     Route::resource('users', UserController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
@@ -210,7 +254,7 @@ Route::middleware(['auth', \App\Http\Middleware\CheckAdmin::class])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', \App\Http\Middleware\CheckJudge::class])
+Route::middleware(['auth', 'role:judge'])
     ->prefix('judge')
     ->name('judge.')
     ->group(function () {
