@@ -60,6 +60,7 @@ class MailController extends Controller
             ->send(new teamAnswer($userDestination, $user, $team, $answer, $this->mailsender));
         return "E-mail Enviado";
     }
+    //Respuesta a la solicitud para unirse al equipo
     function sendApplicationTeamEmailResponse($user, $team, $response){
         \Mail::to($team->lider->email)
             ->send(new applicationTeam($user, $team, $response, $this->mailsender));

@@ -841,6 +841,7 @@ class TeamController extends Controller
         $solicitud->aceptar();
         $mailController = new MailController();
         $mailController->sendApplicationTeamEmailResponse($user,$team,'aceptada');
+
         return back()->with('success', '✅ Solicitud aceptada. El usuario se ha unido al equipo.');
     }
 
