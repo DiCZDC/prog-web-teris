@@ -431,4 +431,39 @@ class JudgeController extends Controller
             'actividadMensual'
         ));
     }
+    /**
+
+
+
+     * API: Buscar jueces por nombre o email
+
+
+     * Para usar en la asignación de jueces a eventos
+
+
+     */
+
+
+    public function searchJudges(Request $request)
+    {
+        $query = $request->input('q', '');
+
+        if (strlen($query) < 2) {
+            return response()->json([
+                'judges' => []
+            ]);
+        }
+        // Buscar usuarios con rol de juez que coincidan con el criterio
+        $judges = User::role('judge')
+            ->where(function($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('email', 'like', "%{$query}%");
+            })
+            ->select('id', 'name', 'email')
+            ->limit(10)
+            ->get();
+        return response()->json([
+            'judges' => $judges
+        ]);
+    }
 }
