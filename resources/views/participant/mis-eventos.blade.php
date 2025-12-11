@@ -358,7 +358,10 @@
                     <div class="evento-card">
                         <!-- Header del evento -->
                         <div class="evento-header">
-                            <h2 class="evento-nombre">{{ $item['evento']->nombre }}</h2>
+                            
+                            @if(!empty($item['evento']->nombre))
+                                <h2 class="evento-nombre">{{ $item['evento']->nombre }}</h2>
+                            
                             <p class="evento-fechas">
                                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
@@ -366,8 +369,12 @@
                                     <line x1="8" y1="2" x2="8" y2="6"/>
                                     <line x1="3" y1="10" x2="21" y2="10"/>
                                 </svg>
+                            
                                 {{ \Carbon\Carbon::parse($item['evento']->inicio_evento)->format('d/m/Y') }} 
                                 - {{ \Carbon\Carbon::parse($item['evento']->fin_evento)->format('d/m/Y') }}
+                            @else
+                                <h2 class="evento-nombre">Sin Evento</h2>
+                                @endif
                             </p>
                         </div>
 
@@ -441,12 +448,14 @@
                             @endif
 
                             <!-- Botón ver detalles -->
-                            <a href="{{ route('mis-eventos.equipo', $item['evento']->id) }}" class="btn-ver-detalles">
-                                Ver detalles completos
-                                <svg style="display: inline-block; vertical-align: middle; margin-left: 0.5rem;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                                </svg>
-                            </a>
+                            @if(!empty($item['evento']->nombre))
+                                <a href="{{ route('mis-eventos.equipo', $item['evento']->id) }}" class="btn-ver-detalles">
+                                    Ver detalles completos
+                                    <svg style="display: inline-block; vertical-align: middle; margin-left: 0.5rem;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
+                            @endif
                         </div>
                     </div>
                 @endforeach
