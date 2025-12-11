@@ -880,7 +880,7 @@
                     {{-- Botones para el líder --}}
                     @if($team->evento)
                         @if($team->proyecto)
-                            <a href="{{ route('projects.edit', $team->proyecto) }}" class="btn btn-primary">📝 Editar Proyecto</a>
+                            <a href="{{ route('projects.edit', $team->proyecto) }}" class="btn btn-primary">Ver Proyecto</a>
                         @else
                             <a href="{{ route('projects.create', ['team_id' => $team->id]) }}" class="btn btn-primary">📤 Enviar Proyecto</a>
                         @endif
