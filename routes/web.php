@@ -170,6 +170,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/my-solicitudes', [TeamController::class, 'mySolicitudes'])->name('teams.my-solicitudes');
         Route::post('/solicitudes/{invitation}/accept', [TeamController::class, 'acceptRequest'])->name('solicitudes.accept');
         Route::post('/solicitudes/{invitation}/reject', [TeamController::class, 'rejectRequest'])->name('solicitudes.reject');
+
+        //Rutas para ver mis eventos
+        Route::get('/mis-eventos', [App\Http\Controllers\ParticipantController::class, 'misEventos'])->name('mis-eventos');
+        Route::get('/mis-eventos/{evento}/equipo', [App\Http\Controllers\ParticipantController::class, 'verMiEquipo'])->name('mis-eventos.equipo');
+
+        
     });
     
     // Proyectos

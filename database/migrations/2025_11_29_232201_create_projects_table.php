@@ -13,19 +13,35 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->longText('descripcion');
-            //Equipo FK
-            $table->foreignId('team_id')->constrained('teams')->onDelete('cascade')->onUpdate('cascade');
             
-            //Evento FK
-            // $table->foreignId('event_id')->constrained('events')->onDelete('cascade')->onUpdate('cascade');
-
-            $table->string('url_repositorio')-> nullable();
-
-            $table->string('etapa_validacion')-> nullable();
+            // Información básica del proyecto
+            $table->string('nombre');
+            $table->longText('descripcion')->nullable();
+            
+            // Relación con el equipo (UNIQUE para una sola oportunidad)
+            $table->foreignId('team_id')
+                  ->constrained('teams')
+                  ->onDelete('cascade')
+                  ->onUpdate('cascade');
+            
+            // URLs del proyecto
+            $table->string('url', 500); // URL principal del proyecto
+            $table->string('repositorio_url', 500)->nullable(); // También conocido como url_repositorio
+            $table->string('demo_url', 500)->nullable();
+            $table->string('documentacion_url', 500)->nullable();
+            
+            // Estado y validación
+            $table->boolean('estado')->default(true);
+            $table->string('etapa_validacion')->nullable();
+            
+            // Auditoría
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
             
             $table->timestamps();
+            
+            // CONSTRAINT ÚNICO: Un equipo solo puede tener un proyecto (UNA SOLA OPORTUNIDAD)
+            $table->unique('team_id');
         });
     }
 

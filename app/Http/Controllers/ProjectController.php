@@ -8,6 +8,7 @@ use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ProjectController extends Controller
@@ -63,10 +64,10 @@ class ProjectController extends Controller
                     ->with('error', 'Solo el líder del equipo puede subir proyectos.');
             }
             
-            // Verificar si ya tiene proyecto
+            // VALIDACIÓN CRÍTICA: Verificar si ya tiene proyecto (UNA SOLA OPORTUNIDAD)
             if ($team->tieneProyecto()) {
-                return redirect()->route('teams.show', $team)
-                    ->with('error', 'Este equipo ya tiene un proyecto registrado.');
+                return redirect()->route('projects.show', $team->proyecto)
+                    ->with('error', 'Este equipo ya tiene un proyecto registrado. No es posible subir otro proyecto.');
             }
             
             // Verificar que el equipo está en un evento activo
@@ -93,32 +94,44 @@ class ProjectController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * MODIFICADO: Implementa validación estricta de una sola oportunidad
      */
     public function store(Request $request)
     {
         $request->validate([
-            'titulo' => 'required|string|max:255',
+            'nombre' => 'required|string|max:255',  // Cambiado de 'titulo' a 'nombre' para coincidir con tu modelo
             'descripcion' => 'nullable|string',
             'url' => 'required|url|max:500',
             'repositorio_url' => 'nullable|url|max:500',
             'demo_url' => 'nullable|url|max:500',
             'documentacion_url' => 'nullable|url|max:500',
             'team_id' => 'required|exists:teams,id',
+        ], [
+            'nombre.required' => 'El título del proyecto es obligatorio.',
+            'nombre.max' => 'El título no puede exceder 255 caracteres.',
+            'descripcion.max' => 'La descripción no puede exceder 5000 caracteres.',
+            'url.required' => 'La URL del proyecto es obligatoria.',
+            'url.url' => 'La URL del proyecto debe ser válida.',
+            'repositorio_url.url' => 'La URL del repositorio debe ser válida.',
+            'demo_url.url' => 'La URL del demo debe ser válida.',
+            'documentacion_url.url' => 'La URL de la documentación debe ser válida.',
+            'team_id.required' => 'Debes seleccionar un equipo.',
+            'team_id.exists' => 'El equipo seleccionado no existe.',
         ]);
         
         $team = Team::with('evento')->findOrFail($request->team_id);
         
-        // Verificar permisos
+        // VALIDACIÓN CRÍTICA #1: Verificar permisos
         if (!$team->esLider(Auth::id())) {
             return redirect()->back()
                 ->with('error', 'Solo el líder del equipo puede subir proyectos.')
                 ->withInput();
         }
         
-        // Verificar si ya tiene proyecto
+        // VALIDACIÓN CRÍTICA #2: Verificar si ya tiene proyecto (UNA SOLA OPORTUNIDAD)
         if ($team->tieneProyecto()) {
-            return redirect()->route('teams.show', $team)
-                ->with('error', 'Este equipo ya tiene un proyecto registrado.');
+            return redirect()->route('projects.show', $team->proyecto)
+                ->with('error', 'Este equipo ya tiene un proyecto registrado. Solo se permite una subida por equipo.');
         }
         
         // Verificar que el equipo está en un evento activo
@@ -128,10 +141,13 @@ class ProjectController extends Controller
                 ->withInput();
         }
         
+        // Usar transacción para asegurar integridad de datos
+        DB::beginTransaction();
+        
         try {
             // Crear proyecto
             $project = Project::create([
-                'nombre' => $request->titulo,
+                'nombre' => $request->nombre,
                 'descripcion' => $request->descripcion,
                 'url' => $request->url,
                 'repositorio_url' => $request->repositorio_url,
@@ -143,22 +159,28 @@ class ProjectController extends Controller
                 'updated_by' => Auth::id(),
             ]);
             
-            return redirect()->route('teams.show', $team)
-                ->with('success', '¡Proyecto subido exitosamente! Los jueces podrán evaluarlo.');
+            DB::commit();
+            
+            // MODIFICADO: Redirigir a la vista de confirmación del proyecto
+            return redirect()->route('projects.show', $project)
+                ->with('success', '¡Tu proyecto ha sido enviado exitosamente! Los jueces ya pueden acceder a él para evaluarlo.');
                 
         } catch (\Exception $e) {
+            DB::rollBack();
+            
             return redirect()->back()
-                ->with('error', 'Error al crear el proyecto: ' . $e->getMessage())
+                ->with('error', 'Ocurrió un error al subir el proyecto. Por favor, intenta nuevamente.')
                 ->withInput();
         }
     }
 
     /**
      * Display the specified resource.
+     * MODIFICADO: Ahora muestra vista de solo lectura después de subir
      */
     public function show(Project $project)
     {
-        $project->load(['team', 'team.evento', 'creador', 'evaluaciones', 'evaluaciones.judge']);
+        $project->load(['team', 'team.evento', 'team.lider', 'creador', 'evaluaciones', 'evaluaciones.judge']);
         
         // Verificar que el usuario tiene permiso para ver este proyecto
         $user = Auth::user();
@@ -175,65 +197,40 @@ class ProjectController extends Controller
 
     /**
      * Show the form for editing the specified resource.
+     * MODIFICADO: Bloquea la edición una vez subido el proyecto
      */
     public function edit(Project $project)
     {
-        // Verificar que el usuario es líder del equipo
-        if (!$project->team->esLider(Auth::id()) && !Auth::user()->hasRole('admin')) {
-            abort(403, 'Solo el líder del equipo o un administrador puede editar el proyecto.');
-        }
-        
-        return view('projects.edit', compact('project'));
+        // BLOQUEO DE EDICIÓN: Una vez subido, no se puede editar
+        return redirect()->route('projects.show', $project)
+            ->with('error', 'Los proyectos no pueden ser editados una vez subidos. Solo tienes una oportunidad para subirlo correctamente.');
     }
 
     /**
      * Update the specified resource in storage.
+     * MODIFICADO: Bloquea cualquier intento de actualización
      */
     public function update(Request $request, Project $project)
     {
-        // Verificar permisos
-        if (!$project->team->esLider(Auth::id()) && !Auth::user()->hasRole('admin')) {
-            abort(403, 'No tienes permiso para editar este proyecto.');
-        }
-        
-        $request->validate([
-            'titulo' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
-            'url' => 'required|url|max:500',
-            'repositorio_url' => 'nullable|url|max:500',
-            'demo_url' => 'nullable|url|max:500',
-            'documentacion_url' => 'nullable|url|max:500',
-        ]);
-        
-        try {
-            $project->update([
-                'nombre' => $request->titulo,
-                'descripcion' => $request->descripcion,
-                'url' => $request->url,
-                'repositorio_url' => $request->repositorio_url,
-                'demo_url' => $request->demo_url,
-                'documentacion_url' => $request->documentacion_url,
-                'updated_by' => Auth::id(),
-            ]);
-            
-            return redirect()->route('projects.show', $project)
-                ->with('success', 'Proyecto actualizado exitosamente.');
-                
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Error al actualizar el proyecto: ' . $e->getMessage())
-                ->withInput();
-        }
+        // BLOQUEO DE ACTUALIZACIÓN: Una vez subido, no se puede modificar
+        return redirect()->route('projects.show', $project)
+            ->with('error', 'Los proyectos no pueden ser editados una vez subidos. Solo tienes una oportunidad para subirlo correctamente.');
     }
 
     /**
      * Remove the specified resource from storage.
+     * MODIFICADO: Bloquea la eliminación (opcional - puedes permitirla si necesitas)
      */
     public function destroy(Project $project)
     {
-        // Verificar permisos
-        if (!$project->team->esLider(Auth::id()) && !Auth::user()->hasRole('admin')) {
-            abort(403, 'No tienes permiso para eliminar este proyecto.');
+        // BLOQUEO DE ELIMINACIÓN: Una vez subido, no se puede eliminar
+        return redirect()->route('projects.show', $project)
+            ->with('error', 'Los proyectos no pueden ser eliminados una vez subidos.');
+        
+        /* SI QUIERES PERMITIR ELIMINACIÓN SOLO A ADMINS, USA ESTO:
+        if (!Auth::user()->hasRole('admin')) {
+            return redirect()->route('projects.show', $project)
+                ->with('error', 'Solo los administradores pueden eliminar proyectos.');
         }
         
         try {
@@ -247,6 +244,7 @@ class ProjectController extends Controller
             return redirect()->back()
                 ->with('error', 'Error al eliminar el proyecto: ' . $e->getMessage());
         }
+        */
     }
 
     /**
@@ -277,4 +275,4 @@ class ProjectController extends Controller
         
         return $this->show($project);
     }
-} 
+}

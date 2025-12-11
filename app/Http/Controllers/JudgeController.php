@@ -151,49 +151,59 @@ class JudgeController extends Controller
     /**
      * Ver detalles de un equipo específico
      */
-    public function verEquipo($eventoId, $equipoId)
-    {
-        $user = Auth::user();
-        
-        // Verificar permisos
-        if (!$user->esJuezDe($eventoId) && !$user->hasRole('admin')) {
-            abort(403, 'No tienes permisos para ver este equipo');
-        }
-        
-        $equipo = Team::with([
-            'lider', 
-            'disenador', 
-            'frontprog', 
-            'backprog', 
-            'evento',
-            'proyecto' => function($query) use ($user) {
-                $query->with([
-                    'evaluaciones' => function($q) use ($user) {
-                        $q->where('judge_id', $user->id);
-                    },
-                    'evaluaciones as todas_evaluaciones'
-                ]);
-            }
-        ])->findOrFail($equipoId);
-        
-        // Verificar que el equipo pertenece al evento
-        if ($equipo->evento_id != $eventoId) {
-            abort(404, 'El equipo no pertenece a este evento');
-        }
-        
-        // Obtener estadísticas del proyecto si existe
-        $estadisticasProyecto = null;
-        if ($equipo->proyecto) {
-            $estadisticasProyecto = [
-                'total_evaluaciones' => $equipo->proyecto->evaluaciones->count(),
-                'promedio_general' => $equipo->proyecto->evaluaciones->avg('total_score') ?? 0,
-                'evaluado_por_mi' => $equipo->proyecto->evaluaciones->where('judge_id', $user->id)->isNotEmpty(),
-                'mi_calificacion' => $equipo->proyecto->evaluaciones->where('judge_id', $user->id)->first()?->total_score ?? null,
-            ];
-        }
-        
-        return view('judge.eventos.equipo', compact('equipo', 'estadisticasProyecto'));
+    public function verEquipo($eventoId, $team_id)
+{
+    $user = Auth::user();
+    
+    // Verificar permisos
+    if (!$user->esJuezDe($eventoId) && !$user->hasRole('admin')) {
+        abort(403, 'No tienes permisos para ver este equipo');
     }
+    
+    $equipo = Team::with([
+        'lider', 
+        'disenador', 
+        'frontprog', 
+        'backprog', 
+        'evento',
+        'proyecto.evaluaciones.judge'  // Cargar todas las evaluaciones con el juez
+    ])->findOrFail($team_id);
+    
+    // Verificar que el equipo pertenece al evento
+    if ($equipo->evento_id != $eventoId) {
+        abort(404, 'El equipo no pertenece a este evento');
+    }
+    
+    // Inicializar variables para la vista
+    $estadisticasProyecto = null;
+    $miEvaluacion = null;
+    $todasEvaluaciones = collect();
+    
+    // Obtener estadísticas del proyecto si existe
+    if ($equipo->proyecto) {
+        // Mi evaluación
+        $miEvaluacion = $equipo->proyecto->evaluaciones
+            ->where('judge_id', $user->id)
+            ->first();
+        
+        // Todas las evaluaciones
+        $todasEvaluaciones = $equipo->proyecto->evaluaciones;
+        
+        $estadisticasProyecto = [
+            'total_evaluaciones' => $todasEvaluaciones->count(),
+            'promedio_general' => $todasEvaluaciones->avg('total_score') ?? 0,
+            'evaluado_por_mi' => $miEvaluacion !== null,
+            'mi_calificacion' => $miEvaluacion?->total_score,
+        ];
+    }
+    
+    return view('judge.eventos.equipo', compact(
+        'equipo', 
+        'estadisticasProyecto',
+        'miEvaluacion',
+        'todasEvaluaciones'
+    ));
+}
     
     /**
      * Formulario para evaluar un proyecto

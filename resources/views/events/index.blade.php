@@ -140,6 +140,30 @@
             background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
         }
 
+        .btn-mis-eventos {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        .btn-mis-eventos {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+
+        .btn-mis-eventos:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(6, 182, 212, 0.6);
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+        }
+
         .page-title {
             font-size: 2.5rem;
             font-weight: 800;
@@ -199,13 +223,24 @@
         <div class="flex justify-between items-center mb-8">
             <h1 class="page-title">Eventos Populares</h1>
             
-            @auth
-                @if(auth()->user()->hasRole('admin'))
-                    <a href="{{ route('admin.events.create') }}" class="btn-crear">
-                        ＋ Crear Nuevo Evento
+            <div class="flex gap-4">
+                @auth
+                    {{-- Botón Mis Eventos para usuarios autenticados --}}
+                    <a href="{{ route('mis-eventos') }}" class="btn-mis-eventos">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        Mis Eventos
                     </a>
-                @endif
-            @endauth
+                    
+                    @if(auth()->user()->hasRole('admin'))
+                        <a href="{{ route('admin.events.create') }}" class="btn-crear">
+                            ＋ Crear Nuevo Evento
+                        </a>
+                    @endif
+                @endauth
+            </div>
         </div>
         
         <!-- Mensajes de éxito -->
