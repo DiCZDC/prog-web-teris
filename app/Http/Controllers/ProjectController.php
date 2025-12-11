@@ -253,7 +253,7 @@ class ProjectController extends Controller
                 ->with('error', 'Error al eliminar el proyecto: ' . $e->getMessage());
         }
         */
-    }
+    
 
         // Verificar que el usuario sea el líder del equipo o admin
         if ($team->lider_id !== Auth::id() && !Auth::user()->hasRole('admin')) {
