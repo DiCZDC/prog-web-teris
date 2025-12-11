@@ -1,310 +1,290 @@
 <x-app-layout>
-    <div class="min-h-screen bg-gradient-to-br from-purple-900 via-violet-800 to-purple-900 py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-4xl mx-auto">
-            <!-- Botón Regresar -->
-            <div class="mb-6">
-                @if(isset($team) && $team)
-                    <a href="{{ route('teams.show', $team) }}" 
-                       class="inline-flex items-center text-white hover:text-yellow-300 transition-colors duration-200">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        <span class="font-medium">← Volver al equipo</span>
-                    </a>
-                @else
-                    <a href="{{ route('teams.my-teams') }}" 
-                       class="inline-flex items-center text-white hover:text-yellow-300 transition-colors duration-200">
-                        <i class="fas fa-arrow-left mr-2"></i>
-                        <span class="font-medium">← Mis equipos</span>
-                    </a>
-                @endif
-            </div>
+    @push('styles')
+    <style>
+        .project-form-container {
+            background: linear-gradient(135deg, rgba(49, 46, 129, 0.95), rgba(76, 29, 149, 0.95));
+            border-radius: 16px;
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.3);
+            color: #e0e7ff;
+        }
 
-            <div class="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl overflow-hidden border border-white/20">
-                <!-- Encabezado -->
-                <div class="bg-gradient-to-r from-purple-700 to-indigo-800 px-8 py-6">
-                    <h1 class="text-3xl font-bold text-white flex items-center">
-                        <i class="fas fa-cloud-upload-alt mr-3"></i>
-                        Subir Proyecto para Evaluación
-                    </h1>
-                    <p class="text-white/90 mt-2">
-                        @if(isset($team) && $team)
-                            Para el equipo: <span class="font-bold text-yellow-300">{{ $team->nombre }}</span>
-                            @if($team->evento)
-                                - Evento: <span class="font-bold text-yellow-300">{{ $team->evento->nombre }}</span>
-                            @endif
-                        @else
-                            Selecciona un equipo y proporciona los enlaces de tu proyecto
-                        @endif
-                    </p>
-                </div>
+        .form-title {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #c4b5fd, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
 
-                <!-- Formulario -->
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #c4b5fd;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(30, 27, 75, 0.5);
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            border-radius: 0.5rem;
+            color: #e0e7ff;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: rgba(167, 139, 250, 0.6);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .form-input::placeholder {
+            color: #a5b4fc;
+            opacity: 0.6;
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            padding: 0.75rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            color: white;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            width: 100%;
+            font-size: 1.125rem;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(59, 130, 246, 0.6);
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            color: white;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+            border: 2px solid rgba(167, 139, 250, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(139, 92, 246, 0.6);
+        }
+
+        .help-text {
+            font-size: 0.75rem;
+            color: #a5b4fc;
+            margin-top: 0.25rem;
+        }
+
+        .error-message {
+            font-size: 0.875rem;
+            color: #fca5a5;
+            margin-top: 0.25rem;
+        }
+
+        .info-box {
+            background: rgba(59, 130, 246, 0.2);
+            border: 2px solid rgba(59, 130, 246, 0.4);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-box-title {
+            font-weight: 700;
+            color: #93c5fd;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-box-text {
+            color: #c7d2fe;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+    </style>
+    @endpush
+
+    <div class="py-12">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <a href="{{ route('teams.show', $team) }}" class="back-btn mb-4">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Volver al Equipo
+            </a>
+
+            <div class="project-form-container overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-8">
-                    @if(session('error'))
-                        <div class="mb-6 p-4 bg-red-500/20 border border-red-500/50 text-red-200 rounded-xl">
-                            <div class="flex items-center">
-                                <i class="fas fa-exclamation-triangle mr-3"></i>
-                                <span>{{ session('error') }}</span>
-                            </div>
+                    <h1 class="form-title">
+                        {{ isset($project) ? 'Editar Proyecto' : 'Enviar Proyecto' }}
+                    </h1>
+
+                    <div class="info-box">
+                        <div class="info-box-title">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Información del Equipo
                         </div>
-                    @endif
-
-                    @if(session('success'))
-                        <div class="mb-6 p-4 bg-green-500/20 border border-green-500/50 text-green-200 rounded-xl">
-                            <div class="flex items-center">
-                                <i class="fas fa-check-circle mr-3"></i>
-                                <span>{{ session('success') }}</span>
-                            </div>
-                        </div>
-                    @endif
-
-                    <form method="POST" action="{{ route('projects.store') }}" class="space-y-6">
-                        @csrf
-
-                        <!-- Selección de equipo -->
-                        @if(!isset($team) || !$team)
-                        <div class="space-y-4">
-                            <label class="block text-lg font-medium text-white">
-                                <i class="fas fa-users mr-2"></i>Seleccionar Equipo
-                                <span class="text-red-400 ml-1">*</span>
-                            </label>
-                            <select name="team_id" 
-                                    required
-                                    class="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
-                                <option value="">-- Selecciona un equipo --</option>
-                                @if(isset($misEquipos) && $misEquipos->count() > 0)
-                                    @foreach($misEquipos as $equipoOption)
-                                        <option value="{{ $equipoOption->id }}">
-                                            {{ $equipoOption->nombre }} 
-                                            @if($equipoOption->evento)
-                                                - {{ $equipoOption->evento->nombre }}
-                                            @endif
-                                        </option>
-                                    @endforeach
-                                @endif
-                            </select>
-                            @error('team_id')
-                                <p class="text-red-300 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                            
-                            @if(!isset($misEquipos) || $misEquipos->count() === 0)
-                                <div class="p-4 bg-yellow-500/20 border border-yellow-500/30 rounded-xl">
-                                    <p class="text-yellow-200">
-                                        <i class="fas fa-exclamation-triangle mr-2"></i>
-                                        No tienes equipos disponibles para subir proyectos.
-                                        <a href="{{ route('teams.create') }}" class="text-yellow-300 underline ml-1">Crear un equipo</a>
-                                    </p>
-                                </div>
+                        <div class="info-box-text">
+                            <strong>Equipo:</strong> {{ $team->nombre }}<br>
+                            @if($team->evento)
+                                <strong>Evento:</strong> {{ $team->evento->nombre }}
+                            @else
+                                <strong class="text-yellow-400">⚠️ Este equipo no está inscrito en ningún evento</strong>
                             @endif
                         </div>
-                        @else
-                            <input type="hidden" name="team_id" value="{{ $team->id }}">
+                    </div>
+
+                    @if($errors->any())
+                        <div class="mb-6 p-4 rounded-lg" style="background: rgba(239, 68, 68, 0.2); border: 2px solid #ef4444;">
+                            <div class="font-bold mb-2" style="color: #fca5a5;">Error en el formulario:</div>
+                            <ul class="list-disc list-inside">
+                                @foreach($errors->all() as $error)
+                                    <li class="error-message">{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <form action="{{ isset($project) ? route('projects.update', $project) : route('projects.store') }}" method="POST">
+                        @csrf
+                        @if(isset($project))
+                            @method('PUT')
                         @endif
 
-                        <!-- Título del proyecto -->
-                        <div class="space-y-4">
-                            <label class="block text-lg font-medium text-white">
-                                <i class="fas fa-heading mr-2"></i>Título del Proyecto
-                                <span class="text-red-400 ml-1">*</span>
-                            </label>
-                            <input type="text" 
-                                   name="nombre" 
-                                   required
-                                   value="{{ old('nombre') }}"
-                                   placeholder="Ej: Sistema de Gestión de Eventos"
-                                   class="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
-                            @error('nombre')
-                                <p class="text-red-300 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                        <input type="hidden" name="team_id" value="{{ $team->id }}">
 
-                        <!-- Descripción -->
-                        <div class="space-y-4">
-                            <label class="block text-lg font-medium text-white">
-                                <i class="fas fa-align-left mr-2"></i>Descripción del Proyecto
-                            </label>
-                            <textarea name="descripcion" 
-                                      rows="4"
-                                      placeholder="Describe tu proyecto, tecnologías utilizadas, funcionalidades principales..."
-                                      class="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-500 focus:border-transparent">{{ old('descripcion') }}</textarea>
-                            @error('descripcion')
-                                <p class="text-red-300 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- URL del proyecto (principal) -->
-                        <div class="space-y-4">
-                            <label class="block text-lg font-medium text-white">
-                                <i class="fas fa-link mr-2"></i>URL del Proyecto
-                                <span class="text-red-400 ml-1">*</span>
-                                <span class="block text-sm font-normal text-white/70 mt-1">(Enlace a tu proyecto desplegado - GitHub Pages, Vercel, Netlify, etc.)</span>
-                            </label>
-                            <input type="url" 
-                                   name="url" 
-                                   required
-                                   value="{{ old('url') }}"
-                                   placeholder="https://tuproyecto.com o https://github.com/usuario/proyecto"
-                                   class="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
-                            @error('url')
-                                <p class="text-red-300 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                            <p class="text-white/70 text-sm flex items-center">
-                                <i class="fas fa-info-circle mr-2"></i>
-                                Este es el enlace principal que los jueces evaluarán
-                            </p>
-                        </div>
-
-                        <!-- URL del repositorio -->
-                        <div class="space-y-4">
-                            <label class="block text-lg font-medium text-white">
-                                <i class="fab fa-github mr-2"></i>Repositorio GitHub (Opcional)
-                            </label>
-                            <input type="url" 
-                                   name="repositorio_url"
-                                   value="{{ old('repositorio_url') }}"
-                                   placeholder="https://github.com/usuario/repositorio"
-                                   class="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
-                            @error('repositorio_url')
-                                <p class="text-red-300 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- URL de demo -->
-                        <div class="space-y-4">
-                            <label class="block text-lg font-medium text-white">
-                                <i class="fas fa-play-circle mr-2"></i>URL de Demo (Opcional)
-                            </label>
-                            <input type="url" 
-                                   name="demo_url"
-                                   value="{{ old('demo_url') }}"
-                                   placeholder="https://demo.tuproyecto.com"
-                                   class="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
-                            @error('demo_url')
-                                <p class="text-red-300 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- URL de documentación -->
-                        <div class="space-y-4">
-                            <label class="block text-lg font-medium text-white">
-                                <i class="fas fa-book mr-2"></i>Documentación (Opcional)
-                            </label>
-                            <input type="url" 
-                                   name="documentacion_url"
-                                   value="{{ old('documentacion_url') }}"
-                                   placeholder="https://docs.tuproyecto.com"
-                                   class="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
-                            @error('documentacion_url')
-                                <p class="text-red-300 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Información importante -->
-                        <div class="p-4 bg-yellow-500/20 border border-yellow-500/30 rounded-xl">
-                            <div class="flex items-start">
-                                <i class="fas fa-exclamation-circle text-yellow-300 mt-1 mr-3"></i>
-                                <div>
-                                    <h3 class="font-bold text-yellow-300 mb-2">Importante</h3>
-                                    <ul class="text-white/90 space-y-1 text-sm">
-                                        <li class="flex items-start">
-                                            <span class="mr-2">•</span>
-                                            <span>Una vez subido el proyecto, los jueces asignados podrán evaluarlo</span>
-                                        </li>
-                                        <li class="flex items-start">
-                                            <span class="mr-2">•</span>
-                                            <span>Asegúrate de que todos los enlaces funcionen correctamente</span>
-                                        </li>
-                                        <li class="flex items-start">
-                                            <span class="mr-2">•</span>
-                                            <span>Solo el líder del equipo puede subir/editar el proyecto</span>
-                                        </li>
-                                        <li class="flex items-start">
-                                            <span class="mr-2">•</span>
-                                            <span>Cada equipo solo puede tener un proyecto por evento</span>
-                                        </li>
-                                        <li class="flex items-start">
-                                            <span class="mr-2">•</span>
-                                            <span>El proyecto debe estar relacionado con el evento del equipo</span>
-                                        </li>
-                                    </ul>
-                                </div>
+                        <div class="space-y-6">
+                            <!-- Nombre del Proyecto -->
+                            <div>
+                                <label for="nombre" class="form-label">Nombre del Proyecto *</label>
+                                <input
+                                    type="text"
+                                    id="nombre"
+                                    name="nombre"
+                                    class="form-input @error('nombre') border-red-500 @enderror"
+                                    value="{{ old('nombre', $project->nombre ?? '') }}"
+                                    placeholder="Ej: Sistema de Gestión Escolar"
+                                    required
+                                    maxlength="255"
+                                >
+                                @error('nombre')
+                                    <p class="error-message">{{ $message }}</p>
+                                @enderror
                             </div>
-                        </div>
 
-                        <!-- Botones -->
-                        <div class="flex justify-between pt-6 border-t border-white/20">
-                            @if(isset($team) && $team)
-                                <a href="{{ route('teams.show', $team) }}" 
-                                   class="px-6 py-3 border border-white/30 text-white rounded-xl hover:bg-white/10 transition-colors duration-200">
-                                    <i class="fas fa-times mr-2"></i>Cancelar
-                                </a>
-                            @else
-                                <a href="{{ route('teams.my-teams') }}" 
-                                   class="px-6 py-3 border border-white/30 text-white rounded-xl hover:bg-white/10 transition-colors duration-200">
-                                    <i class="fas fa-times mr-2"></i>Cancelar
-                                </a>
-                            @endif
-                            
-                            <button type="submit" 
-                                    class="px-8 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold rounded-xl hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 shadow-lg hover:shadow-xl">
-                                <i class="fas fa-cloud-upload-alt mr-2"></i>Subir Proyecto
-                            </button>
+                            <!-- Descripción -->
+                            <div>
+                                <label for="descripcion" class="form-label">Descripción del Proyecto *</label>
+                                <textarea
+                                    id="descripcion"
+                                    name="descripcion"
+                                    class="form-input @error('descripcion') border-red-500 @enderror"
+                                    placeholder="Describe tu proyecto, sus objetivos y características principales..."
+                                    required
+                                    rows="5"
+                                >{{ old('descripcion', $project->descripcion ?? '') }}</textarea>
+                                @error('descripcion')
+                                    <p class="error-message">{{ $message }}</p>
+                                @enderror
+                                <p class="help-text">Describe en detalle qué hace tu proyecto y cómo funciona.</p>
+                            </div>
+
+                            <!-- URL del Repositorio GitHub -->
+                            <div>
+                                <label for="repositorio_url" class="form-label">URL del Repositorio (GitHub) *</label>
+                                <input
+                                    type="url"
+                                    id="repositorio_url"
+                                    name="repositorio_url"
+                                    class="form-input @error('repositorio_url') border-red-500 @enderror"
+                                    value="{{ old('repositorio_url', $project->repositorio_url ?? '') }}"
+                                    placeholder="https://github.com/usuario/proyecto"
+                                    required
+                                >
+                                @error('repositorio_url')
+                                    <p class="error-message">{{ $message }}</p>
+                                @enderror
+                                <p class="help-text">Ingresa la URL completa de tu repositorio en GitHub.</p>
+                            </div>
+
+                            <!-- URL de Demo (Opcional) -->
+                            <div>
+                                <label for="demo_url" class="form-label">URL de Demo (Opcional)</label>
+                                <input
+                                    type="url"
+                                    id="demo_url"
+                                    name="demo_url"
+                                    class="form-input @error('demo_url') border-red-500 @enderror"
+                                    value="{{ old('demo_url', $project->demo_url ?? '') }}"
+                                    placeholder="https://mi-proyecto-demo.com"
+                                >
+                                @error('demo_url')
+                                    <p class="error-message">{{ $message }}</p>
+                                @enderror
+                                <p class="help-text">Si tienes una demo en línea de tu proyecto, ingresa la URL aquí.</p>
+                            </div>
+
+                            <!-- URL de Documentación (Opcional) -->
+                            <div>
+                                <label for="documentacion_url" class="form-label">URL de Documentación (Opcional)</label>
+                                <input
+                                    type="url"
+                                    id="documentacion_url"
+                                    name="documentacion_url"
+                                    class="form-input @error('documentacion_url') border-red-500 @enderror"
+                                    value="{{ old('documentacion_url', $project->documentacion_url ?? '') }}"
+                                    placeholder="https://docs.mi-proyecto.com"
+                                >
+                                @error('documentacion_url')
+                                    <p class="error-message">{{ $message }}</p>
+                                @enderror
+                                <p class="help-text">Si tienes documentación adicional (README extendido, Wiki, etc.), ingresa la URL aquí.</p>
+                            </div>
+
+                            <!-- Botón de envío -->
+                            <div class="pt-4">
+                                <button type="submit" class="submit-btn">
+                                    <svg class="w-6 h-6 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    {{ isset($project) ? 'Actualizar Proyecto' : 'Enviar Proyecto' }}
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Script para validación básica -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Validar URLs al salir del campo
-            const urlInputs = document.querySelectorAll('input[type="url"]');
-            urlInputs.forEach(input => {
-                input.addEventListener('blur', function() {
-                    const value = this.value.trim();
-                    if (value && !value.startsWith('http://') && !value.startsWith('https://')) {
-                        alert('Por favor, incluye https:// al inicio de la URL');
-                        this.focus();
-                    }
-                });
-            });
-
-            // Validar formulario antes de enviar
-            const form = document.querySelector('form');
-            form.addEventListener('submit', function(event) {
-                const teamSelect = document.querySelector('select[name="team_id"]');
-                if (teamSelect && !teamSelect.value) {
-                    event.preventDefault();
-                    alert('Por favor selecciona un equipo');
-                    teamSelect.focus();
-                    return;
-                }
-
-                const titleInput = document.querySelector('input[name="nombre"]');
-                if (!titleInput.value.trim()) {
-                    event.preventDefault();
-                    alert('Por favor ingresa un título para el proyecto');
-                    titleInput.focus();
-                    return;
-                }
-
-                const urlInput = document.querySelector('input[name="url"]');
-                if (!urlInput.value.trim()) {
-                    event.preventDefault();
-                    alert('Por favor ingresa la URL del proyecto');
-                    urlInput.focus();
-                    return;
-                }
-
-                const urlValue = urlInput.value.trim();
-                if (!urlValue.startsWith('http://') && !urlValue.startsWith('https://')) {
-                    event.preventDefault();
-                    alert('La URL debe comenzar con http:// o https://');
-                    urlInput.focus();
-                    return;
-                }
-            });
-        });
-    </script>
 </x-app-layout>

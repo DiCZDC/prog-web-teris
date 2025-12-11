@@ -80,7 +80,7 @@ class TeamController extends Controller
      */
     public function show(Team $team)
     {
-        $team->load(['lider', 'disenador', 'frontprog', 'backprog', 'evento']);
+        $team->load(['lider', 'disenador', 'frontprog', 'backprog', 'evento', 'proyecto']);
         return view('teams.show', compact('team'));
     }
 

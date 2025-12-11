@@ -539,10 +539,92 @@
                 </div>
             </div>
 
+            {{-- NUEVA SECCIÓN: PROYECTO DEL EQUIPO --}}
+            @if($team->evento)
+            <div class="members-section" style="margin-top: 30px; padding-top: 30px; border-top: 2px solid rgba(255, 255, 255, 0.2);">
+                <div class="members-title">📦 Proyecto del Equipo:</div>
+
+                @if($team->proyecto)
+                    {{-- Equipo ya tiene proyecto --}}
+                    <div style="background: rgba(34, 197, 94, 0.2); border: 2px solid #22c55e; border-radius: 10px; padding: 20px; margin-bottom: 15px;">
+                        <div style="display: flex; align-items: start; gap: 15px;">
+                            <div style="flex-shrink: 0;">
+                                <svg style="width: 48px; height: 48px; color: #22c55e;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 20px; font-weight: bold; color: #22c55e; margin-bottom: 8px;">
+                                    {{ $team->proyecto->nombre }}
+                                </h3>
+                                <p style="color: rgba(255, 255, 255, 0.9); margin-bottom: 12px; line-height: 1.5;">
+                                    {{ $team->proyecto->descripcion }}
+                                </p>
+                                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+                                    @if($team->proyecto->repositorio_url)
+                                    <a href="{{ $team->proyecto->repositorio_url }}" target="_blank"
+                                       style="display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; background: rgba(255, 255, 255, 0.2); border-radius: 6px; color: white; text-decoration: none; font-size: 14px; transition: all 0.2s;">
+                                        <svg style="width: 16px; height: 16px;" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                        </svg>
+                                        GitHub
+                                    </a>
+                                    @endif
+                                    @if($team->proyecto->demo_url)
+                                    <a href="{{ $team->proyecto->demo_url }}" target="_blank"
+                                       style="display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; background: rgba(255, 255, 255, 0.2); border-radius: 6px; color: white; text-decoration: none; font-size: 14px;">
+                                        <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        </svg>
+                                        Demo
+                                    </a>
+                                    @endif
+                                    @if($team->proyecto->documentacion_url)
+                                    <a href="{{ $team->proyecto->documentacion_url }}" target="_blank"
+                                       style="display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; background: rgba(255, 255, 255, 0.2); border-radius: 6px; color: white; text-decoration: none; font-size: 14px;">
+                                        <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        Docs
+                                    </a>
+                                    @endif
+                                </div>
+                                <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">
+                                    Enviado el {{ $team->proyecto->created_at->format('d/m/Y H:i') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    {{-- Equipo no tiene proyecto --}}
+                    <div style="background: rgba(249, 115, 22, 0.2); border: 2px solid #f97316; border-radius: 10px; padding: 20px; text-align: center;">
+                        <svg style="width: 48px; height: 48px; color: #fb923c; margin: 0 auto 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        <p style="font-weight: bold; color: #fb923c; margin-bottom: 6px;">
+                            Este equipo aún no ha enviado su proyecto
+                        </p>
+                        <p style="font-size: 14px; color: rgba(255, 255, 255, 0.8);">
+                            El líder del equipo debe enviar el proyecto para que los jueces puedan evaluarlo
+                        </p>
+                    </div>
+                @endif
+            </div>
+            @endif
+
             @auth
             <div class="action-buttons">
                 @if($team->lider_id === Auth::id())
-                    <a href="{{ route('teams.edit', $team) }}" class="btn btn-primary">Editar Equipo</a>
+                    {{-- Botones para el líder --}}
+                    @if($team->evento)
+                        @if($team->proyecto)
+                            <a href="{{ route('projects.edit', $team->proyecto) }}" class="btn btn-primary">📝 Editar Proyecto</a>
+                        @else
+                            <a href="{{ route('projects.create', ['team_id' => $team->id]) }}" class="btn btn-primary">📤 Enviar Proyecto</a>
+                        @endif
+                    @endif
+                    <a href="{{ route('teams.edit', $team) }}" class="btn btn-primary">✏️ Editar Equipo</a>
                     <form action="{{ route('teams.destroy', $team) }}" method="POST" style="display: inline;" onsubmit="return confirm('¿Estás seguro de eliminar este equipo?');">
                         @csrf
                         @method('DELETE')
@@ -556,7 +638,7 @@
                 @elseif(!$team->estaCompleto())
                     <a href="{{ route('teams.join') }}" class="btn btn-primary">Unirse a este Equipo</a>
                 @endif
-                
+
                 <a href="{{ route('teams.index') }}" class="btn btn-secondary">← Volver</a>
             </div>
             @endauth
