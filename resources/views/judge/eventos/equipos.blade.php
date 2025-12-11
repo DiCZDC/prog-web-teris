@@ -112,14 +112,14 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($equipo->proyecto)
-                                    <div class="font-medium text-gray-900">{{ $equipo->proyecto->titulo }}</div>
+                                    <div class="font-medium text-gray-900">{{ $equipo->proyecto->nombre }}</div>
                                     <div class="text-xs text-gray-500">
-                                        @if($equipo->proyecto->url)
-                                            <a href="{{ $equipo->proyecto->url }}" target="_blank" class="text-blue-600 hover:underline">
-                                                <i class="fas fa-link mr-1"></i> Ver proyecto
+                                        @if($equipo->proyecto->repositorio_url)
+                                            <a href="{{ $equipo->proyecto->repositorio_url }}" target="_blank" class="text-blue-600 hover:underline">
+                                                <i class="fas fa-link mr-1"></i> Ver repositorio
                                             </a>
                                         @else
-                                            <span class="text-yellow-600">Sin enlace</span>
+                                            <span class="text-yellow-600">Sin repositorio</span>
                                         @endif
                                     </div>
                                 @else
